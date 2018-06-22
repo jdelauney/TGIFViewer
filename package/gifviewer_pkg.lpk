@@ -17,15 +17,7 @@
       </Parsing>
       <CodeGeneration>
         <SmartLinkUnit Value="True"/>
-        <Optimizations>
-          <OptimizationLevel Value="3"/>
-        </Optimizations>
       </CodeGeneration>
-      <Linking>
-        <Debugging>
-          <GenerateDebugInfo Value="False"/>
-        </Debugging>
-      </Linking>
     </CompilerOptions>
     <Description Value="Paquet GIFViewer de conception et d'éxécution.
 Contient un composant visuel spécialiser dans l'affichage d'animation d'image au format GIF (Graphic Interchange Format) installé dans le groupe Beanz Extras"/>

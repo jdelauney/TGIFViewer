@@ -388,6 +388,7 @@ Type
     FBevelInner, FBevelOuter : TPanelBevel;
     FBevelWidth : TBevelWidth;
     FBevelColor : TColor;
+    FColor : TColor;
 
     FCenter, FStretch, FTransparent : Boolean;
 
@@ -464,6 +465,7 @@ Type
     { Image courante de l'animation affichée }
     property CurrentView : Graphics.TBitmap read FCurrentView;
   published
+    property Color : TColor Read FColor Write FColor;
     { Bordure visible autour du composant }
     property Border : Boolean Read FBorderShow Write FBorderShow;
     { Couleur de la bordure }
@@ -1524,10 +1526,10 @@ Var
       if not(CurrentFrameInfos.Interlaced) then
       begin
         CurrentLine := 0;
-        While (CurrentLine<CurrentFrameInfos.Height) do
+        While (CurrentLine<=CurrentFrameInfos.Height-1) do
         begin
           LinePtr :=OutBmp.GetScanLine(CurrentLine);// FFrames.Items[CurrentFrameIndex].Bitmap.GetScanLine(CurrentLine);
-          For x:=0 to OutBmp.Width-1 do
+          For x:=0 to (CurrentFrameInfos.Width-1) do
           begin
             // Lecture de l'index de la couleur dans la palette
             ColIdx := TargetBufferPtr^;
@@ -1628,7 +1630,7 @@ Var
           While (CurrentLine<CurrentFrameInfos.Height) do
           begin
             LinePtr := FFrames.Items[CurrentFrameIndex].Bitmap.GetScanLine(CurrentLine);
-            For x:=0 to Pred(FFrames.Items[CurrentFrameIndex].Bitmap.Width) do
+            For x:=0 to (FFrames.Items[CurrentFrameIndex].Bitmap.Width-1) do
             begin
               // Lecture de l'index de la couleur dans la palette
               ColIdx := TargetBufferPtr^;
@@ -1925,6 +1927,11 @@ Begin
   FBorderShow := False;
   FBorderColor := clBlack;
   FBorderWidth := 1;
+  FBevelInner := bvNone;
+  FBevelOuter := bvNone;
+  FBevelWidth := 1;
+  FBevelColor := clGray;
+  FColor := clNone;
   FAnimateTimer := TTimer.Create(nil);
   with FAnimateTimer do
   begin
@@ -2087,7 +2094,7 @@ Begin
      iDrawMode := dmSet;
    end;
    FVirtualView.PutImage(Src,0,0, Src.Width, Src.Height,pLeft,pTop,dmSet);
-   //FRestoreBitmap := FVirtualView.Clone;
+   FRestoreBitmap := FVirtualView.Clone;
   End
   else
   begin
@@ -2156,8 +2163,8 @@ End;
 
 Procedure TGIFViewer.CalculatePreferredSize(Var PreferredWidth, PreferredHeight : integer; WithThemeSpace : Boolean);
 Begin
-  PreferredWidth := FGIFWidth+1;
-  PreferredHeight := FGIFHeight+1;
+  PreferredWidth := FGIFWidth;//+FBorderWidth;
+  PreferredHeight := FGIFHeight;//t+FBorderWidth;
 End;
 
 Class Function TGIFViewer.GetControlClassDefaultSize : TSize;
@@ -2182,37 +2189,31 @@ Procedure TGIFViewer.Paint;
     end;
   end;
 
-  procedure PaintBevel(var ARect: TRect; ABevel: GraphType.TGraphicsBevelCut);
-  begin
-    // Note: Frame3D inflates ARect
-    if (ABevel <> bvNone)  then
-      if BevelColor = clDefault then
-      begin
-         with inherited Canvas do
-            Canvas.Frame3d(ARect, BevelWidth, ABevel)
-      End
-      else
-      begin
-//        InflateRect(ARect, -BorderWidth, -BorderWidth);
-        with inherited Canvas do
-          Canvas.Frame3d(ARect, BevelColor, BevelColor, BevelWidth);
-      End;
-  end;
-
 
 var
   R: TRect;
   C: TCanvas;
+  ARect: TRect;
+  w: integer;
 begin
 
   if csDesigning in ComponentState then DrawFrame;
+  //      if Not(FBorderShow) and (FBevelInner = bvNone) and (FBevelOuter=bvNone)  then
 
   C := inherited Canvas;
   R := DestRect;
   FPainting:=true;
   try
     C.Lock;
-
+    IF (FColor<>clNone) then //Not(FTransparent) and
+    begin
+      With C do
+      begin
+        Brush.Style := bsSolid;
+        Brush.Color := FColor;
+        FillRect(0,0,ClientWidth,ClientHeight);
+      End;
+    End;
     FCurrentView.Transparent:= FTransparent;
     C.StretchDraw(R, FCurrentView);
     if FBorderShow then
@@ -2226,7 +2227,16 @@ begin
         Brush.Style := bsClear;
         Rectangle(0,0,ClientWidth,ClientHeight);
       End;
+       ARect := rect(0,0,ClientWidth,ClientHeight);
+       w := FBevelWidth;
+      // if w = 0 then w := 1;
+       if (FBevelOuter <> bvNone) and (w > 0) then
+          C.Frame3d(ARect, w, BevelOuter);
+        InflateRect(ARect, -BorderWidth, -BorderWidth);
+       if (FBevelInner <> bvNone) and (w > 0) then
+         C.Frame3d(ARect, w, BevelInner); // Note: Frame3D inflates ARect
     End;
+
     C.UnLock;
   finally
     FPainting:=false;

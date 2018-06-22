@@ -6,7 +6,7 @@ Interface
 
 Uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  LResources, ExtCtrls, // /!\ Unité obligatoire pour charger la resource.
+  LResources, ExtCtrls, StdCtrls, // /!\ Unité obligatoire pour charger la resource.
   uGifViewer;
 
 Type
@@ -15,6 +15,7 @@ Type
 
   TMainForm = Class(TForm)
     GIFViewer1: TGIFViewer;
+    Label1: TLabel;
     Panel1: TPanel;
     Procedure FormShow(Sender: TObject);
   private
@@ -43,7 +44,8 @@ Begin
   newTop := (clientHeight div 2) - (GIFViewer1.Height div 2);
   GIFViewer1.Left := newLeft;
   GIFViewer1.Top :=  newTop;
-  //GIFViewer1.Start;
+  Label1.Caption :=  GIFViewer1.FrameCount.ToString;
+  GIFViewer1.Start;
 end;
 
 initialization

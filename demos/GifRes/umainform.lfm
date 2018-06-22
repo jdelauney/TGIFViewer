@@ -8,26 +8,31 @@ object MainForm: TMainForm
   ClientWidth = 367
   Color = clBlack
   OnShow = FormShow
+  LCLVersion = '1.8.5.0'
   Visible = False
   object GIFViewer1: TGIFViewer
-    Left = 40
-    Height = 91
-    Top = 40
-    Width = 91
-    Border = False
+    Left = 120
+    Height = 94
+    Top = 56
+    Width = 94
+    Color = clTeal
+    Border = True
     BorderColor = clRed
     BorderWidth = 4
+    BevelColor = clGray
+    BevelInner = bvLowered
+    BevelOuter = bvNone
     AutoPlay = True
     Transparent = True
-    Center = False
+    Center = True
     Stretch = False
     AutoSize = True
   end
   object Panel1: TPanel
     Left = 40
     Height = 50
-    Top = 240
-    Width = 288
+    Top = 288
+    Width = 280
     Caption = 'GIF FROM RESOURCE'
     Font.Color = clWhite
     Font.Height = -21
@@ -35,5 +40,15 @@ object MainForm: TMainForm
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 0
+  end
+  object Label1: TLabel
+    Left = 160
+    Height = 15
+    Top = 19
+    Width = 34
+    Caption = 'Label1'
+    Font.Color = clYellow
+    ParentColor = False
+    ParentFont = False
   end
 end

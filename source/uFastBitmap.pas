@@ -773,14 +773,20 @@ Var
       if DstX > FWidth then DstX := 0;
       if DstY > FHeight then DstY := 0;
 
-      If ((DstX + rWidth) > DstClip.Right) Then rWidth := DstClip.Right - DstX;
-      If ((DstY + rHeight) > DstClip.Bottom) Then rHeight := DstClip.Bottom - DstY;
+      If ((DstX + rWidth) >  (DstClip.Right+1)) Then rWidth := DstClip.Right - DstX;
+      If ((DstY + rHeight) > (DstClip.Bottom+1)) Then rHeight := DstClip.Bottom - DstY;
 
     End;
 Begin
+  //ShowMessage('Before clipCopyRect = rWidth : '+SrcWidth.ToString()+' rHeight : '+ SrcHeight.ToString());
   if (SrcWidth = 0) and (SrcHeight = 0) then exit;
   ClipCopyRect(SrcX, SrcY, SrcWidth,SrcHeight, DstX, DstY, Src.Width, Src.Height, Types.Rect(0,0,FWidth-1, FHeight-1));
-  //Showmessage('left : '+DstX.ToString()+' Top : '+DstY.ToString());
+
+  //Showmessage('ClipCoryRect = SrcX : '+SrcX.ToString()+' SrcY : '+SrcY.ToString()+#13+#10+
+  //                         'rWidth : '+SrcWidth.ToString()+' rHeight : '+ SrcHeight.ToString()+#13+#10+
+  //                         'imgWidth : '+Src.Width.ToString()+' imgHeight : '+ Src.Height.ToString()+#13+#10+
+  //                         'DstX : '+DstX.ToString()+' DstY : '+DstY.ToString());
+
   if (SrcWidth = 1) and (SrcHeight = 1) then
   begin
     Case Mode of
@@ -816,7 +822,7 @@ Begin
   SrcPtr := Src.GetPixelPtr(SrcX,SrcY);
   DstPtr := GetPixelPtr(DstX, DstY);
 
-  if SrcWidth < Src.Width then
+  if SrcWidth <= Src.Width then
     nextSrcLine := Src.Width
   else
     nextSrcLine := SrcX + (Src.Width - (SrcX + SrcWidth));
@@ -827,8 +833,7 @@ Begin
     else
     begin
       LineSize := SrcWidth * 4;
-      J := Pred(SrcHeight);
-      For I := 0 to J do
+      For I := 0 to SrcHeight-1 do
       begin
         Move(SrcPtr^, DstPtr^, LineSize);
         Inc(SrcPtr, NextSrcLine);
@@ -838,7 +843,7 @@ Begin
   End
   else
   begin
-    totalsize := (SrcWidth * SrcHeight) - 1;
+    totalsize := (Src.Width * Src.Height) - 1;
     Dec(SrcHeight);
     xx := 0;
     Dec(SrcWidth);

@@ -1,5 +1,5 @@
-# TGIFViewer
-TGIFViewer :eyes: composant visuel pour l'affichage d'animations au fromat GIF (Graphic Interchange Format) avec Free Pascal et Lazarus 
+# TGIFViewer :eyes:
+TGIFViewer  composant visuel pour l'affichage d'animations au fromat GIF (Graphic Interchange Format) avec Free Pascal et Lazarus 
 
 Capacités de TGIFViewer :
 - Chargement depuis un stream, un fichier ou une resource (**fonctions LoadFromStream, LoadFromFile, LoadFromResource**)
@@ -17,4 +17,5 @@ Capacités de TGIFViewer :
 - uFastBitmap : Classe pour la manipulation de bitmap 32 bit au format RGBA ou BGRA suivant l'OS
 - TypesHelpers : Classes ajoutant des fonctions utiles au type de données (Byte, integer, string, double, TDateTime...) les fonctions sont accesibles directement par le biais complétation du code sous Lazarus.
 
-
+## :copyright: 2018 J.Delauney (BeanzMaster)
+## Licence : **MPL**

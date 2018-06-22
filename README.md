@@ -13,7 +13,7 @@ Capacités de TGIFViewer :
 - Evèment à la lecture, l'arrêt ou la mise en pause de l'animation (**OnStart, OnPause, OnStop**)
 - Accès aux images et informations du GIF via la propiété **Frames.Items[x]**
 
-....
+____
 
 **Contient également 2 unités** :
 - uFastBitmap : Classe pour la manipulation de bitmap 32 bit au format RGBA ou BGRA suivant l'OS

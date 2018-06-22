@@ -1,0 +1,39 @@
+object MainForm: TMainForm
+  Left = 0
+  Height = 343
+  Top = 0
+  Width = 367
+  Caption = 'GIF Resource'
+  ClientHeight = 343
+  ClientWidth = 367
+  Color = clBlack
+  OnShow = FormShow
+  Visible = False
+  object GIFViewer1: TGIFViewer
+    Left = 40
+    Height = 91
+    Top = 40
+    Width = 91
+    Border = False
+    BorderColor = clRed
+    BorderWidth = 4
+    AutoPlay = True
+    Transparent = True
+    Center = False
+    Stretch = False
+    AutoSize = True
+  end
+  object Panel1: TPanel
+    Left = 40
+    Height = 50
+    Top = 240
+    Width = 288
+    Caption = 'GIF FROM RESOURCE'
+    Font.Color = clWhite
+    Font.Height = -21
+    Font.Name = 'Verdana'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+  end
+end

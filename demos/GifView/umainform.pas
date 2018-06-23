@@ -69,34 +69,8 @@ Implementation
 
 {$R *.lfm}
 
-Uses uErrorBoxForm;
+Uses FileCtrl, uErrorBoxForm;
 
-Function EllipsisPath(Const sFilePath: String; MaxChar: Integer): String;
-Const
-  Sep = '...';
-Var
-  pName, aPath, plpath, prPath: String;
-  Diff, middle, maxl, fileLen:  Integer;
-Begin
-  Result := sFilePath;
-  maxl := MaxChar - 4;
-
-  If (Length(sFilePath) > maxl) Then
-  Begin
-    pName := ExtractFileName(sFilePath);
-    fileLen := Length(pName);
-    middle := Length(sFilePath) - (filelen) Div 2;
-    If middle > maxchar Then
-    Begin
-      middle := (maxchar - filelen) Div 2;
-    End;
-    aPath := ExtractFilePath(sFilePath);
-    plPath := LeftStr(aPath, middle - 3);
-    Diff := Maxl - (middle - 3);
-    prPath := RightStr(aPath, diff);
-    Result := plPath + Sep + prPath + pName;
-  End;
-End;
 
 { TMainForm }
 
@@ -116,20 +90,6 @@ Begin
 End;
 
 Procedure TMainForm.FormDropFiles(Sender: TObject; Const FileNames: Array Of String);
-  function GetCharWidth : Integer;
-  var
-    bmp: TBitmap;
-  begin
-    Result := 0;
-    bmp := TBitmap.Create;
-    try
-      bmp.Canvas.Font.Assign(Self.Font);
-      Result := bmp.Canvas.TextWidth('W');
-    finally
-      bmp.Free;
-    end;
-  end;
-
 var
    ImageFileName : String;
 Begin
@@ -139,7 +99,7 @@ Begin
       Screen.Cursor := crHourGlass;
       ImageFileName := FileNames[0];
       GifViewer.LoadFromFile(ImageFileName);
-      lblFileName.Caption := EllipsisPath(ImageFileName, (lblFileName.ClientWidth Div GetCharWidth));
+      lblFileName.Caption := MiniMizeName(ImageFileName, lblFileName.Canvas ,lblFileName.ClientWidth);
       lblVersion.Caption := GifViewer.Version;
       lblFrameCount.Caption := GifViewer.FrameCount.ToString;
       pnlAnimationPlayer.Enabled := (GifViewer.FrameCount>1);

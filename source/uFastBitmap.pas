@@ -1,10 +1,9 @@
 Unit uFastBitmap;
 (*==============================================================================
- DESCRIPTION   : Classe de manipulation de bitmap en 32 bit.
+ DESCRIPTION   : Classe de manipulation basique de bitmap en 32 bit.
  DATE          : 17/06/2018
- VERSION       : 0.3
+ VERSION       : 1.0
  AUTEUR        : J.Delauney (BeanzMaster)
- CONTRIBUTEURS : Jipete, Jurassik Pork
  LICENCE       : MPL
 ================================================================================
 *)
@@ -15,7 +14,7 @@ Unit uFastBitmap;
 Interface
 
 Uses
-  LCLType, LCLIntf, Classes, SysUtils, Graphics, Contnrs, Dialogs;
+  LCLType, LCLIntf, Classes, SysUtils, GraphType, Graphics, Contnrs, Dialogs;
 
 Const
   { Constantes utiles pour le calcul sur les masques de couleur }
@@ -46,22 +45,26 @@ Type
   { TColorRGB24 : Définition d'un pixel sur 24 bits au format RGB }
   TColorRGB24Type = packed array[0..2] of byte;
   TColorRGB24 = packed record
+    { Creation de la couleur }
     procedure Create(R,G,B : Byte); Overload;
     procedure Create(Color:TColor); Overload;
+
+    { Conversion vers un TColor }
     function ToColor : TColor;
 
     Case Integer of
-     0 : (V:TColorRGB24Type);
-     1 : (Red, Green, Blue:Byte);
+     0 : (V:TColorRGB24Type);    // Acces via Tableau
+     1 : (Red, Green, Blue:Byte); // Acces via Composantes
   end;
 
-  { TColorRGBA32 : Définition d'un pixel sur 32 bits au format RGBA ou BGRA suivant l'OS}
-  TColorRGBA32Type = packed array[0..3] of byte;
-  TColorRGBA32 = Packed Record
+  { TColor32 : Définition d'un pixel sur 32 bits au format RGBA ou BGRA suivant l'OS}
+  TColor32Type = packed array[0..3] of byte;
+  TColor32 = Packed Record
   private
     function getColorComponent(Index : Integer): byte;
     procedure SetColorComponent(Index : Integer; aValue:Byte);
   public
+    { Creation de la couleur }
     procedure Create(R,G,B,A : Byte); Overload;
     procedure Create(R,G,B : Byte);   Overload;
     procedure Create(Color : TColor); Overload;
@@ -72,9 +75,10 @@ Type
     { Conversion vers un TColorRGB24 }
     function ToColorRGB24 : TColorRGB24;
     { Mixage de la couleur courrante avec la couleur "Color" avec prise en charge du canal Alpha }
-    function Blend(Color : TColorRGBA32): TColorRGBA32;
+    function Blend(Color : TColor32): TColor32;
 
-    class operator =(Color1,Color2 : TColorRGBA32):Boolean;
+    { Vérifie si 2 valeurs sont identiques }
+    class operator =(Color1,Color2 : TColor32):Boolean;
 
     { Accès aux composantes de la couleur }
     property Red:Byte Index cRedOrder read GetColorComponent Write SetColorComponent;
@@ -83,15 +87,15 @@ Type
     property Alpha:Byte Index cAlphaOrder read GetColorComponent Write SetColorComponent;
 
     Case Integer of
-     0 : (V:TColorRGBA32Type);
-     1 : (AsInteger : Integer);
+     0 : (V:TColor32Type);  // Acces via tableau
+     1 : (AsInteger : Integer); // Acces via Integer
   End;
-  PColorRGBA32 = ^TColorRGBA32;
+  PColor32 = ^TColor32;
 
-  { TColorRGBA32Item : Objet persistant englobant une couleur de type TColorRGBA32 }
-  TColorRGBA32Item = Class(TPersistent)
+  { TColor32Item : Objet persistant englobant une couleur de type TColor32 }
+  TColor32Item = Class(TPersistent)
   Private
-    FColor: TColorRGBA32;
+    FColor: TColor32;
     FName:  String;
     FTag:   Integer;
 
@@ -99,14 +103,14 @@ Type
     Procedure SetGreen(Const AValue: Byte);
     Procedure SetBlue(Const AValue: Byte);
     Procedure SetAlpha(Const AValue: Byte);
-    Procedure SetValue(Const AValue: TColorRGBA32);
+    Procedure SetValue(Const AValue: TColor32);
     Procedure SetColorName(Const aName: String);
 
     Function getRed: Byte;
     Function getGreen: Byte;
     Function getBlue: Byte;
     Function getAlpha: Byte;
-    Function getValue: TColorRGBA32;
+    Function getValue: TColor32;
 
   Protected
   Public
@@ -114,7 +118,7 @@ Type
     Destructor Destroy; override;
 
     { Valeur de la couleur }
-    Property Value: TColorRGBA32 read getValue write setValue;
+    Property Value: TColor32 read getValue write setValue;
     { Nom de la couleur eg : clrRed }
     Property Name: String read FName write setColorName;
   Published
@@ -131,34 +135,34 @@ Type
   End;
 
   { TBZColorList : Classe pour la gestion d'une palette (liste) de couleurs }
-  TColorRGBA32List = Class(TObjectList)
+  TColor32List = Class(TObjectList)
   Private
   Protected
-    Function GetColorItem(index: Integer): TColorRGBA32Item;
-    Procedure SetColorItem(index: Integer; val: TColorRGBA32Item);
+    Function GetColorItem(index: Integer): TColor32Item;
+    Procedure SetColorItem(index: Integer; val: TColor32Item);
   Public
     procedure Clear; override;
     { Ajoute une couler à la liste }
-    Function AddColor(Const aColor: TColorRGBA32): Integer; Overload;
+    Function AddColor(Const aColor: TColor32): Integer; Overload;
     { Ajoute une couler à la liste }
-    Function AddColor(Const aName: String; Const aColor: TColorRGBA32): Integer; Overload;
+    Function AddColor(Const aName: String; Const aColor: TColor32): Integer; Overload;
     { Ajoute une couler à la liste }
-    Function AddColor(Const aColorItem: TColorRGBA32Item): Integer; Overload;
+    Function AddColor(Const aColorItem: TColor32Item): Integer; Overload;
     { Supprime une couleur de la liste }
     Procedure RemoveColor(Const aName: String);
     { Recherche une couleur dans la liste }
-    Function FindColorByName(Const aName: String; Out Index: Integer):TColorRGBA32; Overload;
+    Function FindColorByName(Const aName: String; Out Index: Integer):TColor32; Overload;
     { Recherche une couleur dans la liste }
-    Function FindColorByName(Const aName: String): TColorRGBA32; Overload;
+    Function FindColorByName(Const aName: String): TColor32; Overload;
 
     { Colors : Acceder à la couleur "Index" de la liste }
-    Property Colors[Index: Integer]: TColorRGBA32Item read GetColorItem write setColorItem;
+    Property Colors[Index: Integer]: TColor32Item read GetColorItem write setColorItem;
   End;
 
 Const
-  clrTransparent : TColorRGBA32 = (v:($00,$00,$00,$00));
-  clrBlack       : TColorRGBA32 = (v:($00,$00,$00,$FF));
-  clrWhite       : TColorRGBA32 = (v:($FF,$FF,$FF,$FF));
+  clrTransparent : TColor32 = (v:($00,$00,$00,$00));
+  clrBlack       : TColor32 = (v:($00,$00,$00,$FF));
+  clrWhite       : TColor32 = (v:($FF,$FF,$FF,$FF));
 
 
 Type
@@ -193,20 +197,24 @@ Type
     procedure Assign(aFastBitmap : TFastBitmap);
     { Modifie les dimensions du bitmap }
     procedure SetSize(NewWidth, NewHeight : Integer);
+    { Importation des données d'un TRawImage. Retourne "TRUE" en cas de succès }
+    function ImportFromRawImage(Const ARawImage : TRawImage):Boolean;
+    { Importation des données d'un TBitmap. Retourne "TRUE" en cas de succès }
+    function ImportFromBitmap(Const ABitmap :Graphics.TBitmap):Boolean;
     { Efface le bitmap avec la couleur "Color" }
-    procedure Clear(Color : TColorRGBA32);
+    procedure Clear(Color : TColor32);
     { Retourne le tampon du bitmap }
-    function GetSurfaceBuffer : PColorRGBA32;
+    function GetSurfaceBuffer : PColor32;
     { Retourne l'adresse de la ligne "Y" dans le tampon }
-    function GetScanLine(Y : Integer) : PColorRGBA32;
+    function GetScanLine(Y : Integer) : PColor32;
     { Retourne l'adresse du pixel à la position "X,Y" dans le tampon }
-    function GetPixelPtr(X, Y : Integer) : PColorRGBA32;
+    function GetPixelPtr(X, Y : Integer) : PColor32;
     { Ecrit un pixel de couleur "Color" à la position "X,Y }
-    procedure PutPixel(X,Y:Integer; Color : TColorRGBA32);
+    procedure PutPixel(X,Y:Integer; Color : TColor32);
     { Lit un pixel de couleur "Color" à la position "X,Y }
-    function GetPixel(X,Y:Integer): TColorRGBA32;
+    function GetPixel(X,Y:Integer): TColor32;
     { Ecrit un pixel de en mixant couleur "Color" avec la couleur du pixel présent dans le tampon à la position "X,Y }
-    procedure PutPixelBlend(X,Y : Integer; Color : TColorRGBA32);
+    procedure PutPixelBlend(X,Y : Integer; Color : TColor32);
     { Copie une image source "Src" depuis la position "SrcX,SrcY" et de dimension "SrcWidthxSrcHeight" dans le bitmap à la position "DstX, DstY
       et suivant le "Mode"
        Mode : TFastBitmapDrawMode
@@ -238,7 +246,7 @@ Type
 
 Implementation
 
-Uses Types, GraphType, Math;
+Uses Types, Math;
 
 {%region=====[ TColorRGB24 ]====================================================}
 
@@ -266,19 +274,19 @@ End;
 
 {%endregion%}
 
-{%region=====[ TColorRGBA32 ]===================================================}
+{%region=====[ TColor32 ]===================================================}
 
-Function TColorRGBA32.getColorComponent(Index: Integer): byte;
+Function TColor32.getColorComponent(Index: Integer): byte;
 Begin
   result := v[Index];
 End;
 
-Procedure TColorRGBA32.SetColorComponent(Index: Integer; aValue: Byte);
+Procedure TColor32.SetColorComponent(Index: Integer; aValue: Byte);
 Begin
   v[Index] := aValue;
 End;
 
-Procedure TColorRGBA32.Create(R, G, B, A : Byte);
+Procedure TColor32.Create(R, G, B, A : Byte);
 Begin
   Red := R;
   Green := G;
@@ -286,12 +294,12 @@ Begin
   Alpha := A;
 End;
 
-Procedure TColorRGBA32.Create(R, G, B : Byte);
+Procedure TColor32.Create(R, G, B : Byte);
 Begin
   Create(R,G,B,255);
 End;
 
-Procedure TColorRGBA32.Create(Color : TColor);
+Procedure TColor32.Create(Color : TColor);
 Var
   ColorRGB24 : TColorRGB24;
 Begin
@@ -299,24 +307,24 @@ Begin
   Create(ColorRGB24);
 End;
 
-Procedure TColorRGBA32.Create(Color : TColorRGB24);
+Procedure TColor32.Create(Color : TColorRGB24);
 Begin
   Create(Color.Red,Color.Green,Color.Blue);
 End;
 
-Function TColorRGBA32.ToColor : TColor;
+Function TColor32.ToColor : TColor;
 Begin
  Result := ToColorRGB24.ToColor;
 End;
 
-Function TColorRGBA32.ToColorRGB24 : TColorRGB24;
+Function TColor32.ToColorRGB24 : TColorRGB24;
 Begin
  Result.Red := Red;
  Result.Green := Green;
  Result.Blue := Blue;
 End;
 
-//Function TColorRGBA32.Blend(Color : TColorRGBA32) : TColorRGBA32;
+//Function TColor32.Blend(Color : TColor32) : TColor32;
 //Var
 //  Coef1,Coef2,Coef3,Coef4, Tmp : Cardinal;
 //Begin
@@ -336,7 +344,7 @@ End;
 // end;
 //End;
 
-Function TColorRGBA32.Blend(Color : TColorRGBA32) : TColorRGBA32;
+Function TColor32.Blend(Color : TColor32) : TColor32;
 var
   factor, factor2:single;
 begin
@@ -353,7 +361,7 @@ begin
   End;
 end;
 
-Class Operator TColorRGBA32. = (Color1, Color2 : TColorRGBA32) : Boolean;
+Class Operator TColor32. = (Color1, Color2 : TColor32) : Boolean;
 Begin
   Result := False;
   if (Color1.Alpha = 0) and (Color2.Alpha = 0) then Result :=True
@@ -362,9 +370,9 @@ End;
 
 {%endregion%}
 
-{%region=====[ TColorRGBA32Item ]===============================================}
+{%region=====[ TColor32Item ]===============================================}
 
-Constructor TColorRGBA32Item.Create;
+Constructor TColor32Item.Create;
 Begin
   Inherited Create;
   FName := 'Black';
@@ -372,67 +380,67 @@ Begin
   FTag := 0;
 End;
 
-Destructor TColorRGBA32Item.Destroy;
+Destructor TColor32Item.Destroy;
 Begin
   Inherited Destroy;
 End;
 
-Procedure TColorRGBA32Item.SetRed(Const AValue: Byte);
+Procedure TColor32Item.SetRed(Const AValue: Byte);
 Begin
   If AValue = FColor.red Then exit;
   FColor.Red := AValue;
 End;
 
-Procedure TColorRGBA32Item.SetGreen(Const AValue: Byte);
+Procedure TColor32Item.SetGreen(Const AValue: Byte);
 Begin
   If AValue = FColor.Green Then exit;
   FColor.Green := AValue;
 End;
 
-Procedure TColorRGBA32Item.SetBlue(Const AValue: Byte);
+Procedure TColor32Item.SetBlue(Const AValue: Byte);
 Begin
   If AValue = FColor.Blue Then exit;
   FColor.Blue := AValue;
 End;
 
-Procedure TColorRGBA32Item.SetAlpha(Const AValue: Byte);
+Procedure TColor32Item.SetAlpha(Const AValue: Byte);
 Begin
   If AValue = FColor.Alpha Then exit;
   FColor.Alpha := AValue;
 End;
 
-Procedure TColorRGBA32Item.SetValue(Const AValue: TColorRGBA32);
+Procedure TColor32Item.SetValue(Const AValue: TColor32);
 Begin
   If AValue = FColor Then exit;
   FColor := AValue;
 End;
 
-Function TColorRGBA32Item.getRed: Byte;
+Function TColor32Item.getRed: Byte;
 Begin
   Result := FColor.Red;
 End;
 
-Function TColorRGBA32Item.getGreen: Byte;
+Function TColor32Item.getGreen: Byte;
 Begin
   Result := FColor.Green;
 End;
 
-Function TColorRGBA32Item.getBlue: Byte;
+Function TColor32Item.getBlue: Byte;
 Begin
   Result := FColor.Blue;
 End;
 
-Function TColorRGBA32Item.getAlpha: Byte;
+Function TColor32Item.getAlpha: Byte;
 Begin
   Result := FColor.Alpha;
 End;
 
-Function TColorRGBA32Item.getValue: TColorRGBA32;
+Function TColor32Item.getValue: TColor32;
 Begin
   Result := FColor;
 End;
 
-Procedure TColorRGBA32Item.SetColorName(Const aName: String);
+Procedure TColor32Item.SetColorName(Const aName: String);
 Begin
   If FName = aName Then exit;
   FName := aName;
@@ -440,21 +448,21 @@ End;
 
 {%endregion%}
 
-{%region ====[ TColorRGBA32List ]===============================================}
+{%region ====[ TColor32List ]===============================================}
 
-Function TColorRGBA32List.GetColorItem(index: Integer): TColorRGBA32Item;
+Function TColor32List.GetColorItem(index: Integer): TColor32Item;
 Begin
-  Result := TColorRGBA32Item(Get(Index));
+  Result := TColor32Item(Get(Index));
 End;
 
-Procedure TColorRGBA32List.SetColorItem(index: Integer; val: TColorRGBA32Item);
+Procedure TColor32List.SetColorItem(index: Integer; val: TColor32Item);
 Begin
   Put(Index, Val);
 End;
 
-procedure TColorRGBA32List.Clear;
+procedure TColor32List.Clear;
 Var
-  anItem: TColorRGBA32Item;
+  anItem: TColor32Item;
   i : Integer;
 Begin
   inherited Clear;
@@ -468,34 +476,34 @@ Begin
   End;
 End;
 
-Function TColorRGBA32List.AddColor(Const aColor: TColorRGBA32): Integer;
+Function TColor32List.AddColor(Const aColor: TColor32): Integer;
 Var
-  aColorItem: TColorRGBA32Item;
+  aColorItem: TColor32Item;
 Begin
-  aColorItem := TColorRGBA32Item.Create;
+  aColorItem := TColor32Item.Create;
   aColorItem.Value := aColor;
   Result := Add(aColorItem);
 End;
 
-Function TColorRGBA32List.AddColor(Const aName: String; Const aColor: TColorRGBA32): Integer;
+Function TColor32List.AddColor(Const aName: String; Const aColor: TColor32): Integer;
 Var
-  aColorItem: TColorRGBA32Item;
+  aColorItem: TColor32Item;
 Begin
-  aColorItem := TColorRGBA32Item.Create;
+  aColorItem := TColor32Item.Create;
   aColorItem.Value := aColor;
   aColorItem.Name := aName;
   Result := Add(aColorItem);
 End;
 
-Function TColorRGBA32List.AddColor(Const aColorItem: TColorRGBA32Item): Integer;
+Function TColor32List.AddColor(Const aColorItem: TColor32Item): Integer;
 Begin
   Result := Add(aColorItem);
 End;
 
-Procedure TColorRGBA32List.RemoveColor(Const aName: String);
+Procedure TColor32List.RemoveColor(Const aName: String);
 Var
   I:   Integer;
-  Col: TColorRGBA32Item;
+  Col: TColor32Item;
 Begin
   FindColorByName(aName, I);
   If I > -1 Then
@@ -507,22 +515,22 @@ Begin
   End;
 End;
 
-Function TColorRGBA32List.FindColorByName(Const aName: String; Out Index: Integer): TColorRGBA32;
+Function TColor32List.FindColorByName(Const aName: String; Out Index: Integer): TColor32;
 Var
   i: Integer;
 Begin
   Result := clrTransparent;
   Index := -1;
   For i := 0 To Count - 1 Do
-    If TColorRGBA32Item(Items[i]).Name = aName Then
+    If TColor32Item(Items[i]).Name = aName Then
     Begin
       Index := I;
-      Result := TColorRGBA32Item(Items[i]).Value;
+      Result := TColor32Item(Items[i]).Value;
       break;
     End;
 End;
 
-Function TColorRGBA32List.FindColorByName(Const aName: String): TColorRGBA32;
+Function TColor32List.FindColorByName(Const aName: String): TColor32;
 Var
   i: Integer;
 Begin
@@ -620,7 +628,7 @@ End;
 
 Procedure TFastBitmap.SwapRB;
 var
-  Pixptr: PColorRGBA32;
+  Pixptr: PColor32;
   AIntColor : Cardinal;
   PixelCount : Integer;
 begin
@@ -655,17 +663,82 @@ Begin
   Clear(clrTransparent);
 End;
 
-Procedure TFastBitmap.Clear(Color : TColorRGBA32);
+Function TFastBitmap.ImportFromRawImage(Const ARawImage: TRawImage): Boolean;
+var
+  BufferData : PByte;
+begin
+  SetSize(ARawImage.Description.Width,ARawImage.Description.Height);
+  result:=false;
+  // On verifie si la taille des deux tampons sont identique
+  // Si ce n'est pas le cas, cela veut dire que le TRawImage n'est pas au format 32bit
+  if (ARawImage.DataSize= FSize) then
+  begin
+    try
+      //BytePerRow := RawImage.Description.BytesPerLine;
+      BufferData := PByte(Self.getSurfaceBuffer);
+      Move(ARawImage.Data^, BufferData^, self.Size);
+    finally
+      result:=true;
+    end;
+  end;
+End;
+
+Function TFastBitmap.ImportFromBitmap(Const ABitmap: Graphics.TBitmap): Boolean;
+var
+  LTempBitmap: Graphics.TBitmap;
+  ok,ResetAlpha:Boolean;
+  procedure SetAlpha(Value : Byte);
+  var
+    i : Integer;
+    PixPtr : PColor32;
+  begin
+    i:=0;
+    PixPtr := Self.GetScanLine(0);
+    While i<FSize-1 do
+    begin
+      PixPtr^.Alpha:= Value;
+      inc(PixPtr);
+      inc(i);
+    end;
+  end;
+
+begin
+  ResetAlpha:=False;
+  result:=false;
+  if (ABitmap.PixelFormat <> pf32bit)  then
+  begin
+    LTempBitmap := Graphics.TBitmap.Create;
+    try
+      ResetAlpha:=True;
+      LTempBitmap.PixelFormat := pf32bit;
+      LTempBitmap.SetSize(ABitmap.Width, ABitmap.Height);
+      LTempBitmap.Canvas.Draw(0, 0, ABitmap);
+    finally
+      ok:=Self.ImportFromRawImage(LTempBitmap.RawImage);
+      if ResetAlpha then SetAlpha(255);
+      FreeAndNil(LTempBitmap);
+      result:=true and (ok);
+    end;
+  end
+  else
+  begin
+   ok:=Self.ImportFromRawImage(ABitmap.RawImage);
+   result:=true and (ok);
+  end;
+End;
+
+
+Procedure TFastBitmap.Clear(Color : TColor32);
 Begin
   FillDWord(FData^,FWidth * FHeight, DWord(Color));
 End;
 
-Function TFastBitmap.GetSurfaceBuffer: PColorRGBA32;
+Function TFastBitmap.GetSurfaceBuffer: PColor32;
 Begin
-   Result := PColorRGBA32(FData);
+   Result := PColor32(FData);
 End;
 
-Function TFastBitmap.GetScanLine(Y : Integer) : PColorRGBA32;
+Function TFastBitmap.GetScanLine(Y : Integer) : PColor32;
 Var
   yy : DWord;
 Begin
@@ -674,59 +747,59 @@ Begin
   else
   begin
     yy := DWord(FWidth) * DWord(Y);
-    Result := PColorRGBA32(FData + YY);
+    Result := PColor32(FData + YY);
   End;
 End;
 
-Function TFastBitmap.GetPixelPtr(X, Y : Integer) : PColorRGBA32;
+Function TFastBitmap.GetPixelPtr(X, Y : Integer) : PColor32;
 Begin
   Result := nil;
   if IsClipped(X,Y) then
   Begin
-    Result := PColorRGBA32(FData + (FWidth * Y) + X);
+    Result := PColor32(FData + (FWidth * Y) + X);
   End;
 End;
 
-Procedure TFastBitmap.PutPixel(X, Y : Integer; Color : TColorRGBA32);
+Procedure TFastBitmap.PutPixel(X, Y : Integer; Color : TColor32);
 Var
-  PixelPtr : PColorRGBA32;
+  PixelPtr : PColor32;
 Begin
   if IsClipped(X,Y) then
   Begin
-    PixelPtr := PColorRGBA32(FData + DWord(FWidth * Y));
+    PixelPtr := PColor32(FData + DWord(FWidth * Y));
     Inc(PixelPtr,X);
     PixelPtr^:= Color;
   End;
 End;
 
-Function TFastBitmap.GetPixel(X, Y : Integer) : TColorRGBA32;
+Function TFastBitmap.GetPixel(X, Y : Integer) : TColor32;
 Var
-  PixelPtr : PColorRGBA32;
+  PixelPtr : PColor32;
 Begin
   Result := clrTransparent;
   if IsClipped(X,Y) then
   Begin
-    PixelPtr := PColorRGBA32(FData + (FWidth * Y) + X);
+    PixelPtr := PColor32(FData + (FWidth * Y) + X);
     Result := PixelPtr^;
   End;
 End;
 
-Procedure TFastBitmap.PutPixelBlend(X, Y : Integer; Color : TColorRGBA32);
+Procedure TFastBitmap.PutPixelBlend(X, Y : Integer; Color : TColor32);
 Var
-  PixelPtr : PColorRGBA32;
+  PixelPtr : PColor32;
 Begin
   if IsClipped(X,Y) then
   Begin
-    PixelPtr := PColorRGBA32(FData + (FWidth * Y) + X);
+    PixelPtr := PColor32(FData + (FWidth * Y) + X);
     PixelPtr^:= PixelPtr^.Blend(Color);
   End;
 End;
 
 Procedure TFastBitmap.PutImage(Src : TFastBitmap; SrcX, SrcY, SrcWidth, SrcHeight, DstX, DstY : Integer; Mode : TFastBitmapDrawMode);
 Var
-  SrcPtr, DstPtr : PColorRGBA32;
+  SrcPtr, DstPtr : PColor32;
   NextSrcLine, NextDstLine : Integer;
-  DstCol, SrcCol : TColorRGBA32;
+  DstCol, SrcCol : TColor32;
   LineSize,TotalSize,xx,yy,i,J : Integer;
 
   Procedure ClipCopyRect(Var SrcX, SrcY, rWidth, rHeight, DstX, DstY: Integer; SrcImageWidth, SrcImageHeight: Integer; Const DstClip: Types.TRect);

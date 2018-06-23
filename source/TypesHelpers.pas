@@ -1,4 +1,16 @@
 Unit TypesHelpers;
+(*==============================================================================
+ DESCRIPTION   : Unité utilitaire qui rajoutes des fonctions aux type de données :
+                 Byte, Integer, Single, Double, Char, String, TDateTime.
+                 Ces fonctions sont directement accessibles via l'auto-complétation
+                 du code, lorsque vous rajouté un "." Vous pouvez également y avoir
+                 accès via le raccourci "Ctrl + Espace"
+ DATE          : 17/06/2018
+ VERSION       : 1.0
+ AUTEUR        : J.Delauney (BeanzMaster)
+ LICENCE       : MPL
+================================================================================
+*)
 
 // /!\ Dont' Work with trunk versions
 {$mode objfpc}{$H+}
@@ -7,6 +19,7 @@ Unit TypesHelpers;
 {$ASMMODE INTEL}
 {.$mode delphi} // Work with trunk version only if Delphi Mode is defined
 
+//----[ Option Interne ]-------------------------------------------------------------------------
 // if Defined then disable Assembly code optimizations
 {.$DEFINE NO_ASM_OPTIMIZATIONS}
 

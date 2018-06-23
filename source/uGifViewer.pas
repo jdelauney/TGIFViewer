@@ -2432,7 +2432,7 @@ End;
 Procedure Register;
 Begin
   {$I ..\Resources\gifviewer_icon.lrs}
-  RegisterComponents('Beanz Extras', [TGIFViewer]);
+  RegisterComponents('Beanz Extra', [TGIFViewer]);
   RegisterPropertyEditor(TypeInfo(String),
     TGIFViewer, 'FileName', TGIFViewerFileNamePropertyEditor);
 End;

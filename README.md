@@ -1,7 +1,9 @@
 # TGIFViewer :eyes:
 TGIFViewer  composant visuel pour l'affichage d'animations au fromat GIF (Graphic Interchange Format) avec Free Pascal et Lazarus 
 
-Capacités de TGIFViewer :
+###  Compatibilité : **Windows, Linux et MacOS**
+
+## Capacités de TGIFViewer :
 - Chargement depuis un stream, un fichier ou une resource (**fonctions LoadFromStream, LoadFromFile, LoadFromResource**)
 - Extraction des images brute (**fonction DisplayRawFrame)
 - Extraction des images pré-calculées de l'animation (**fonction DisplayFrame** )
@@ -18,6 +20,17 @@ Capacités de TGIFViewer :
 - TypesHelpers : Classes ajoutant des fonctions utiles au type de données (Byte, integer, string, double, TDateTime...) les fonctions sont accesibles directement par le biais complétation du code sous Lazarus.
 
 :information_source: Vous pouvez télécharger [GIF-ImageTestSuite](https://github.com/jdelauney/GIF-ImageTestSuite) pour tester avec plusieurs GIF encodés différemment
+
+## Installation :
+1) Dans Lazarus allez dans le menu "Paquet" et sélectionnez "Ouvrir un fichier de paquet (".lpk") 
+2) Sélectionnez **gifviewer_pkg.lpk** du dossier **Package**
+3) Cliquez sur le bouton "Compiler"
+4) Cliquez sur le bouton "Utiliser" puis "Installer"
+
+Le composant **TGIFViewer** sera installé dans la section **Beanz Extra**
+
+### Note :
+L'application de démonstration **GifView** du dossier **Demos** ne nécessite pas l'installation du composant dans l'EDI pour fonctionner.
 
 ## Licence : **MPL**
 #### :copyright: 2018 J.Delauney (BeanzMaster)

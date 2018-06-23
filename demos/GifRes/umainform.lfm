@@ -8,20 +8,19 @@ object MainForm: TMainForm
   ClientWidth = 367
   Color = clBlack
   OnShow = FormShow
-  LCLVersion = '1.8.5.0'
   Visible = False
   object GIFViewer1: TGIFViewer
     Left = 120
-    Height = 94
+    Height = 96
     Top = 56
-    Width = 94
-    Color = clTeal
+    Width = 96
+    Color = clWhite
     Border = True
     BorderColor = clRed
-    BorderWidth = 4
-    BevelColor = clGray
-    BevelInner = bvLowered
-    BevelOuter = bvNone
+    BorderWidth = 1
+    BevelInner = bvRaised
+    BevelOuter = bvLowered
+    BevelWidth = 4
     AutoPlay = True
     Transparent = True
     Center = True

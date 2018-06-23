@@ -387,8 +387,7 @@ Type
     FBorderWidth : Byte;
     FBevelInner, FBevelOuter : TPanelBevel;
     FBevelWidth : TBevelWidth;
-    FBevelColor : TColor;
-    FColor : TColor;
+    FBevelColor, FColor : TColor;
 
     FCenter, FStretch, FTransparent : Boolean;
 
@@ -404,7 +403,6 @@ Type
     procedure SetFileName(Const Value : String);
     function  GetFrame(Const Index : Integer):Graphics.TBitmap;
     procedure SetTransparent(Const Value : Boolean);
-    procedure SetBevelColor(AValue: TColor);
     procedure SetBevelInner(const Value: TPanelBevel);
     procedure SetBevelOuter(const Value: TPanelBevel);
     procedure SetBevelWidth(const Value: TBevelWidth);
@@ -472,7 +470,7 @@ Type
     property BorderColor : TColor Read FBorderColor Write FBorderColor;
     { Epaisseur de la bordure }
     property BorderWidth : Byte Read FBorderWidth Write FBorderWidth;
-    property BevelColor: TColor read FBevelColor write SetBevelColor default clDefault;
+    property BevelColor : TColor Read FBevelColor Write FBevelColor;
     property BevelInner: TPanelBevel read FBevelInner write SetBevelInner default bvNone;
     property BevelOuter: TPanelBevel read FBevelOuter write SetBevelOuter default bvRaised;
     property BevelWidth: TBevelWidth read FBevelWidth write SetBevelWidth default 1;
@@ -1930,8 +1928,8 @@ Begin
   FBevelInner := bvNone;
   FBevelOuter := bvNone;
   FBevelWidth := 1;
-  FBevelColor := clGray;
   FColor := clNone;
+
   FAnimateTimer := TTimer.Create(nil);
   with FAnimateTimer do
   begin
@@ -2021,14 +2019,6 @@ Begin
 
 End;
 
-procedure TGIFViewer.SetBevelColor(AValue: TColor);
-begin
-  if FBevelColor <> AValue then
-  begin
-    FBevelColor := AValue;
-    Invalidate;
-  end;
-end;
 
 procedure TGIFViewer.SetBevelWidth(const Value: TBevelWidth);
 begin
@@ -2162,9 +2152,12 @@ Begin
 End;
 
 Procedure TGIFViewer.CalculatePreferredSize(Var PreferredWidth, PreferredHeight : integer; WithThemeSpace : Boolean);
+Var
+  extraWidth : Integer;
 Begin
-  PreferredWidth := FGIFWidth;//+FBorderWidth;
-  PreferredHeight := FGIFHeight;//t+FBorderWidth;
+  extraWidth := (FBorderWidth * 2) + ((FBevelWidth + FBevelWidth) * 2);
+  PreferredWidth := FGIFWidth + extraWidth+2;
+  PreferredHeight := FGIFHeight + extraWidth+2;
 End;
 
 Class Function TGIFViewer.GetControlClassDefaultSize : TSize;
@@ -2218,6 +2211,15 @@ begin
     C.StretchDraw(R, FCurrentView);
     if FBorderShow then
     begin
+
+      ARect := rect(0,0,ClientWidth,ClientHeight);
+      w := FBevelWidth;
+      // if w = 0 then w := 1;
+
+      if (FBevelInner <> bvNone) and (w > 0) then C.Frame3d(ARect, w, BevelInner); // Note: Frame3D inflates ARect
+      InflateRect(ARect, -(FBorderWidth+1), -(FBorderWidth+1));
+      if (FBevelOuter <> bvNone) and (w > 0) then C.Frame3d(ARect, w, BevelOuter);
+
       if FBorderWidth > 0 then
       With C do
       begin
@@ -2227,14 +2229,6 @@ begin
         Brush.Style := bsClear;
         Rectangle(0,0,ClientWidth,ClientHeight);
       End;
-       ARect := rect(0,0,ClientWidth,ClientHeight);
-       w := FBevelWidth;
-      // if w = 0 then w := 1;
-       if (FBevelOuter <> bvNone) and (w > 0) then
-          C.Frame3d(ARect, w, BevelOuter);
-        InflateRect(ARect, -BorderWidth, -BorderWidth);
-       if (FBevelInner <> bvNone) and (w > 0) then
-         C.Frame3d(ARect, w, BevelInner); // Note: Frame3D inflates ARect
     End;
 
     C.UnLock;

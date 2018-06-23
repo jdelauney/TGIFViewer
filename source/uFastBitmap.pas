@@ -800,7 +800,7 @@ Var
   SrcPtr, DstPtr : PColor32;
   NextSrcLine, NextDstLine : Integer;
   DstCol, SrcCol : TColor32;
-  LineSize,TotalSize,xx,yy,i,J : Integer;
+  LineSize,TotalSize,xx,yy,i : Integer;
 
   Procedure ClipCopyRect(Var SrcX, SrcY, rWidth, rHeight, DstX, DstY: Integer; SrcImageWidth, SrcImageHeight: Integer; Const DstClip: Types.TRect);
     Var
@@ -851,14 +851,10 @@ Var
 
     End;
 Begin
-  //ShowMessage('Before clipCopyRect = rWidth : '+SrcWidth.ToString()+' rHeight : '+ SrcHeight.ToString());
+
   if (SrcWidth = 0) and (SrcHeight = 0) then exit;
   ClipCopyRect(SrcX, SrcY, SrcWidth,SrcHeight, DstX, DstY, Src.Width, Src.Height, Types.Rect(0,0,FWidth-1, FHeight-1));
 
-  //Showmessage('ClipCoryRect = SrcX : '+SrcX.ToString()+' SrcY : '+SrcY.ToString()+#13+#10+
-  //                         'rWidth : '+SrcWidth.ToString()+' rHeight : '+ SrcHeight.ToString()+#13+#10+
-  //                         'imgWidth : '+Src.Width.ToString()+' imgHeight : '+ Src.Height.ToString()+#13+#10+
-  //                         'DstX : '+DstX.ToString()+' DstY : '+DstY.ToString());
 
   if (SrcWidth = 1) and (SrcHeight = 1) then
   begin

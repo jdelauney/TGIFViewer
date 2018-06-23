@@ -15,7 +15,6 @@ Type
 
   TMainForm = Class(TForm)
     GIFViewer1: TGIFViewer;
-    Label1: TLabel;
     Panel1: TPanel;
     Procedure FormShow(Sender: TObject);
   private
@@ -44,7 +43,6 @@ Begin
   newTop := (clientHeight div 2) - (GIFViewer1.Height div 2);
   GIFViewer1.Left := newLeft;
   GIFViewer1.Top :=  newTop;
-  Label1.Caption :=  GIFViewer1.FrameCount.ToString;
   GIFViewer1.Start;
 end;
 

@@ -55,6 +55,7 @@ Type
   protected
     GifViewer : TGIFViewer;
     GIFLoaded : Boolean;
+
     Procedure DoOnBitmapLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
     Procedure DoOnFrameChange(Sender: TObject);
   public
@@ -73,6 +74,7 @@ Uses FileCtrl, uErrorBoxForm;
 
 
 { TMainForm }
+
 
 Procedure TMainForm.DoOnBitmapLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
 Begin
@@ -97,6 +99,7 @@ Begin
     Try
       GIFLoaded := False;
       Screen.Cursor := crHourGlass;
+      ImageFileName := '';
       ImageFileName := FileNames[0];
       GifViewer.LoadFromFile(ImageFileName);
       lblFileName.Caption := MiniMizeName(ImageFileName, lblFileName.Canvas ,lblFileName.ClientWidth);
@@ -121,7 +124,7 @@ Begin
     End
     Else
     Begin
-      MessageDlg('Erreur Inconnue : ' +//E.Message+
+      MessageDlg('Erreur Inconnue : ' +
         #13 + #10 + 'Ok pour continuer' + #13 + #10 + 'Abandonner pour quitter l''application', mtError, [mbOK, mbAbort], 0);
     End;
   End;;
@@ -179,7 +182,6 @@ Begin
     AutoSize := true;
     OnLoadError := @DoOnBitmapLoadError;
     OnFrameChange := @DoOnFrameChange;
-    //OnFrameChanged := @DoOnFrameChanged;
   End;
 end;
 

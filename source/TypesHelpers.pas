@@ -637,6 +637,11 @@ Type
     function ToByte : Byte;
     { @name : Computes the Hash of the string }
     function ComputeHash(Const IgnoreCase : Boolean = False) : Integer;
+
+    { @name : Return the UTF8 Length }
+    function LengthUTF8 : Integer;
+    //class operator := (const NewString:String):String;
+
     { Chars : Returns the Char at "AIndex" of the string }
     property Chars[AIndex: Integer]: Char read GetChar;
     { Length : Returns length of the string. }
@@ -2228,27 +2233,27 @@ end;
 
 {%region%=====[ TStringHelper ]=================================================}
 
-Procedure TStringHelper.SetFromSys(aString : String);
+procedure TStringHelper.SetFromSys(aString: String);
 Begin
   Self := SysToUTF8(aString);
 End;
 
-Procedure TStringHelper.SetFromConsole(aString:String);
+procedure TStringHelper.SetFromConsole(aString: String);
 Begin
   Self := ConsoleToUTF8(aString);
 End;
 
-Procedure TStringHelper.SetToUTF8 (AString:String);
+procedure TStringHelper.SetToUTF8(aString: String);
 begin
   Self := Utf8EscapeControlChars(AString);
 End;
 
-Function TStringHelper.ToSys : String;
+function TStringHelper.ToSys: String;
 Begin
   result := UTF8ToSys(Self);
 End;
 
-Function TStringHelper.ToConsole : String;
+function TStringHelper.ToConsole: String;
 Begin
   result := UTF8ToConsole(Self);
 End;
@@ -2301,7 +2306,7 @@ end;
 
 function TStringHelper.GetLength: Integer;
 Begin
-  Result := UTF8Length(Self);
+  Result := System.Length(Self);  //Length(Self); //UTF8Length(Self);
 End;
 
 function TStringHelper.ToUpper: String;
@@ -2633,7 +2638,7 @@ Begin
   Result := UTF8StringReplace(Self, OldPattern, NewPattern,rFlag);
 End;
 
-Function TStringHelper.RemoveLeft(StartIndex : Integer):String; overload;
+function TStringHelper.RemoveLeft(StartIndex: Integer): String;
 Var
   L : Integer;
 Begin
@@ -2641,7 +2646,7 @@ Begin
  Result := Self.Copy(StartIndex,L);
 End;
 
-Function TStringHelper.RemoveLeft(StartIndex, aCount : Integer):String; overload;
+function TStringHelper.RemoveLeft(StartIndex, aCount: Integer): String;
 Var
   L : Integer;
 Begin
@@ -2649,12 +2654,12 @@ Begin
  Result := Self.Copy(0,StartIndex-aCount)+Self.Copy(StartIndex,L);
 End;
 
-Function TStringHelper.RemoveRight(StartIndex : Integer):String;
+function TStringHelper.RemoveRight(StartIndex: Integer): String;
 Begin
  Result := Self.Copy(0,StartIndex);
 End;
 
-Function TStringHelper.RemoveRight(StartIndex, aCount : Integer):String;
+function TStringHelper.RemoveRight(StartIndex, aCount: Integer): String;
 Var
   L : Integer;
 Begin
@@ -2662,7 +2667,8 @@ Begin
   Result := Self.Copy(0,StartIndex)+Self.Copy(StartIndex+aCount,L);
 End;
 
-Function TStringHelper.RemoveChar(aChar : Char; Const IgnoreCase : Boolean = False):String;
+function TStringHelper.RemoveChar(aChar: Char; const IgnoreCase: Boolean
+  ): String;
 var
   I,L : Integer;
   c, c1 : Char;
@@ -2679,7 +2685,8 @@ Begin
   End;
 End;
 
-Function TStringHelper.Remove(SubStr:String; Const IgnoreCase : Boolean = False):String;
+function TStringHelper.Remove(SubStr: String; const IgnoreCase: Boolean
+  ): String;
 Begin
   Result := Self.Replace(SubStr,'',IgnoreCase);
 End;
@@ -2753,7 +2760,7 @@ Begin
   End;
 end;
 
-Function TStringHelper.ToInt64: Int64;
+function TStringHelper.ToInt64: Int64;
 Var
   I: Int64;
 Begin
@@ -2775,7 +2782,7 @@ Begin
   End;
 end;
 
-function TStringHelper.ComputeHash(Const IgnoreCase : Boolean = False) : Integer;
+function TStringHelper.ComputeHash(const IgnoreCase: Boolean): Integer;
 Var
   i, j: Integer;
 Begin
@@ -2789,6 +2796,16 @@ Begin
   Until I = 0;
   if IgnoreCase then Result := (J Mod cHash2) else Result := abs(J Mod cHash2);
 End;
+
+function TStringHelper.LengthUTF8: Integer;
+begin
+  result := UTF8Length(Self);
+end;
+
+//class operator TStringHelper.:=(const NewString: String): String;
+//begin
+//  result.SetToUTF8(NewString);
+//end;
 
 {%endregion%}
 

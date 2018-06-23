@@ -611,10 +611,7 @@ Begin
     Temp.Height := H;
     Temp.PixelFormat := pf32bit;
     Temp.Handle := BmpHandle;
-    Temp.MaskHandle := MskHandle;
-    Temp.Transparent := True;
-    //Temp.TransparentColor := FTransparentColor;
-    //temp.TransparentMode := tmAuto;
+    //Temp.MaskHandle := MskHandle; // NE PAS UTILISE = BUG DE TRANSPARENCE SOUS LINUX
     Result := Temp;
   End;
   if Result = nil then

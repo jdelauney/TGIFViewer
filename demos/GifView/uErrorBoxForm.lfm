@@ -9,7 +9,9 @@ object ErrorBoxForm: TErrorBoxForm
   ClientWidth = 576
   Font.Height = -11
   Font.Name = 'Verdana'
+  FormStyle = fsSystemStayOnTop
   Position = poMainFormCenter
+  LCLVersion = '1.8.5.0'
   Visible = False
   object Panel1: TPanel
     Left = 8

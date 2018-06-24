@@ -228,6 +228,7 @@ Type
     Function GetItems(Index : Integer): TGIFImageListItem;
     Procedure SetItems(Index : Integer; AGifImage : TGIFImageListItem);
   Public
+    { Efface la liste }
     Procedure Clear; Override;
     { Ajoute une nouvelle image vide à la liste }
     Function AddNewImage: TGIFImageListItem;
@@ -341,6 +342,7 @@ Type
     Function GetItems(Index : Integer): TGIFRenderCacheListItem;
     Procedure SetItems(Index : Integer; AGIFRenderCache : TGIFRenderCacheListItem);
   Public
+    { Efface la liste }
     Procedure Clear; Override;
     { Ajoute un nouvel objet cache vide }
     Function AddNewCache: TGIFRenderCacheListItem;
@@ -652,7 +654,7 @@ End;
 
 Function TFastMemoryStream.Read(Var Buffer; Count : Int64): Int64;
 Var
-  NumOfBytesToCopy, NumOfBytesLeft: Longint;  //, NumOfBytesRead
+  NumOfBytesToCopy, NumOfBytesLeft: Longint;
   CachePtr, BufferPtr: PByte;
 Begin
   Result := 0;
@@ -1589,20 +1591,17 @@ Var
 
             If CurrentFrameInfos.IsTransparent Then
             Begin
-              //If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
-              //  Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
 
               If (Self.FTransparent) Then
               Begin
                 If (ColIdx = CurrentFrameInfos.TransparentColorIndex) Then
                 begin
-                 // OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor;
-                 // TargetColor.Alpha := 0; //clrTransparent ;
-                  TargetColor := clrTransparent;
+                  If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
+                    Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
+
+                  TargetColor.Alpha := 0; // clrTransparent;
                 end;
-                If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FbackgroundColor := clrTransparent;
-                //FbackgroundColor.Alpha := 0;
-                //clrTransparent; //FBackgroundColor.Alpha := 0;
+                If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FbackgroundColor.Alpha := 0; //clrTransparent;
               End;
             End;
             LinePtr^ := TargetColor;
@@ -1687,15 +1686,16 @@ Var
 
               If CurrentFrameInfos.IsTransparent Then
               Begin
-                If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
-                  Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
-
                 If (FTransparent) Then
                 Begin
-                  If CurrentFrameInfos.TransparentColorIndex = colIdx Then TargetColor.Alpha := 0; // := clrTransparent;
+                  If CurrentFrameInfos.TransparentColorIndex = colIdx Then
+                  begin
+                    If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
+                      Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
+                     TargetColor.Alpha := 0; // := clrTransparent;
+                  End;
                   If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FBackgroundColor.Alpha := 0;
                 End;
-
               End;
 
               LinePtr^ := TargetColor;
@@ -1715,12 +1715,13 @@ Var
         dsInvalidInputBufferSize: AddError('Image #' + CurrentFrameIndex.ToString + ' : La taille du tampon d''entrée est invalide ( Taille <= 0)');
         dsInvalidOutputBufferSize: AddError('Image #' + CurrentFrameIndex.ToString + ' : La taille du tampon de sortie est invalide ( Taille <= 0)');
         dsBufferOverflow: AddError('Image #' + CurrentFrameIndex.ToString + ' : Le décodeur s''est arrêté pour empêcher un débordement de tampon');
-       (* dsOutputBufferTooSmall :
-          begin
+        dsOutputBufferTooSmall :
+         (* begin
             // On supprime l'image. Le tampon de sortie étant trop petit, cela va générer des erreurs lors du transfert des données décompressées vers l'image
             //FFrames.Delete(CurrentFrameIndex);
-            dec(FCurrentLayerIndex);
+
           end;*)
+          dec(FCurrentLayerIndex);
       End;
     End;
 
@@ -2165,7 +2166,8 @@ procedure TGIFViewer.CalculatePreferredSize(var PreferredWidth,
 Var
   extraWidth: Integer;
 Begin
-  extraWidth      := (FBorderWidth * 2) + (FBevelWidth * 2);
+  extraWidth := - 2;
+  if FBorderShow then extraWidth      := (FBorderWidth * 2) + (FBevelWidth * 2);
   PreferredWidth  := FGIFWidth + extraWidth + 2;
   PreferredHeight := FGIFHeight + extraWidth + 2;
 End;
@@ -2201,6 +2203,7 @@ Begin
     PicWidth := w;
     PicHeight := h;
   End;
+
   n  := FBorderWidth + FBevelWidth;
   If FBorderShow Then
   Begin
@@ -2257,7 +2260,7 @@ Begin
   Try
     C.Lock;
     // Fond
-    If (FColor <> clNone) Then //Not(FTransparent) and
+    If (FColor <> clNone) Then //and Not(FTransparent)
     Begin
       With C Do
       Begin
@@ -2270,7 +2273,6 @@ Begin
     // Bitmap
     FCurrentView.Transparent := FTransparent;
     C.StretchDraw(R, FCurrentView);
-    //C.Draw(R.Left,R.Top,FCurrentView);
 
     // Bordures
     If FBorderShow Then

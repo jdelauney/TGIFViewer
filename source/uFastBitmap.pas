@@ -598,11 +598,49 @@ Var
   W,H,X,Y : Integer;
   SrcPix : PColor32;
 Begin
+
+  (* /!\ Le code si dessous fonctionne parfaitement sous Windows et Mac.
+     Mais sous Linux ce code produit des erreur au niveau de la transparence
+
+    BmpHandle := 0;
+    MskHandle := 0;
+    W := FWidth;
+    H := FHeight;
+    Buffer := PByte(GetSurfaceBuffer);
+
+    RawImage.Init;
+    {$IFDEF WINDOWS}
+    RawImage.Description.Init_BPP32_B8G8R8A8_BIO_TTB(W,H);
+    {$ELSE}
+    RawImage.Description.Init_BPP32_R8G8B8A8_BIO_TTB(W,H);
+    {$ENDIF}
+
+    RawImage.Data := Buffer;
+    RawImage.DataSize := FSize;
+
+    if not RawImage_CreateBitmaps(RawImage, BmpHandle, MskHandle,False) then
+      Raise Exception.Create('Impossible de créer le TBitmap')
+    else
+    begin
+      Temp := Graphics.TBitmap.Create;
+      Temp.Width := W;
+      Temp.Height := H;
+      Temp.PixelFormat := pf32bit;
+      Temp.Handle := BmpHandle;
+      Temp.MaskHandle := MskHandle;
+      Temp.Transparent := True;
+      //Temp.TransparentColor := FTransparentColor;
+      //temp.TransparentMode := tmAuto;
+      Result := Temp;
+    End;
+  *)
+
   Result := nil;
 
   W := FWidth;
   H := FHeight;
 
+  // Pour que la transparence soit gérée correctement sous Linux on est obligé de passer par TLazIntfImage
   IntfBmp := TLazIntfImage.Create(W,H);
   ImgFormatDescription.Init_BPP32_B8G8R8A8_BIO_TTB(W, H);
   IntfBmp.DataDescription := ImgFormatDescription;
@@ -729,7 +767,6 @@ begin
    result:=true and (ok);
   end;
 End;
-
 
 Procedure TFastBitmap.Clear(Color : TColor32);
 Begin

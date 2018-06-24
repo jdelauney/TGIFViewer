@@ -14,7 +14,9 @@ Unit uFastBitmap;
 Interface
 
 Uses
-  LCLType, LCLIntf, Classes, SysUtils, GraphType, Graphics, Contnrs, Dialogs;
+  LCLType, LCLIntf, Classes, SysUtils, GraphType, Graphics, Contnrs, Dialogs,
+  IntfGraphics, FPimage;
+//  {$IFDEF LCLGTK2}GDK2, Gtk2Def{$ENDIF} ;
 
 Const
   { Constantes utiles pour le calcul sur les masques de couleur }
@@ -74,6 +76,9 @@ Type
     function ToColor : TColor;
     { Conversion vers un TColorRGB24 }
     function ToColorRGB24 : TColorRGB24;
+
+    function ToFPColor : TFPColor;
+
     { Mixage de la couleur courrante avec la couleur "Color" avec prise en charge du canal Alpha }
     function Blend(Color : TColor32): TColor32;
 
@@ -179,6 +184,7 @@ Type
     FWidth    : Integer;   // Largeur du bitmap
     FHeight   : Integer;   // Hauteur du Bitmap
     FSize     : Int64;     // Taille du tampon en octet
+
   protected
 
     procedure SetWidth(NewWidth : Integer);
@@ -276,17 +282,17 @@ End;
 
 {%region=====[ TColor32 ]===================================================}
 
-Function TColor32.getColorComponent(Index: Integer): byte;
+function TColor32.getColorComponent(Index: Integer): byte;
 Begin
   result := v[Index];
 End;
 
-Procedure TColor32.SetColorComponent(Index: Integer; aValue: Byte);
+procedure TColor32.SetColorComponent(Index: Integer; aValue: Byte);
 Begin
   v[Index] := aValue;
 End;
 
-Procedure TColor32.Create(R, G, B, A : Byte);
+procedure TColor32.Create(R, G, B, A: Byte);
 Begin
   Red := R;
   Green := G;
@@ -294,12 +300,12 @@ Begin
   Alpha := A;
 End;
 
-Procedure TColor32.Create(R, G, B : Byte);
+procedure TColor32.Create(R, G, B: Byte);
 Begin
   Create(R,G,B,255);
 End;
 
-Procedure TColor32.Create(Color : TColor);
+procedure TColor32.Create(Color: TColor);
 Var
   ColorRGB24 : TColorRGB24;
 Begin
@@ -307,22 +313,30 @@ Begin
   Create(ColorRGB24);
 End;
 
-Procedure TColor32.Create(Color : TColorRGB24);
+procedure TColor32.Create(Color: TColorRGB24);
 Begin
   Create(Color.Red,Color.Green,Color.Blue);
 End;
 
-Function TColor32.ToColor : TColor;
+function TColor32.ToColor: TColor;
 Begin
  Result := ToColorRGB24.ToColor;
 End;
 
-Function TColor32.ToColorRGB24 : TColorRGB24;
+function TColor32.ToColorRGB24: TColorRGB24;
 Begin
  Result.Red := Red;
  Result.Green := Green;
  Result.Blue := Blue;
 End;
+
+function TColor32.ToFPColor: TFPColor;
+begin
+  Result.Red   := Self.Red shl 8 + Self.Red;
+  Result.Green := Self.Green shl 8 + Self.Green;
+  Result.Blue  := Self.Blue shl 8 + Self.Blue;
+  Result.Alpha := Self.Alpha shl 8 + Self.Alpha;
+end;
 
 //Function TColor32.Blend(Color : TColor32) : TColor32;
 //Var
@@ -344,7 +358,7 @@ End;
 // end;
 //End;
 
-Function TColor32.Blend(Color : TColor32) : TColor32;
+function TColor32.Blend(Color: TColor32): TColor32;
 var
   factor, factor2:single;
 begin
@@ -361,7 +375,7 @@ begin
   End;
 end;
 
-Class Operator TColor32. = (Color1, Color2 : TColor32) : Boolean;
+class operator TColor32.=(Color1, Color2: TColor32): Boolean;
 Begin
   Result := False;
   if (Color1.Alpha = 0) and (Color2.Alpha = 0) then Result :=True
@@ -579,40 +593,33 @@ End;
 Function TFastBitmap.BuildBitmap: Graphics.TBitmap;
 Var
   Temp : Graphics.TBitmap;
-  RawImage : TRawImage;
-  BmpHandle, MskHandle : HBitmap;
-  W,H : Integer;
-  Buffer : PByte;
+  IntfBmp : TLazIntfImage;
+  ImgFormatDescription: TRawImageDescription;
+  W,H,X,Y : Integer;
+  SrcPix : PColor32;
 Begin
   Result := nil;
 
-  BmpHandle := 0;
-  MskHandle := 0;
   W := FWidth;
   H := FHeight;
-  Buffer := PByte(GetSurfaceBuffer);
 
-  RawImage.Init;
-  {$IFDEF WINDOWS}
-  RawImage.Description.Init_BPP32_B8G8R8A8_BIO_TTB(W,H);
-  {$ELSE}
-  RawImage.Description.Init_BPP32_R8G8B8A8_BIO_TTB(W,H);
-  {$ENDIF}
+  IntfBmp := TLazIntfImage.Create(W,H);
+  ImgFormatDescription.Init_BPP32_B8G8R8A8_BIO_TTB(W, H);
+  IntfBmp.DataDescription := ImgFormatDescription;
 
-  RawImage.Data := Buffer;
-  RawImage.DataSize := FSize;
+  SrcPix := Self.GetSurfaceBuffer;
+  For Y:=0 to H-1 do
+    For X:=0 to W-1 do
+    begin
+      IntfBmp.Colors[x, y]:=SrcPix^.ToFPColor;
+      inc(SrcPix);
+    end;
 
-  if not RawImage_CreateBitmaps(RawImage, BmpHandle, MskHandle,False) then
-    Raise Exception.Create('Impossible de créer le TBitmap')
-  else
   begin
     Temp := Graphics.TBitmap.Create;
-    Temp.Width := W;
-    Temp.Height := H;
-    Temp.PixelFormat := pf32bit;
-    Temp.Handle := BmpHandle;
-    //Temp.MaskHandle := MskHandle; // NE PAS UTILISE = BUG DE TRANSPARENCE SOUS LINUX
+    Temp.LoadFromIntfImage(IntfBmp);
     Result := Temp;
+    IntfBmp.Free;
   End;
   if Result = nil then
     Raise Exception.Create('Erreur lors de la création du TBitmap');
@@ -671,7 +678,6 @@ begin
   if (ARawImage.DataSize= FSize) then
   begin
     try
-      //BytePerRow := RawImage.Description.BytesPerLine;
       BufferData := PByte(Self.getSurfaceBuffer);
       Move(ARawImage.Data^, BufferData^, self.Size);
     finally
@@ -926,14 +932,16 @@ Begin
       Case Mode of
         dmAlpha :
         begin
-          DstPtr^ := DstCol.Blend(SrcCol)
+          DstPtr^ := DstCol.Blend(SrcCol);
+          //DstPtr^.Alpha := 255;
         End;
         dmAlphaCheck :
         begin
           If SrcCol.Alpha > 0 Then
-          DstPtr^ := DstCol.Blend(SrcCol)
-        Else
-          DstPtr^ := DstCol;
+            DstPtr^ := DstCol.Blend(SrcCol)
+          Else
+            DstPtr^ := DstCol;
+          //DstPtr^.Alpha := 255;
         End;
       End;
       Inc(xx);

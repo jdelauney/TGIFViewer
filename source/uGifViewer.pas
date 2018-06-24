@@ -1589,13 +1589,19 @@ Var
 
             If CurrentFrameInfos.IsTransparent Then
             Begin
-              If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
-                Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
+              //If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
+              //  Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
 
               If (Self.FTransparent) Then
               Begin
-                If (ColIdx = CurrentFrameInfos.TransparentColorIndex) Then TargetColor.Alpha := 0; //clrTransparent ;
-                If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FbackgroundColor.Alpha := 0;
+                If (ColIdx = CurrentFrameInfos.TransparentColorIndex) Then
+                begin
+                 // OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor;
+                 // TargetColor.Alpha := 0; //clrTransparent ;
+                  TargetColor := clrTransparent;
+                end;
+                If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FbackgroundColor := clrTransparent;
+                //FbackgroundColor.Alpha := 0;
                 //clrTransparent; //FBackgroundColor.Alpha := 0;
               End;
             End;
@@ -2264,6 +2270,7 @@ Begin
     // Bitmap
     FCurrentView.Transparent := FTransparent;
     C.StretchDraw(R, FCurrentView);
+    //C.Draw(R.Left,R.Top,FCurrentView);
 
     // Bordures
     If FBorderShow Then

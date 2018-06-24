@@ -101,7 +101,6 @@ Procedure TMainForm.FormDropFiles(Sender: TObject; Const FileNames: Array Of Str
 var
    ImageFileName : String;
 Begin
-  Try
     Try
       GIFLoaded := False;
       Screen.Cursor := crHourGlass;
@@ -122,18 +121,6 @@ Begin
     Finally
       Screen.Cursor := crDefault;
     End;
-  Except
-    On E: Exception Do
-    Begin
-      MessageDlg(E.Message, mtWarning, [mbOK], 0);
-      Exit;
-    End
-    Else
-    Begin
-      MessageDlg('Erreur Inconnue : ' +
-        #13 + #10 + 'Ok pour continuer' + #13 + #10 + 'Abandonner pour quitter l''application', mtError, [mbOK, mbAbort], 0);
-    End;
-  End;;
 end;
 
 Procedure TMainForm.DoOnTranslate(Sender: TObject; Const Folder, Lang, FallbackLang: String);

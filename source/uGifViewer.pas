@@ -1591,14 +1591,13 @@ Var
 
             If CurrentFrameInfos.IsTransparent Then
             Begin
+              If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
+                Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
 
               If (Self.FTransparent) Then
               Begin
                 If (ColIdx = CurrentFrameInfos.TransparentColorIndex) Then
                 begin
-                  If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
-                    Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
-
                   TargetColor.Alpha := 0; // clrTransparent;
                 end;
                 If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FbackgroundColor.Alpha := 0; //clrTransparent;
@@ -1686,12 +1685,13 @@ Var
 
               If CurrentFrameInfos.IsTransparent Then
               Begin
+                If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
+                  Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
                 If (FTransparent) Then
                 Begin
                   If CurrentFrameInfos.TransparentColorIndex = colIdx Then
                   begin
-                    If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
-                      Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
+
                      TargetColor.Alpha := 0; // := clrTransparent;
                   End;
                   If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FBackgroundColor.Alpha := 0;

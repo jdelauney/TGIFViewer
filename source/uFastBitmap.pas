@@ -16,7 +16,6 @@ Interface
 Uses
   LCLType, LCLIntf, Classes, SysUtils, GraphType, Graphics, Contnrs, Dialogs,
   IntfGraphics, FPimage;
-//  {$IFDEF LCLGTK2}GDK2, Gtk2Def{$ENDIF} ;
 
 Const
   { Constantes utiles pour le calcul sur les masques de couleur }
@@ -309,7 +308,7 @@ procedure TColor32.Create(Color: TColor);
 Var
   ColorRGB24 : TColorRGB24;
 Begin
-  ColorRGB24.Create(Color);
+  {%H-}ColorRGB24.Create(Color);
   Create(ColorRGB24);
 End;
 
@@ -362,8 +361,9 @@ function TColor32.Blend(Color: TColor32): TColor32;
 var
   factor, factor2:single;
 begin
+
   if Color.Alpha = 255 then Result := Color
-  else  if Color.Alpha = 0 then Result:= Self
+  else  if (Color.Alpha = 0) or (Self = Color) then Result:= Self
   else
   begin
     factor := Color.Alpha / 255;

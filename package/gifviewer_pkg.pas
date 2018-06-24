@@ -8,13 +8,13 @@ Unit gifviewer_pkg;
 Interface
 
 uses
-  TypesHelpers, uFastBitmap, uGifViewer, LazarusPackageIntf;
+  TypesHelpers, uFastBitmap, uGIFViewer_Register, LazarusPackageIntf;
 
 Implementation
 
 Procedure Register;
 Begin
-  RegisterUnit('uGifViewer', @uGifViewer.Register);
+  RegisterUnit('uGIFViewer_Register', @uGIFViewer_Register.Register);
 End;
 
 Initialization

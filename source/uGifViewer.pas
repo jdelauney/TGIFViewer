@@ -24,8 +24,8 @@ Uses
 {%region=====[ Définitions des types et constantes utiles pour le format GIF ]===================================}
 Const
   GIF_MaxColors  : Integer    = 256;    // Nombre de couleurs maximum supportées. NE PAS TOUCHER A CETTE VALEUR
-  GIF_DelayFactor  : Integer  = 10;    // Facteur de multiplication pour les délais en ms entre chaque image de l'animation
-  GIF_DefaultDelay  : Integer = 100;   // 10*10
+  GIF_DelayFactor  : Integer  = 10;     // Facteur de multiplication pour les délais en ms entre chaque image de l'animation
+  GIF_DefaultDelay  : Integer = 100;    // 10*10
 
 Type
   TGIFVersion    = (gvUnknown, gv87a, gv89a);
@@ -38,46 +38,46 @@ Type
   { En-tête }
   TGIFFileHeader = Packed Record
     Signature: Array[0..2] Of AnsiChar; // 'GIF'
-    Version:   TGIFVersionRec;   // '87a' ou '89a' }
+    Version:   TGIFVersionRec;          // '87a' ou '89a' }
   End;
 
   { Description globale de l'image }
   TGIFLogicalScreenDescriptorRec = Packed Record
-    ScreenWidth:  Word;              // Largeur de l'image en pixels
+    ScreenWidth:  Word;             // Largeur de l'image en pixels
     ScreenHeight: Word;             // Hauteur de l'image en pixels
     PackedFields: Byte;             // champs compactés
     BackgroundColorIndex: Byte;     // Index globale de la couleur de fond
-    AspectRatio:  Byte;              // Ratio d'échelle = (AspectRatio + 15) / 64
+    AspectRatio:  Byte;             // Ratio d'échelle = (AspectRatio + 15) / 64
   End;
 
   { Description d'une image }
   TGIFImageDescriptorRec = Packed Record
-    //Separator: byte;  // On lis toujours un byte avant
-    Left:   Word;          // Colonne en pixels par rapport au bord gauche de l'écran
-    Top:    Word;          // Rangée en pixels par rapport au haut de l'écran
-    Width:  Word;        // Largeur de l'image en cours en pixels
-    Height: Word;        // Hauteur de l'image en cours pixels
-    PackedFields: Byte;  // Champs compactés
+    //Separator: byte;    // On lis toujours un byte avant
+    Left:   Word;         // Colonne en pixels par rapport au bord gauche de l'écran
+    Top:    Word;         // Rangée en pixels par rapport au haut de l'écran
+    Width:  Word;         // Largeur de l'image en cours en pixels
+    Height: Word;         // Hauteur de l'image en cours pixels
+    PackedFields: Byte;   // Champs compactés
   End;
 
   { Graphic Control Extension bloc a.k.a GCE }
   TGIFGraphicControlExtensionRec = Packed Record
     // BlockSize: byte;           // Normalement toujours 4 octets
     PackedFields: Byte;           // Champs compacté
-    DelayTime:    Word;              // Délai entre chaque image en centième de secondes
+    DelayTime:    Word;           // Délai entre chaque image en centième de secondes
     TransparentColorIndex: Byte;  // Index dans la palette si plus petit ou égale
-    // Terminator: Byte;           // Normalement toujours ZERO
+    // Terminator: Byte;          // Normalement toujours ZERO
   End;
 
   TGIFDisposalFlag = (dmNone, dmKeep, dmErase, dmRestore); // Methodes pour l'affichage des images lors de l'animation
 
   { Plain Text Extension }
   TGIFPlainTextExtensionRec = Packed Record
-    // BlockSize: byte;             // Normalement égal à 12 octets
+    // BlockSize: byte;              // Normalement égal à 12 octets
     Left, Top, Width, Height: Word;  // Positions et dimensions du texte
-    CellWidth, CellHeight:    Byte;     // Dimensions d'une cellule dans l'image
+    CellWidth, CellHeight:    Byte;  // Dimensions d'une cellule dans l'image
     TextFGColorIndex,                // Index de la couleur de fond dans la palette
-    TextBGColorIndex:         Byte;          // Index de la couleur du texte dans la palette
+    TextBGColorIndex:         Byte;  // Index de la couleur du texte dans la palette
   End;
 
   { Application Extension }
@@ -88,21 +88,21 @@ Type
 
   { Informations de "l'application extension" si disponible }
   TGIFNSLoopExtensionRec = Packed Record
-    Loops:      Word;        // Nombre de boucle de l'animation 0 = infinie
+    Loops:      Word;   // Nombre de boucle de l'animation 0 = infinie
     BufferSize: DWord;  // Taille du tampon. Usage ?????
   End;
 
 Const
   // Description des masques pour la description globale de l'image
-  GIF_GLOBALCOLORTABLE = $80;       // Défini si la table de couleurs globale suit la description globale
-  GIF_COLORRESOLUTION = $70;        // Résolution de la couleur (BitsPerPixel) - 3 bits
-  GIF_GLOBALCOLORTABLESORTED = $08; // Définit si la palette globale est triée - 1 bit
+  GIF_GLOBALCOLORTABLE = $80;        // Défini si la table de couleurs globale suit la description globale
+  GIF_COLORRESOLUTION = $70;         // Résolution de la couleur (BitsPerPixel) - 3 bits
+  GIF_GLOBALCOLORTABLESORTED = $08;  // Définit si la palette globale est triée - 1 bit
   GIF_COLORTABLESIZE  = $07;         // Taille de la palette - 3 bits
-  GIF_RESERVED        = $0C;            // Réservé - doit être défini avec $00 - Taille des données = 2^value+1 - 3 bits
+  GIF_RESERVED        = $0C;         // Réservé - doit être défini avec $00 - Taille des données = 2^value+1 - 3 bits
 
   // Descption des masques pour les images
-  GIF_LOCALCOLORTABLE = $80;       // Défini si la table de couleurs locale suit la description de l'image
-  GIF_INTERLACED      = $40;            // Défini si l'image est entrelacée
+  GIF_LOCALCOLORTABLE = $80;        // Défini si la table de couleurs locale suit la description de l'image
+  GIF_INTERLACED      = $40;        // Défini si l'image est entrelacée
   GIF_LOCALCOLORTABLESORTED = $20;  // Définit si la palette locale est triée
 
   // Identification des blocs
@@ -115,11 +115,11 @@ Const
   GIF_TRAILER         = $3B;               // ';'
 
   // Graphic Control Extension - Définition des masques pour les paramètres
-  GIF_NO_DISPOSAL     = $00;  // 0
-  GIF_DO_NOT_DISPOSE  = $04;  // 1
+  GIF_NO_DISPOSAL     = $00;           // 0
+  GIF_DO_NOT_DISPOSE  = $04;           // 1
   GIF_RESTORE_BACKGROUND_COLOR = $08;  // 2
-  GIF_RESTORE_PREVIOUS = $12;  // 3
-  GIF_DISPOSAL_ALL    = $1C;  // bits 2-4 ($1C)
+  GIF_RESTORE_PREVIOUS = $12;          // 3
+  GIF_DISPOSAL_ALL    = $1C;           // bits 2-4 ($1C)
   GIF_USER_INPUT_FLAG = $02;
   GIF_TRANSPARENT_FLAG = $01;
   GIF_RESERVED_FLAG   = $E0;
@@ -134,24 +134,24 @@ Const
 Type
   { Informations sur une image de l'animation }
   TGIFFrameInformations = Record
-    Left, Top,                     // Position de l'image
-    Width, Height:   Integer;       // Dimension de l'image
-    HasLocalPalette: Boolean;     // Palette locale disponible
-    IsTransparent:   Boolean;         // Image transparente
+    Left, Top,                          // Position de l'image
+    Width, Height:   Integer;           // Dimension de l'image
+    HasLocalPalette: Boolean;           // Palette locale disponible
+    IsTransparent:   Boolean;           // Image transparente
     UserInput:       Boolean;           // Données personnelle
-    BackgroundColorIndex: Byte;    // Normalement seulement valide si une palette globale existe
-    TransparentColorIndex: Byte;   // Index de la couleur transparente
-    DelayTime:       Word;               // Délai d'animation
-    Disposal:        TGIFDisposalFlag;    // Methode d'affichage
-    Interlaced:      Boolean;          // Image entrelacée
+    BackgroundColorIndex: Byte;         // Normalement seulement valide si une palette globale existe
+    TransparentColorIndex: Byte;        // Index de la couleur transparente
+    DelayTime:       Word;              // Délai d'animation
+    Disposal:        TGIFDisposalFlag;  // Methode d'affichage
+    Interlaced:      Boolean;           // Image entrelacée
   End;
   PGifFrameInformations = ^TGifFrameInformations;
 
   {%endregion%}
 
-  { TFastMemoryStream }
+  { TGIFFastMemoryStream }
   { Classe d'aide à la lecture des données dans un flux en mémoire }
-  TFastMemoryStream = Class
+  TGIFFastMemoryStream = Class
   Private
     FBuffer:   PByte;
     FPosition: Int64;
@@ -274,7 +274,7 @@ Type
     Procedure SetCurrentLayerIndex(AValue : Integer);
 
   Protected
-    Memory: TFastMemoryStream;
+    Memory: TGIFFastMemoryStream;
 
     CurrentFrameInfos: TGifFrameInformations;
 
@@ -360,7 +360,8 @@ Type
     Function Last: TGIFRenderCacheListItem;
     { Insertion d'un cache à la position "Index" }
     Procedure Insert(Index : Integer; AGIFRenderCache : TGIFRenderCacheListItem);
-
+    { Vérifie si "anIndex" ne dépasse pas la nombre d'élément dans la liste. Retroune FALSE si l'index est hors limite }
+    function IsIndexOk(anIndex : Integer) : Boolean;
     { Liste des caches }
     Property Items[Index: Integer]: TGIFRenderCacheListItem read GetItems write SetItems; Default;
   End;
@@ -521,25 +522,35 @@ Type
 
   End;
 
-{ Enregistrement du composant et de l'editeur de propriété dans l'EDI }
-Procedure Register;
+
 
 Implementation
 
 Uses
-  GraphType, LazIDEIntf, propedits; // Pour l'integration de l'éditeur de propriété dans l'EDI
+  GraphType; // Pour l'integration de l'éditeur de propriété dans l'EDI
 
 {%region=====[ Constantes et types internes ]===================================}
 
-Const
+ResourceString
   // Messages d'erreurs ou de notifications
-  sScreenBadColorSize = 'Nombre de couleur dans la palette globale invalide.';
-  sImageBadColorSize  = 'Nombre de couleur dans la palette locale invalide.';
-  sBadSignature       = 'Signature GIF invalide';
-  sBadScreenSize      = ' Dimension de l''image Invalides.';
-  sEmptyColorMap      = 'Erreur aucune palette de couleur disponible pour cette image !';
-  sEmptyImage         = 'L''Image est vide';
-  sUnknownVersion     = 'Version GIF inconnue';
+  sScreenBadColorSize       = 'Nombre de couleur dans la palette globale invalide.';
+  sImageBadColorSize        = 'Nombre de couleur dans la palette locale invalide.';
+  sBadSignature             = 'Signature GIF invalide : %s';
+  sBadScreenSize            = 'Dimension de l''image Invalides : %dx%d';
+  sEmptyColorMap            = 'Erreur aucune palette de couleur disponible pour cette image !';
+  sEmptyImage               = 'L''Image est vide';
+  sUnknownVersion           = 'Version GIF inconnue';
+  sFileNotFound             = 'Le fichier %s est introuvable !';
+  sResourceNotFound         = 'Resource %s not found !';
+  sBufferOverFlow           = 'Image #%d : Le décodeur s''est arrêté pour empêcher un débordement de tampon';
+  sInvalidOutputBufferSize  = 'Image #%d : La taille du tampon de sortie est invalide ( Taille <= 0)';
+  sInvalidInputBufferSize   = 'Image #%d : La taille du tampon d''entrée est invalide ( Taille <= 0)';
+  sInvalidBufferSize        = 'Image #%d : La taille du tampon d''entrée et de sortie sont invalides ( Taille <= 0)';
+  dsLZWInternalErrorOutputBufferOverflow = 'Dépassement du buffer de sortie dans le décodeur GIF LZW. Signaler ce bug. C''est un bug sérieux !';
+  dsLZWInternalErrorInputBufferOverflow  = 'Dépassement du buffer d''entrée dans le décodeur GIF LZW. Signaler ce bug. C''est un bug sérieux !';
+  dsLZWInvalidInput         = 'Image #%d : Le décodeur a rencontré une entrée invalide (données corrompues)';
+  sLZWOutputBufferTooSmall  = 'Image #%d : Le décodeur n''a pas pu décoder toutes les données car le tampon de sortie est trop petit';
+
 
 Type
   // Statut de décodage / encodage LZW
@@ -584,9 +595,9 @@ End;
 
 {%endregion%}
 
-{%region=====[ TFastMemoryStream ]==============================================}
+{%region=====[ TGIFFastMemoryStream ]==============================================}
 
-Constructor TFastMemoryStream.Create(AStream : TStream);
+Constructor TGIFFastMemoryStream.Create(AStream : TStream);
 Var
   ms: TMemoryStream;
 Begin
@@ -606,7 +617,7 @@ Begin
   FreeAndNil(ms);
 End;
 
-Destructor TFastMemoryStream.Destroy;
+Destructor TGIFFastMemoryStream.Destroy;
 Begin
   If FBuffer <> nil Then
   Begin
@@ -616,7 +627,7 @@ Begin
   Inherited Destroy;
 End;
 
-Function TFastMemoryStream.ReadByte: Byte;
+Function TGIFFastMemoryStream.ReadByte: Byte;
 Begin
   Result := 0;
   If FBytesLeft > 0 Then
@@ -628,7 +639,7 @@ Begin
   End;
 End;
 
-Function TFastMemoryStream.ReadWord: Word;
+Function TGIFFastMemoryStream.ReadWord: Word;
 Begin
   Result := 0;
   If (FBytesLeft >= 2) Then
@@ -640,7 +651,7 @@ Begin
   End;
 End;
 
-Function TFastMemoryStream.ReadDWord: DWord;
+Function TGIFFastMemoryStream.ReadDWord: DWord;
 Begin
   Result := 0;
   If (FBytesLeft >= 4) Then
@@ -652,7 +663,7 @@ Begin
   End;
 End;
 
-Function TFastMemoryStream.Read(Var Buffer; Count : Int64): Int64;
+Function TGIFFastMemoryStream.Read(Var Buffer; Count : Int64): Int64;
 Var
   NumOfBytesToCopy, NumOfBytesLeft: Longint;
   CachePtr, BufferPtr: PByte;
@@ -684,7 +695,7 @@ Begin
   End;
 End;
 
-Function TFastMemoryStream.Seek(Const Offset : Int64; Origin : TSeekOrigin): Int64;
+Function TGIFFastMemoryStream.Seek(Const Offset : Int64; Origin : TSeekOrigin): Int64;
 Var
   NewPos: Integer;
 Begin
@@ -704,12 +715,12 @@ Begin
   Result     := NewPos;
 End;
 
-Procedure TFastMemoryStream.SeekForward(Cnt : Integer);
+Procedure TGIFFastMemoryStream.SeekForward(Cnt : Integer);
 Begin
   Seek(Cnt, soCurrent);
 End;
 
-Function TFastMemoryStream.EOS: Boolean;
+Function TGIFFastMemoryStream.EOS: Boolean;
 Begin
   Result := ((FBytesLeft <= 0) Or (FPosition >= Pred(FSize)));
 End;
@@ -757,7 +768,7 @@ Begin
   Inherited Clear;
   If Count > 0 Then
   Begin
-    For i := 0 To Count - 1 Do
+    For i := Count - 1 Downto 0 do
     Begin
       AnItem := Items[i];
       If anItem <> nil Then anItem.Free;
@@ -850,7 +861,7 @@ Begin
   Else
   Begin
     // Signature du fichier GIF Invalide. On lève une exception
-    Raise Exception.Create(sBadSignature + ' : ' + uppercase(String(FGIFFileHeader.Signature)));
+    Raise Exception.Create(Format(sBadSignature,[uppercase(String(FGIFFileHeader.Signature))]));
   End;
 End;
 
@@ -867,7 +878,7 @@ Begin
   If (FWidth < 1) Or (FHeight < 1) Then
   Begin
     // Dimensions incorrectes on lève une exception
-    Raise Exception.Create(sBadScreenSize + ' : ' + FWidth.ToString + 'x' + FHeight.ToString);
+    Raise Exception.Create(Format(sBadScreenSize,[FWidth,FHeight]));
     exit;
   End;
   FHasGlobalPalette := (FLogicalScreenChunk.PackedFields And GIF_GLOBALCOLORTABLE) <> 0;
@@ -891,7 +902,7 @@ End;
 Procedure TGIFImageLoader.LoadFromStream(aStream : TStream);
 Begin
   If Memory <> nil Then FreeAndNil(Memory);
-  Memory := TFastMemoryStream.Create(aStream);
+  Memory := TGIFFastMemoryStream.Create(aStream);
   If CheckFormat Then LoadFromMemory;
   FreeAndNil(Memory);
 End;
@@ -1254,7 +1265,7 @@ Var
             // Code ne peux à être supérieur à FreeCode. Nous avons donc une image cassée.
             // On notifie l'erreur à l'utilisateur. Et on considère qu'il n'ya pas d'erreur.
             DecoderStatus := dsInvalidInput;
-            AddError('Image #' + CurrentFrameIndex.ToString + ' : Le décodeur a rencontré une entrée invalide (données corrompues)');
+            AddError(Format(dsLZWInvalidInput,[CurrentFrameIndex]));
             //NotifyUser('Le décodeur a rencontré une entrée invalide (données corrompues)');
             Code := ClearCode;
             //Break; //Ici, on continue le chargement du reste de l'image au lieu de le stopper
@@ -1320,8 +1331,7 @@ Var
                 // On notifie l'erreur à l'utilisateur. Et on considère qu'il n'ya pas d'erreur.
                 // Afin de pouvoir afficher le GIF et continuer le chargement des images suivantes
                 Result := dsOutputBufferTooSmall;
-                AddError('Image #' + CurrentFrameIndex.ToString +
-                  ' : Le décodeur n''a pas pu décoder toutes les données car le tampon de sortie est trop petit');
+                AddError(Format(sLZWOutputBufferTooSmall,[CurrentFrameIndex]));
                 break;
               End;
               Dec(StackPointer);
@@ -1343,7 +1353,7 @@ Var
                 // On a intercepter une donnée corrompue. On continue quand la même décompression sans en tenir compte.
                 // On notifie juste l'erreur à l'utilisateur
                 DecoderStatus := dsInvalidInput;
-                AddError('Image #' + CurrentFrameIndex.ToString + ' : Le décodeur a rencontré une entrée invalide (données corrompues)');
+                AddError(Format(dsLZWInvalidInput,[CurrentFrameIndex]));
                 //NotifyUser('Le décodeur a rencontré une entrée invalide (données corrompues)');
                 MaxCode       := True;
               End;
@@ -1380,7 +1390,7 @@ Var
         Begin
           Result := dsInternalError;
           // C'est une erreur sérieuse : nous avons eu un dépassement de tampon d'entrée que nous aurions dû intercepter. Nous devons arrêter maintenant.
-          Raise Exception.Create('Dépassement du buffer d''entrée dans le décodeur GIF LZW. Signaler ce bug. C''est un bug sérieux !');
+          Raise Exception.Create(dsLZWInternalErrorInputBufferOverflow);
           Exit;
         End;
         If UnpackedSize <> 0 Then
@@ -1397,7 +1407,7 @@ Var
           Begin
             Result := dsInternalError;
             // C'est une erreur sérieuse : nous avons eu un dépassement de tampon de sortie que nous aurions dû intercepter. Nous devons arrêter maintenant.
-            Raise Exception.Create('Dépassement du buffer de sortie dans le décodeur GIF LZW. Signaler ce bug. C''est un bug sérieux !');
+            Raise Exception.Create(dsLZWInternalErrorOutputBufferOverFlow);
           End;
         End;
       End;
@@ -1691,7 +1701,6 @@ Var
                 Begin
                   If CurrentFrameInfos.TransparentColorIndex = colIdx Then
                   begin
-
                      TargetColor.Alpha := 0; // := clrTransparent;
                   End;
                   If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FBackgroundColor.Alpha := 0;
@@ -1711,10 +1720,10 @@ Var
     Else
     Begin
       Case Ret Of
-        dsInvalidBufferSize: AddError('Image #' + CurrentFrameIndex.ToString + ' : La taille du tampon d''entrée et de sortie sont invalides ( Taille <= 0)');
-        dsInvalidInputBufferSize: AddError('Image #' + CurrentFrameIndex.ToString + ' : La taille du tampon d''entrée est invalide ( Taille <= 0)');
-        dsInvalidOutputBufferSize: AddError('Image #' + CurrentFrameIndex.ToString + ' : La taille du tampon de sortie est invalide ( Taille <= 0)');
-        dsBufferOverflow: AddError('Image #' + CurrentFrameIndex.ToString + ' : Le décodeur s''est arrêté pour empêcher un débordement de tampon');
+        dsInvalidBufferSize: AddError(Format(sInvalidBufferSize,[CurrentFrameIndex]));
+        dsInvalidInputBufferSize: AddError(Format(sInvalidInputBufferSize,[CurrentFrameIndex]));
+        dsInvalidOutputBufferSize: AddError(Format(sInvalidOutputBufferSize,[CurrentFrameIndex]));
+        dsBufferOverflow: AddError(Format(sBufferOverFlow,[CurrentFrameIndex]));
         dsOutputBufferTooSmall :
          (* begin
             // On supprime l'image. Le tampon de sortie étant trop petit, cela va générer des erreurs lors du transfert des données décompressées vers l'image
@@ -1860,7 +1869,7 @@ Var
 Begin
   If Count > 0 Then
   Begin
-    For i := 0 To Count - 1 Do
+    For i := Count - 1 Downto 0 do
     Begin
       AnItem := Items[i];
       If anItem <> nil Then anItem.Free;
@@ -1911,6 +1920,12 @@ End;
 Procedure TGIFRenderCacheList.Insert(Index : Integer; AGIFRenderCache : TGIFRenderCacheListItem);
 Begin
   Inherited Insert(Index, AGIFRenderCache);
+End;
+
+Function TGIFRenderCacheList.IsIndexOk(anIndex: Integer): Boolean;
+Begin
+  Result := True;
+  If (anIndex < 0) or (anIndex > Count-1) then result := False;
 End;
 
 {%endregion%}
@@ -2321,7 +2336,7 @@ Begin
   FCurrentFrameIndex := 0;
   if Not(FileExists(aFileName)) then
   begin
-    MessageDlg('Le fichier '+aFileName+' est introuvable !', mtError, [mbOK],0);
+    MessageDlg(Format(sFileNotFound,[aFileName]), mtError, [mbOK],0);
     Exit;
   end;
   FGIFLoader.LoadFromFile(aFileName);
@@ -2348,7 +2363,7 @@ Begin
   FAnimated := False;
   FCurrentFrameIndex := 0;
   Resource  := LazarusResources.Find(ResName);
-  If Resource = nil Then Raise Exception.Create('Resource ' + ResName + ' not found !')
+  If Resource = nil Then Raise Exception.Create(Format(sResourceNotFound,[ResName]))
   Else If CompareText(LazarusResources.Find(ResName).ValueType, 'gif') = 0 Then
   Begin
     FGIFLoader.LoadFromResource(ResName);
@@ -2400,7 +2415,7 @@ End;
 
 procedure TGIFViewer.DisplayFrame(Index: Integer);
 Begin
-  If (Index > FRenderCache.Count - 1) Then exit;
+  If not(FRenderCache.IsIndexOk(Index)) then exit;
   FCurrentView.Assign(FRenderCache.Items[Index].Bitmap);
   Invalidate;
 End;
@@ -2409,7 +2424,7 @@ procedure TGIFViewer.DisplayRawFrame(Index: Integer);
 Var
   Tmp: Graphics.TBitmap;
 Begin
-  If (Index > FRenderCache.Count - 1) Then exit;
+  If not(FRenderCache.IsIndexOk(Index)) Then exit;
   Tmp := GetRawFrame(Index);
   FCurrentView.Assign(Tmp);
   FreeAndNil(Tmp);
@@ -2418,35 +2433,7 @@ End;
 
 {%endregion}
 
-{%region=====[ Intégration EDI ]================================================}
 
-Type
-  TGIFViewerFileNamePropertyEditor = Class(TFileNamePropertyEditor)
-  Public
-    Function GetFilter: String; Override;
-    Function GetInitialDirectory: String; Override;
-  End;
-
-
-Function TGIFViewerFileNamePropertyEditor.GetFilter: String;
-Begin
-  Result := 'Graphic Interchange Format |*.gif';
-End;
-
-Function TGIFViewerFileNamePropertyEditor.GetInitialDirectory: String;
-Begin
-  Result := ExtractFilePath(LazarusIDE.ActiveProject.ProjectInfoFile);
-End;
-
-Procedure Register;
-Begin
-  {$I ..\Resources\gifviewer_icon.lrs}
-  RegisterComponents('Beanz Extra', [TGIFViewer]);
-  RegisterPropertyEditor(TypeInfo(String),
-    TGIFViewer, 'FileName', TGIFViewerFileNamePropertyEditor);
-End;
-
-{%endregion%}
 
 Initialization
 

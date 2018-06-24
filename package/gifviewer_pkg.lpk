@@ -23,7 +23,7 @@
 Contient un composant visuel spécialiser dans l'affichage d'animation d'image au format GIF (Graphic Interchange Format) installé dans le groupe Beanz Extras"/>
     <License Value="MPL"/>
     <Version Major="1"/>
-    <Files Count="3">
+    <Files Count="4">
       <Item1>
         <Filename Value="..\source\TypesHelpers.pas"/>
         <UnitName Value="TypesHelpers"/>
@@ -34,10 +34,20 @@ Contient un composant visuel spécialiser dans l'affichage d'animation d'image a
       </Item2>
       <Item3>
         <Filename Value="..\source\uGifViewer.pas"/>
-        <HasRegisterProc Value="True"/>
+        <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uGifViewer"/>
       </Item3>
+      <Item4>
+        <Filename Value="ugifviewer_register.pas"/>
+        <HasRegisterProc Value="True"/>
+        <AddToUsesPkgSection Value="False"/>
+        <UnitName Value="uGIFViewer_Register"/>
+      </Item4>
     </Files>
+    <i18n>
+      <EnableI18N Value="True"/>
+      <OutDir Value="..\Locale\"/>
+    </i18n>
     <RequiredPkgs Count="3">
       <Item1>
         <PackageName Value="IDEIntf"/>

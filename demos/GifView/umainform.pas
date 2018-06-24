@@ -1,4 +1,4 @@
-Unit umainform;
+Unit uMainForm;
 
 {$mode objfpc}{$H+}
 
@@ -6,7 +6,8 @@ Interface
 
 Uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Spin,
-  TypesHelpers, uGifViewer;
+  TypesHelpers, uGifViewer,
+  gvTranslate;
 
 Type
 
@@ -21,13 +22,15 @@ Type
     btnChooseBackgroundColor: TColorButton;
     chkTansparent: TCheckBox;
     chkViewRawFrame: TCheckBox;
+    cbxLang: TComboBox;
     edtViewFrameIndex: TSpinEdit;
     Label1: TLabel;
     Label4: TLabel;
+    Label5: TLabel;
     lblCurrentFrame: TLabel;
     Label6: TLabel;
-    lblTotalFrame: TLabel;
     lblFileName: TLabel;
+    lblTotalFrame: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     lblVersion: TLabel;
@@ -35,6 +38,7 @@ Type
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
+    Panel6: TPanel;
     pnlAnimationPlayer: TPanel;
     Panel4: TPanel;
     Panel5: TPanel;
@@ -44,6 +48,7 @@ Type
     Procedure btnPauseAnimationClick(Sender: TObject);
     Procedure btnStartAnimationClick(Sender: TObject);
     Procedure btnStopAnimationClick(Sender: TObject);
+    Procedure cbxLangSelect(Sender: TObject);
     Procedure chkCenterGIFClick(Sender: TObject);
     Procedure chkStretchGIFChange(Sender: TObject);
     Procedure chkTansparentChange(Sender: TObject);
@@ -55,7 +60,8 @@ Type
   protected
     GifViewer : TGIFViewer;
     GIFLoaded : Boolean;
-
+    LangManager : TGVTranslate;
+    procedure DoOnTranslate(Sender:TObject;Const Folder, Lang, FallbackLang: String);
     Procedure DoOnBitmapLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
     Procedure DoOnFrameChange(Sender: TObject);
   public
@@ -70,7 +76,7 @@ Implementation
 
 {$R *.lfm}
 
-Uses FileCtrl, uErrorBoxForm;
+Uses  Translations, FileCtrl, uErrorBoxForm;
 
 
 { TMainForm }
@@ -130,6 +136,14 @@ Begin
   End;;
 end;
 
+Procedure TMainForm.DoOnTranslate(Sender: TObject; Const Folder, Lang, FallbackLang: String);
+Begin
+  LangManager.Translate('uGIFViewer');
+  LangManager.Translate('uFastBitmap');
+ // Translations.TranslateUnitResourceStrings('uGIFViewer', Folder + 'uGIFViewer.'+Lang+'.po', Lang, FallbackLang);
+ // Translations.TranslateUnitResourceStrings('uFastBitmap', Folder + 'uFastBitmap.'+Lang+'.po', Lang, FallbackLang);
+End;
+
 Procedure TMainForm.btnStartAnimationClick(Sender: TObject);
 Begin
   pnlSelectFrame.Enabled := False;
@@ -142,6 +156,14 @@ Begin
   pnlSelectFrame.Enabled := True;
   lblCurrentFrame.Caption := '1';
   GifViewer.Stop;
+end;
+
+Procedure TMainForm.cbxLangSelect(Sender: TObject);
+Begin
+  LangManager.Language := cbxLang.Items[cbxLang.ItemIndex];
+
+  // on redémarre
+  LangManager.Restart;
 end;
 
 Procedure TMainForm.chkCenterGIFClick(Sender: TObject);
@@ -171,6 +193,8 @@ end;
 
 Procedure TMainForm.FormCreate(Sender: TObject);
 Begin
+  LangManager := TGVTranslate.Create;
+  LangManager.OnTranslate := @DoOnTranslate;
   GifViewer := TGIFVIewer.Create(Self);
   With GifViewer do
   Begin
@@ -183,10 +207,12 @@ Begin
     OnLoadError := @DoOnBitmapLoadError;
     OnFrameChange := @DoOnFrameChange;
   End;
+  LangManager.Translate;
 end;
 
 Procedure TMainForm.FormDestroy(Sender: TObject);
 Begin
+  FreeAndNil(LangManager);
   FreeAndNil(GifViewer);
 end;
 

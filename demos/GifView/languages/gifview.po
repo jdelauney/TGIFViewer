@@ -1,0 +1,91 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: terrorboxform.button1.caption
+msgid "Fermer"
+msgstr ""
+
+#: terrorboxform.panel1.caption
+msgid "ATTENTION ! Des erreurs se sont produites lors du chargement de l'image"
+msgstr ""
+
+#: tmainform.btnpauseanimation.caption
+msgid "Pause"
+msgstr ""
+
+#: tmainform.btnstartanimation.caption
+msgid "Start"
+msgstr ""
+
+#: tmainform.btnstopanimation.caption
+msgid "Stop"
+msgstr ""
+
+#: tmainform.cbxlang.text
+msgid "auto"
+msgstr ""
+
+#: tmainform.chkcentergif.caption
+msgid "Centrer"
+msgstr ""
+
+#: tmainform.chkstretchgif.caption
+msgid "Adapter dimension"
+msgstr ""
+
+#: tmainform.chktansparent.caption
+msgid "Transparent"
+msgstr ""
+
+#: tmainform.chkviewrawframe.caption
+msgid "Parcourir images brutes"
+msgstr ""
+
+#: tmainform.label1.caption
+msgid "Images : "
+msgstr ""
+
+#: tmainform.label2.caption
+msgid "Version :"
+msgstr ""
+
+#: tmainform.label3.caption
+msgid "Nombre d'images :"
+msgstr ""
+
+#: tmainform.label4.caption
+msgid "Couleur du fond : "
+msgstr ""
+
+#: tmainform.label5.caption
+msgid "Languages :"
+msgstr ""
+
+#: tmainform.label6.caption
+msgid "/ "
+msgstr ""
+
+#: tmainform.lblcurrentframe.caption
+msgctxt "tmainform.lblcurrentframe.caption"
+msgid "0"
+msgstr ""
+
+#: tmainform.lblfilename.caption
+msgid "Glissez et déposez un fichier pour l'ouvrir"
+msgstr ""
+
+#: tmainform.lblframecount.caption
+msgctxt "tmainform.lblframecount.caption"
+msgid "----"
+msgstr ""
+
+#: tmainform.lbltotalframe.caption
+msgctxt "tmainform.lbltotalframe.caption"
+msgid "0"
+msgstr ""
+
+#: tmainform.lblversion.caption
+msgctxt "tmainform.lblversion.caption"
+msgid "----"
+msgstr ""
+

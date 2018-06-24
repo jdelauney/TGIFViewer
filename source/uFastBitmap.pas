@@ -145,6 +145,7 @@ Type
     Function GetColorItem(index: Integer): TColor32Item;
     Procedure SetColorItem(index: Integer; val: TColor32Item);
   Public
+    { Efface la liste }
     procedure Clear; override;
     { Ajoute une couler à la liste }
     Function AddColor(Const aColor: TColor32): Integer; Overload;
@@ -253,6 +254,9 @@ Implementation
 
 Uses Types, Math;
 
+resourcestring
+  sBitmapCreateError = 'Erreur lors de la création du TBitmap';
+
 {%region=====[ TColorRGB24 ]====================================================}
 
 Procedure TColorRGB24.Create(R, G, B : Byte);
@@ -336,26 +340,6 @@ begin
   Result.Blue  := Self.Blue shl 8 + Self.Blue;
   Result.Alpha := Self.Alpha shl 8 + Self.Alpha;
 end;
-
-//Function TColor32.Blend(Color : TColor32) : TColor32;
-//Var
-//  Coef1,Coef2,Coef3,Coef4, Tmp : Cardinal;
-//Begin
-// Result := Self;
-// if (Color.Alpha = 0) or (Result = Color) then Exit;
-// Tmp := (255-Color.Alpha);
-// Coef1 := 65025 - (255-Result.Alpha) * Tmp;
-// Coef2 := Coef1 shr 1;
-// Coef3 := Result.Alpha*Tmp;
-// Coef4 := Color.Alpha * 255;
-// With Result do
-// begin
-//   Red   := ((Red * Coef3) + (Color.Red * Coef4) + Coef2) div Coef1;
-//   Green := ((Green * Coef3) + (Color.Green * Coef4) + Coef2) div Coef1;
-//   Blue  := ((Blue * Coef3) + (Color.Blue * Coef4) + Coef2) div Coef1;
-//   Alpha := (Coef1 + Coef1 shr 7 ) shr 8;
-// end;
-//End;
 
 function TColor32.Blend(Color: TColor32): TColor32;
 var
@@ -482,7 +466,7 @@ Begin
   inherited Clear;
   If Count > 0 then
   begin
-    For i := 0 to Count -1 do
+    For i :=Count -1 downto 0 do
     begin
       AnItem:= Colors[i];
       if anItem<>nil then anItem.Free;
@@ -660,7 +644,7 @@ Begin
     IntfBmp.Free;
   End;
   if Result = nil then
-    Raise Exception.Create('Erreur lors de la création du TBitmap');
+    Raise Exception.Create(sBitmapCreateError);
 End;
 
 Function TFastBitmap.IsClipped(X, Y : Integer) : Boolean;

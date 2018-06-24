@@ -7,12 +7,14 @@ Uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, umainform, uErrorBoxForm
+  Forms, uMainForm, uErrorBoxForm
   { you can add units after this };
 
 {$R *.res}
 
+
 Begin
+  Application.Scaled := True;
   RequireDerivedFormResource := True;
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);

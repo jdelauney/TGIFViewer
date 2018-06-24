@@ -1,6 +1,7 @@
 Unit uFastBitmap;
 (*==============================================================================
  DESCRIPTION   : Classe de manipulation basique de bitmap en 32 bit.
+                 Basic Class for manipulating 32 bit Bitmap
  DATE          : 17/06/2018
  VERSION       : 1.0
  AUTEUR        : J.Delauney (BeanzMaster)
@@ -19,6 +20,7 @@ Uses
 
 Const
   { Constantes utiles pour le calcul sur les masques de couleur }
+  { Useful constants for calculation on color masks }
   {$IFDEF WINDOWS} // Format BGRA
     cBlueOrder = 0;
     cGreenOrder = 1;
@@ -44,59 +46,63 @@ Const
 
 Type
   { TColorRGB24 : Définition d'un pixel sur 24 bits au format RGB }
+  { TColorRGB24 : Definition of a 24-bit pixel in RGB format }
   TColorRGB24Type = packed array[0..2] of byte;
   TColorRGB24 = packed record
-    { Creation de la couleur }
+    { Creation de la couleur / Create Color }
     procedure Create(R,G,B : Byte); Overload;
     procedure Create(Color:TColor); Overload;
 
-    { Conversion vers un TColor }
+    { Conversion vers un TColor / Convert to TColor }
     function ToColor : TColor;
 
     Case Integer of
-     0 : (V:TColorRGB24Type);    // Acces via Tableau
-     1 : (Red, Green, Blue:Byte); // Acces via Composantes
+     0 : (V:TColorRGB24Type);     // Acces via Tableau / Array
+     1 : (Red, Green, Blue:Byte); // Acces via Composantes / Channel
   end;
 
-  { TColor32 : Définition d'un pixel sur 32 bits au format RGBA ou BGRA suivant l'OS}
+  { TColor32 : Définition d'un pixel sur 32 bits au format RGBA ou BGRA suivant l'OS }
+  { TColor32: Definition of a 32-bit pixel in RGBA or BGRA format depending on the OS }
   TColor32Type = packed array[0..3] of byte;
   TColor32 = Packed Record
   private
     function getColorComponent(Index : Integer): byte;
     procedure SetColorComponent(Index : Integer; aValue:Byte);
   public
-    { Creation de la couleur }
+    { Creation de la couleur / Create Color }
     procedure Create(R,G,B,A : Byte); Overload;
     procedure Create(R,G,B : Byte);   Overload;
     procedure Create(Color : TColor); Overload;
     procedure Create(Color : TColorRGB24); Overload;
 
-    { Conversion vers un TColor }
+    { Conversion vers un TColor / Convert to TColor }
     function ToColor : TColor;
-    { Conversion vers un TColorRGB24 }
+    { Conversion vers un TColorRGB24 / Convert to TColorRGB24 }
     function ToColorRGB24 : TColorRGB24;
-
+    { Conversion vers un TFPColor / Convert to TFPColor }
     function ToFPColor : TFPColor;
 
     { Mixage de la couleur courrante avec la couleur "Color" avec prise en charge du canal Alpha }
+    { Mix current color with 'Color' color with Alpha channel support }
     function Blend(Color : TColor32): TColor32;
 
-    { Vérifie si 2 valeurs sont identiques }
+    { Vérifie si 2 valeurs sont identiques / Check if 2 colors are equal }
     class operator =(Color1,Color2 : TColor32):Boolean;
 
-    { Accès aux composantes de la couleur }
+    { Accès aux composantes de la couleur / Color channel access }
     property Red:Byte Index cRedOrder read GetColorComponent Write SetColorComponent;
     property Green:Byte Index cGreenOrder read GetColorComponent Write SetColorComponent;
     property Blue:Byte Index cBlueOrder read GetColorComponent Write SetColorComponent;
     property Alpha:Byte Index cAlphaOrder read GetColorComponent Write SetColorComponent;
 
     Case Integer of
-     0 : (V:TColor32Type);  // Acces via tableau
+     0 : (V:TColor32Type);  // Acces via tableau / Array
      1 : (AsInteger : Integer); // Acces via Integer
   End;
   PColor32 = ^TColor32;
 
   { TColor32Item : Objet persistant englobant une couleur de type TColor32 }
+  { TColor32Item: Persistent object that includes a TColor32 color }
   TColor32Item = Class(TPersistent)
   Private
     FColor: TColor32;
@@ -121,46 +127,47 @@ Type
     Constructor Create;
     Destructor Destroy; override;
 
-    { Valeur de la couleur }
+    { Valeur de la couleur / Value of the color }
     Property Value: TColor32 read getValue write setValue;
-    { Nom de la couleur eg : clrRed }
+    { Nom de la couleur eg : clrRed  / Name of the color}
     Property Name: String read FName write setColorName;
   Published
-    { Valeur du canal rouge }
+    { Valeur du canal rouge / Red channel }
     Property Red: Byte read getRed write setRed;
-    { Valeur du canal vert }
+    { Valeur du canal vert / Green channel }
     Property Green: Byte read getRed write setGreen;
-    { Valeur du canal Bleu }
+    { Valeur du canal Bleu / Blue channel }
     Property Blue: Byte read getRed write setBlue;
-    { Valeur du canal alpha pour la transparence }
+    { Valeur du canal alpha pour la transparence / Alpha channel for transparency }
     Property Alpha: Byte read getRed write setAlpha;
-    {  Valeur complémentaire personnel }
+    {  Valeur complémentaire personnel / User define value }
     Property Tag: Integer read FTag write FTag;
   End;
 
-  { TBZColorList : Classe pour la gestion d'une palette (liste) de couleurs }
+  { TColor32List : Classe pour la gestion d'une palette (liste) de couleurs }
+  { TColor32List : Class for managing a palette (list) of colors }
   TColor32List = Class(TObjectList)
   Private
   Protected
     Function GetColorItem(index: Integer): TColor32Item;
     Procedure SetColorItem(index: Integer; val: TColor32Item);
   Public
-    { Efface la liste }
+    { Efface la liste / Clear the list }
     procedure Clear; override;
-    { Ajoute une couler à la liste }
+    { Ajoute une couleur à la liste / Add a color to the list }
     Function AddColor(Const aColor: TColor32): Integer; Overload;
-    { Ajoute une couler à la liste }
+    { Ajoute une couleur à la liste /Add a color to the list }
     Function AddColor(Const aName: String; Const aColor: TColor32): Integer; Overload;
-    { Ajoute une couler à la liste }
+    { Ajoute une couleur à la liste / Add a color to the list}
     Function AddColor(Const aColorItem: TColor32Item): Integer; Overload;
-    { Supprime une couleur de la liste }
+    { Supprime une couleur de la liste / Delete a color of the list }
     Procedure RemoveColor(Const aName: String);
-    { Recherche une couleur dans la liste }
+    { Recherche une couleur dans la liste / Search color in list }
     Function FindColorByName(Const aName: String; Out Index: Integer):TColor32; Overload;
-    { Recherche une couleur dans la liste }
+    { Recherche une couleur dans la liste  / Search color in list }
     Function FindColorByName(Const aName: String): TColor32; Overload;
 
-    { Colors : Acceder à la couleur "Index" de la liste }
+    { Colors : Acceder à la couleur "Index" de la liste / Color access with Index }
     Property Colors[Index: Integer]: TColor32Item read GetColorItem write setColorItem;
   End;
 
@@ -172,18 +179,20 @@ Const
 
 Type
   { TFastBitmapDrawMode : Mode d'Affichage pour la fonction PutImage de TFastBitmap }
+  { TFastBitmapDrawMode : Display Mode for the PutImage Function of TFastBitmap }
   TFastBitmapDrawMode = ( dmSet, dmAlpha, dmAlphaCheck);
 
   { TFastBitmap }
   { Classe d'aide à la manipulation d'une image }
+  { Help class for image manipulation }
   TFastBitmap = Class
   Strict private
-    FTransparentColor : TColor; // Couleur transparent à pour l'affichage via TBitmap de la LCL si besoin
+    FTransparentColor : TColor; // Couleur transparent à pour l'affichage via TBitmap de la LCL si besoin / Transparent color for display via TBitmap of the LCL if needed
 
-    FData     : PDWord;    // Tampon de stockage des données d'un bitmap
-    FWidth    : Integer;   // Largeur du bitmap
-    FHeight   : Integer;   // Hauteur du Bitmap
-    FSize     : Int64;     // Taille du tampon en octet
+    FData     : PDWord;    // Tampon de stockage des données d'un bitmap / Buffer for storing data from a bitmap
+    FWidth    : Integer;   // Largeur du bitmap / Width
+    FHeight   : Integer;   // Hauteur du Bitmap / Height
+    FSize     : Int64;     // Taille du tampon en octet / Size in byte
 
   protected
 
@@ -199,27 +208,30 @@ Type
     Constructor Create(NewWidth, NewHeight : Integer); Overload;
     Destructor Destroy; Override;
 
-    { Assigne les donnée d'un autre TFastBitmap }
+    { Assigne les donnée d'un autre TFastBitmap / Assign another TFastBitmap }
     procedure Assign(aFastBitmap : TFastBitmap);
-    { Modifie les dimensions du bitmap }
+    { Modifie les dimensions du bitmap / Change size of bitmap }
     procedure SetSize(NewWidth, NewHeight : Integer);
     { Importation des données d'un TRawImage. Retourne "TRUE" en cas de succès }
+    { Import from RawImage. Return TRUE on success }
     function ImportFromRawImage(Const ARawImage : TRawImage):Boolean;
     { Importation des données d'un TBitmap. Retourne "TRUE" en cas de succès }
+    { Import from TBitmap. Return TRUE on success }
     function ImportFromBitmap(Const ABitmap :Graphics.TBitmap):Boolean;
-    { Efface le bitmap avec la couleur "Color" }
+    { Efface le bitmap avec la couleur "Color" / Clear bitmap with Color }
     procedure Clear(Color : TColor32);
-    { Retourne le tampon du bitmap }
+    { Retourne le tampon du bitmap / Return bitmap buffer }
     function GetSurfaceBuffer : PColor32;
-    { Retourne l'adresse de la ligne "Y" dans le tampon }
+    { Retourne l'adresse de la ligne "Y" dans le tampon / Return address in buffer of a line }
     function GetScanLine(Y : Integer) : PColor32;
-    { Retourne l'adresse du pixel à la position "X,Y" dans le tampon }
+    { Retourne l'adresse du pixel à la position "X,Y" dans le tampon / Return address at X,Y}
     function GetPixelPtr(X, Y : Integer) : PColor32;
-    { Ecrit un pixel de couleur "Color" à la position "X,Y }
+    { Ecrit un pixel de couleur "Color" à la position "X,Y / Put pixel X,Y with Color }
     procedure PutPixel(X,Y:Integer; Color : TColor32);
-    { Lit un pixel de couleur "Color" à la position "X,Y }
+    { Lit un pixel de couleur "Color" à la position "X,Y / Get color of pixel at X,Y }
     function GetPixel(X,Y:Integer): TColor32;
     { Ecrit un pixel de en mixant couleur "Color" avec la couleur du pixel présent dans le tampon à la position "X,Y }
+    { Writes a pixel by mixing 'Color' color with the color of the pixel present in the buffer at the 'X, Y' position }
     procedure PutPixelBlend(X,Y : Integer; Color : TColor32);
     { Copie une image source "Src" depuis la position "SrcX,SrcY" et de dimension "SrcWidthxSrcHeight" dans le bitmap à la position "DstX, DstY
       et suivant le "Mode"
@@ -228,25 +240,35 @@ Type
         - dmAlpha : Copie les pixel de l'image source en mixant les couleurs avec celles du bitmap en fonction de leur valeur Alpha
         - dmAlphaCheck : Copie les pixel de l'image source seulement si le pixel n'est pas invisible. les autres pixels sont copié de la façon que le mode dmAlpha
        Note : les dimensions et les positions entre le bitmap et l'image source sont automatiquement ajustées si besoin.
+
+    --------------------------
+      Copy a source image 'Src' from the position 'SrcX, SrcY' and dimension 'SrcWidthxSrcHeight' into the bitmap at the position 'DstX, DstY
+      and following the 'Mode'
+       Mode: TFastBitmapDrawMode
+        - dmSet: Raw copy of the image
+        - dmAlpha: Copy the pixels of the source image by mixing the colors with those of the bitmap according to their Alpha value
+        - dmAlphaCheck: Copies the pixels of the source image only if the pixel is not invisible. the other pixels are copied in the way that dmAlpha mode
+       Note: The dimensions and positions between the bitmap and the source image are automatically adjusted if necessary.
     }
     procedure PutImage(Src : TFastBitmap; SrcX, SrcY, SrcWidth, SrcHeight, DstX, DstY : Integer; Mode : TFastBitmapDrawMode);
-    { Creation  d'un clone du bitmap (nouvelle instance) }
+    { Creation  d'un clone du bitmap (nouvelle instance) / Create clone (new instance) }
     function Clone : TFastBitmap;
-    { Retourne un bitmap de type LCL ==> Graphics.TBitmap }
+    { Retourne un bitmap de type LCL ==> Graphics.TBitmap / Return a TBitmap}
     function GetBitmap : Graphics.TBitmap;
-    { Dessine le bitmap sur un canvas à la position "X,Y" }
+    { Dessine le bitmap sur un canvas à la position "X,Y" / Draw the bitmap on a canvas }
     procedure Draw(ACanvas : TCanvas; X,Y : Integer);  Overload;
-    { Dessine le bitmap sur un canvas délimité par "Rect" }
+    { Dessine le bitmap sur un canvas délimité par "Rect" / Draw the bitmap on a canvas delimited by "Rect" }
     procedure Draw(ACanvas : TCanvas; Rect : TRect);   Overload;
-    { Inverse les composante de couleur Rouge et Bleu du bitmap }
+    { Inverse les composante de couleur Rouge et Bleu du bitmap  / Swap Red and Blue channel }
     procedure SwapRB;
-    { Information sur la couleur assignée à la transparence (seulement valable si différent de clrTransparent) }
+
+    { Information sur la couleur assignée à la transparence (seulement valable si différent de clrTransparent) / Return the transparency color }
     property TransparentColor : TColor Read FTransparentColor Write FTransparentColor;
-    { Largeur du bitmap }
+    { Largeur du bitmap / Width }
     property Width : Integer Read FWidth Write SetWidth;
-    { Hauteur du bitmap }
+    { Hauteur du bitmap / Height }
     property Height : Integer Read FHeight Write SetHeight;
-    { Taille du tampon en octet }
+    { Taille du tampon en octet / Size of the buffer }
     property Size : Int64 Read FSize;
   End;
 

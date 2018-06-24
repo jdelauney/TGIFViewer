@@ -18,6 +18,7 @@ TGIFViewer  composant visuel pour l'affichage d'animations au fromat GIF (Graphi
 :information_source: **Contient également 2 unités** :
 - uFastBitmap : Classe pour la manipulation de bitmap 32 bit au format RGBA ou BGRA suivant l'OS
 - TypesHelpers : Classes ajoutant des fonctions utiles au type de données (Byte, integer, string, double, TDateTime...) les fonctions sont accesibles directement par le biais complétation du code sous Lazarus.
+- gvTranslate : Classe d'aide à la traduction d'application par [Gilles Vasseurs](https://www.developpez.net/forums/u600183/gvasseur58/)
 
 :information_source: Vous pouvez télécharger [GIF-ImageTestSuite](https://github.com/jdelauney/GIF-ImageTestSuite) pour tester avec plusieurs GIF encodés différemment
 
@@ -31,6 +32,7 @@ Le composant **TGIFViewer** sera installé dans la section **Beanz Extra**
 
 ### Note :
 L'application de démonstration **GifView** du dossier **Demos** ne nécessite pas l'installation du composant dans l'EDI pour fonctionner.
+Elle est également multilanguage (Anglais/Français). Copier simplement le dossier languages dans le dossier de sortie de l'executable
 
 ## Licence : **MPL**
 #### :copyright: 2018 J.Delauney (BeanzMaster)

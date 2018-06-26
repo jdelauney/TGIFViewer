@@ -274,10 +274,9 @@ Type
 
 Implementation
 
-Uses Types, Math;
+Uses Types, Math, GifViewerStrConsts;
 
-resourcestring
-  sBitmapCreateError = 'Erreur lors de la création du TBitmap';
+
 
 {%region=====[ TColorRGB24 ]====================================================}
 
@@ -666,7 +665,7 @@ Begin
     IntfBmp.Free;
   End;
   if Result = nil then
-    Raise Exception.Create(sBitmapCreateError);
+    Raise Exception.Create(rsBitmapCreateError);
 End;
 
 Function TFastBitmap.IsClipped(X, Y : Integer) : Boolean;
@@ -789,7 +788,7 @@ Var
   yy : DWord;
 Begin
   If (Y<0) or (Y>=FHeight) then
-    Raise Exception.Create('Scanline : Indice hors limite')
+    Raise Exception.Create(rsBitmapScanlineOutOfRange)
   else
   begin
     yy := DWord(FWidth) * DWord(Y);

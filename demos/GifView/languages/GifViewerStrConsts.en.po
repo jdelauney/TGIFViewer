@@ -1,6 +1,7 @@
 msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
@@ -13,23 +14,23 @@ msgstr ""
 
 #: terrorboxform.button1.caption
 msgid "Fermer"
-msgstr "Close"
+msgstr ""
 
 #: terrorboxform.panel1.caption
 msgid "ATTENTION ! Des erreurs se sont produites lors du chargement de l'image"
-msgstr "WARNING ! Errors occurred while loading the image"
+msgstr ""
 
 #: tmainform.btnpauseanimation.caption
 msgid "Pause"
-msgstr "Pause"
+msgstr ""
 
 #: tmainform.btnstartanimation.caption
 msgid "Start"
-msgstr "Start"
+msgstr ""
 
 #: tmainform.btnstopanimation.caption
 msgid "Stop"
-msgstr "Stop"
+msgstr ""
 
 #: tmainform.cbxlang.text
 msgid "fr"
@@ -41,37 +42,35 @@ msgstr ""
 
 #: tmainform.chkcentergif.caption
 msgid "Centrer"
-msgstr "Center"
+msgstr ""
 
 #: tmainform.chkstretchgif.caption
-#, fuzzy
-#| msgid "Adapter dimension"
 msgid "Adapter"
-msgstr "Fit to Screen"
+msgstr ""
 
 #: tmainform.chktansparent.caption
 msgid "Transparent"
-msgstr "Transparent"
+msgstr ""
 
 #: tmainform.chkviewrawframe.caption
 msgid "Parcourir images brutes"
-msgstr "Browse raw images"
+msgstr ""
 
 #: tmainform.label1.caption
 msgid "Images : "
-msgstr "Frames : "
+msgstr ""
 
 #: tmainform.label2.caption
 msgid "Version :"
-msgstr "Version :"
+msgstr ""
 
 #: tmainform.label3.caption
 msgid "Nombre d'images :"
-msgstr "Numbers of Frames :"
+msgstr ""
 
 #: tmainform.label4.caption
 msgid "Couleur du fond : "
-msgstr "Background Color : "
+msgstr ""
 
 #: tmainform.label5.caption
 msgid "Languages :"
@@ -88,7 +87,7 @@ msgstr ""
 
 #: tmainform.lblfilename.caption
 msgid "Glissez et déposez un fichier pour l'ouvrir"
-msgstr "Drag and Drop for open a file"
+msgstr ""
 
 #: tmainform.lblframecount.caption
 msgctxt "tmainform.lblframecount.caption"

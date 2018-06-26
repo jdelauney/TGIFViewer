@@ -8,7 +8,7 @@ Unit gifviewer_pkg;
 Interface
 
 uses
-  TypesHelpers, uFastBitmap, uGIFViewer_Register, LazarusPackageIntf;
+  uFastBitmap, uGIFViewer_Register, GifViewerStrConsts, LazarusPackageIntf;
 
 Implementation
 

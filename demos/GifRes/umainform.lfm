@@ -1,23 +1,23 @@
 object MainForm: TMainForm
   Left = 0
-  Height = 343
+  Height = 283
   Top = 0
   Width = 367
   Caption = 'GIF Resource'
-  ClientHeight = 343
+  ClientHeight = 283
   ClientWidth = 367
   Color = clBlack
   OnShow = FormShow
-  LCLVersion = '1.8.5.0'
+  Position = poScreenCenter
   Visible = False
   object GIFViewer1: TGIFViewer
     Left = 120
-    Height = 110
+    Height = 102
     Top = 56
-    Width = 110
-    Color = clWhite
+    Width = 102
+    Color = clMoneyGreen
     Border = True
-    BorderColor = clRed
+    BorderColor = clWhite
     BorderWidth = 1
     BevelColor = clBlack
     BevelInner = bvRaised
@@ -30,14 +30,14 @@ object MainForm: TMainForm
     AutoSize = True
   end
   object Panel1: TPanel
-    Left = 40
+    Left = 16
     Height = 50
-    Top = 288
-    Width = 280
+    Top = 192
+    Width = 336
     BevelColor = clWhite
-    Caption = 'GIF FROM RESOURCE'
-    Font.Color = clWhite
-    Font.Height = -21
+    Caption = 'Made with FPC and Lazarus'
+    Font.Color = clSkyBlue
+    Font.Height = -19
     Font.Name = 'Verdana'
     Font.Style = [fsBold]
     ParentFont = False

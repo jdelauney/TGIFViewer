@@ -5,7 +5,9 @@ Unit uGIFViewer_Register;
 Interface
 
 Uses
-  Classes, SysUtils, LResources, LazarusPackageIntf, LazIDEIntf, propedits, uGifViewer;
+  Classes, SysUtils, LResources, LazarusPackageIntf,
+  LazIDEIntf, propedits, // Pour l'integration de l'éditeur de propriété dans l'EDI
+  uGifViewer;
 
 { Enregistrement du composant et de l'editeur de propriété dans l'EDI }
 Procedure Register;

@@ -25,28 +25,29 @@ Contient un composant visuel spécialiser dans l'affichage d'animation d'image a
     <Version Major="1"/>
     <Files Count="4">
       <Item1>
-        <Filename Value="..\source\TypesHelpers.pas"/>
-        <UnitName Value="TypesHelpers"/>
-      </Item1>
-      <Item2>
         <Filename Value="..\source\uFastBitmap.pas"/>
         <UnitName Value="uFastBitmap"/>
-      </Item2>
-      <Item3>
+      </Item1>
+      <Item2>
         <Filename Value="..\source\uGifViewer.pas"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uGifViewer"/>
-      </Item3>
-      <Item4>
+      </Item2>
+      <Item3>
         <Filename Value="ugifviewer_register.pas"/>
         <HasRegisterProc Value="True"/>
         <AddToUsesPkgSection Value="False"/>
         <UnitName Value="uGIFViewer_Register"/>
+      </Item3>
+      <Item4>
+        <Filename Value="..\source\GifViewerStrConsts.pas"/>
+        <UnitName Value="GifViewerStrConsts"/>
       </Item4>
     </Files>
     <i18n>
       <EnableI18N Value="True"/>
       <OutDir Value="..\Locale\"/>
+      <EnableI18NForLFM Value="True"/>
     </i18n>
     <RequiredPkgs Count="3">
       <Item1>

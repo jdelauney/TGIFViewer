@@ -38,7 +38,7 @@ Procedure TMainForm.FormShow(Sender: TObject);
 var
   newLeft, newTop : Integer;
 Begin
-  GIFViewer1.LoadFromResource('pulse_button_01');
+  GIFViewer1.LoadFromResource('fpclogo');
   newLeft := (clientWidth div 2) - (GIFViewer1.Width div 2);
   newTop := (clientHeight div 2) - (GIFViewer1.Height div 2);
   GIFViewer1.Left := newLeft;
@@ -47,7 +47,7 @@ Begin
 end;
 
 initialization
-  {$I pulsebutton.lrs} // Placer le fichier resource à inclure
+  {$I fpclogo.lrs} // Placer le fichier resource à inclure
 
 
 End.

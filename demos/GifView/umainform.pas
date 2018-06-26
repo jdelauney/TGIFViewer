@@ -6,7 +6,9 @@ Interface
 
 Uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Spin,
-  TypesHelpers, uGifViewer,
+  // TGifViewer
+  uGifViewer,
+  // TGVTranslate Traduction de la langue / Translate language
   gvTranslate;
 
 Type
@@ -23,6 +25,7 @@ Type
     chkTansparent: TCheckBox;
     chkViewRawFrame: TCheckBox;
     cbxLang: TComboBox;
+    cbxStretchMode: TComboBox;
     edtViewFrameIndex: TSpinEdit;
     Label1: TLabel;
     Label4: TLabel;
@@ -49,6 +52,7 @@ Type
     Procedure btnStartAnimationClick(Sender: TObject);
     Procedure btnStopAnimationClick(Sender: TObject);
     Procedure cbxLangSelect(Sender: TObject);
+    Procedure cbxStretchModeSelect(Sender: TObject);
     Procedure chkCenterGIFClick(Sender: TObject);
     Procedure chkStretchGIFChange(Sender: TObject);
     Procedure chkTansparentChange(Sender: TObject);
@@ -56,6 +60,7 @@ Type
     Procedure FormCreate(Sender: TObject);
     Procedure FormDestroy(Sender: TObject);
     Procedure FormDropFiles(Sender: TObject; Const FileNames: Array Of String);
+    Procedure FormShow(Sender: TObject);
   private
   protected
     GifViewer : TGIFViewer;
@@ -64,6 +69,7 @@ Type
     procedure DoOnTranslate(Sender:TObject;Const Folder, Lang, FallbackLang: String);
     Procedure DoOnBitmapLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
     Procedure DoOnFrameChange(Sender: TObject);
+    procedure DoOnStetchChanged(Sender: TObject;  IsStretched : Boolean);
   public
 
 
@@ -76,7 +82,7 @@ Implementation
 
 {$R *.lfm}
 
-Uses  Translations, FileCtrl, uErrorBoxForm;
+Uses  FileCtrl, uErrorBoxForm;
 
 
 { TMainForm }
@@ -94,7 +100,12 @@ End;
 
 Procedure TMainForm.DoOnFrameChange(Sender: TObject);
 Begin
-  lblCurrentFrame.Caption := Succ(GIFViewer.CurrentFrameIndex).ToString;
+  lblCurrentFrame.Caption := IntToStr(Succ(GIFViewer.CurrentFrameIndex));
+End;
+
+Procedure TMainForm.DoOnStetchChanged(Sender: TObject; IsStretched: Boolean);
+Begin
+  chkStretchGIF.Checked := IsStretched;
 End;
 
 Procedure TMainForm.FormDropFiles(Sender: TObject; Const FileNames: Array Of String);
@@ -109,26 +120,27 @@ Begin
       GifViewer.LoadFromFile(ImageFileName);
       lblFileName.Caption := MiniMizeName(ImageFileName, lblFileName.Canvas ,lblFileName.ClientWidth);
       lblVersion.Caption := GifViewer.Version;
-      lblFrameCount.Caption := GifViewer.FrameCount.ToString;
+      lblFrameCount.Caption := IntToStr(GifViewer.FrameCount);
       pnlAnimationPlayer.Enabled := (GifViewer.FrameCount>1);
       pnlSelectFrame.Enabled := (GifViewer.FrameCount>1);
       edtViewFrameIndex.MaxValue := GifViewer.FrameCount-1;
       edtViewFrameIndex.Value := 0;
       lblCurrentFrame.Caption := '1';
-      lblTotalFrame.Caption := GifViewer.FrameCount.ToString;
+      lblTotalFrame.Caption := IntToStr(GifViewer.FrameCount);
       GIFLoaded := True;
-
     Finally
       Screen.Cursor := crDefault;
     End;
 end;
 
+Procedure TMainForm.FormShow(Sender: TObject);
+Begin
+  if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
+end;
+
 Procedure TMainForm.DoOnTranslate(Sender: TObject; Const Folder, Lang, FallbackLang: String);
 Begin
-  LangManager.Translate('uGIFViewer');
-  LangManager.Translate('uFastBitmap');
- // Translations.TranslateUnitResourceStrings('uGIFViewer', Folder + 'uGIFViewer.'+Lang+'.po', Lang, FallbackLang);
- // Translations.TranslateUnitResourceStrings('uFastBitmap', Folder + 'uFastBitmap.'+Lang+'.po', Lang, FallbackLang);
+  LangManager.Translate('GifViewerStrConsts');
 End;
 
 Procedure TMainForm.btnStartAnimationClick(Sender: TObject);
@@ -153,6 +165,19 @@ Begin
   LangManager.Restart;
 end;
 
+Procedure TMainForm.cbxStretchModeSelect(Sender: TObject);
+Begin
+  Case cbxStretchMode.ItemIndex of
+    0 : GifViewer.AutoStretchMode := smManual;
+    1 : GifViewer.AutoStretchMode := smAuto;
+    2 : GifViewer.AutoStretchMode := smOnlyStretchBigger;
+    3 : GifViewer.AutoStretchMode := smOnlyStretchSmaller;
+  End;
+
+  chkStretchGIF.Enabled := (GifViewer.AutoStretchMode = smManual);
+
+end;
+
 Procedure TMainForm.chkCenterGIFClick(Sender: TObject);
 Begin
   GifViewer.Center := not(GifViewer.Center);
@@ -160,6 +185,7 @@ end;
 
 Procedure TMainForm.chkStretchGIFChange(Sender: TObject);
 Begin
+  if GIFViewer.AutoStretchMode <> smManual then exit;
   GifViewer.Stretch := not(GifViewer.Stretch);
 end;
 
@@ -171,6 +197,7 @@ end;
 Procedure TMainForm.edtViewFrameIndexChange(Sender: TObject);
 Begin
   if not(GIFLoaded) then exit;
+
   if edtViewFrameIndex.Text<>'' then
   begin
     if not(chkViewRawFrame.Checked) then GIFViewer.DisplayFrame(edtViewFrameIndex.Value)
@@ -193,7 +220,10 @@ Begin
     AutoSize := true;
     OnLoadError := @DoOnBitmapLoadError;
     OnFrameChange := @DoOnFrameChange;
+    OnStretchChanged := @DoOnStetchChanged;
+    AutoStretchMode := smAuto;
   End;
+  chkStretchGIF.Enabled := false;
   LangManager.Translate;
 end;
 

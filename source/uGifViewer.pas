@@ -18,8 +18,8 @@ Interface
 Uses
   Types, Classes, SysUtils, Graphics, Math, Contnrs, Dialogs,
   Controls, ExtCtrls,
-  Lresources,
-  TypesHelpers, uFastBitmap;
+  Lresources, GifViewerStrConsts,
+  uFastBitmap;
 
 {%region=====[ Définitions des types et constantes utiles pour le format GIF ]===================================}
 Const
@@ -43,41 +43,41 @@ Type
 
   { Description globale de l'image }
   TGIFLogicalScreenDescriptorRec = Packed Record
-    ScreenWidth:  Word;             // Largeur de l'image en pixels
-    ScreenHeight: Word;             // Hauteur de l'image en pixels
-    PackedFields: Byte;             // champs compactés
-    BackgroundColorIndex: Byte;     // Index globale de la couleur de fond
+    ScreenWidth:  Word;             // Largeur de l'image en pixels // Width
+    ScreenHeight: Word;             // Hauteur de l'image en pixels // Height
+    PackedFields: Byte;             // champs compactés // Compacted field
+    BackgroundColorIndex: Byte;     // Index globale de la couleur de fond // Index of background color
     AspectRatio:  Byte;             // Ratio d'échelle = (AspectRatio + 15) / 64
   End;
 
   { Description d'une image }
   TGIFImageDescriptorRec = Packed Record
-    //Separator: byte;    // On lis toujours un byte avant
-    Left:   Word;         // Colonne en pixels par rapport au bord gauche de l'écran
-    Top:    Word;         // Rangée en pixels par rapport au haut de l'écran
-    Width:  Word;         // Largeur de l'image en cours en pixels
-    Height: Word;         // Hauteur de l'image en cours pixels
-    PackedFields: Byte;   // Champs compactés
+    //Separator: byte;    // On lis toujours un byte avant  // we always read it before
+    Left:   Word;         // Colonne en pixels par rapport au bord gauche de l'écran // Column in pixels from the left edge of the screen
+    Top:    Word;         // Rangée en pixels par rapport au haut de l'écran // Row in pixels from the top edge of the screen
+    Width:  Word;         // Largeur de l'image en cours en pixels // image width
+    Height: Word;         // Hauteur de l'image en cours pixels // Image height
+    PackedFields: Byte;   // Champs compactés // Compacted field
   End;
 
   { Graphic Control Extension bloc a.k.a GCE }
   TGIFGraphicControlExtensionRec = Packed Record
-    // BlockSize: byte;           // Normalement toujours 4 octets
-    PackedFields: Byte;           // Champs compacté
-    DelayTime:    Word;           // Délai entre chaque image en centième de secondes
-    TransparentColorIndex: Byte;  // Index dans la palette si plus petit ou égale
-    // Terminator: Byte;          // Normalement toujours ZERO
+    // BlockSize: byte;           // Normalement toujours 4 octets // Always 4 bytes
+    PackedFields: Byte;           // Champs compacté // Compacted field
+    DelayTime:    Word;           // Délai entre chaque image en centième de secondes // Delay between each image in hundredths of a second
+    TransparentColorIndex: Byte;  // Index dans la palette si plus petit ou égale  // Delay between each image in hundredths of a second
+    // Terminator: Byte;          // Normalement toujours ZERO // Normally always ZERO
   End;
 
   TGIFDisposalFlag = (dmNone, dmKeep, dmErase, dmRestore); // Methodes pour l'affichage des images lors de l'animation
 
   { Plain Text Extension }
   TGIFPlainTextExtensionRec = Packed Record
-    // BlockSize: byte;              // Normalement égal à 12 octets
-    Left, Top, Width, Height: Word;  // Positions et dimensions du texte
-    CellWidth, CellHeight:    Byte;  // Dimensions d'une cellule dans l'image
-    TextFGColorIndex,                // Index de la couleur de fond dans la palette
-    TextBGColorIndex:         Byte;  // Index de la couleur du texte dans la palette
+    // BlockSize: byte;              // Normalement égal à 12 octets // Normally equal to 12 bytes
+    Left, Top, Width, Height: Word;  // Positions et dimensions du texte  // position and dimension of text
+    CellWidth, CellHeight:    Byte;  // Dimensions d'une cellule dans l'image // Size of cell
+    TextFGColorIndex,                // Index de la couleur de fond dans la palette // Index of the background color
+    TextBGColorIndex:         Byte;  // Index de la couleur du texte dans la palette // Index of the text color
   End;
 
   { Application Extension }
@@ -88,7 +88,7 @@ Type
 
   { Informations de "l'application extension" si disponible }
   TGIFNSLoopExtensionRec = Packed Record
-    Loops:      Word;   // Nombre de boucle de l'animation 0 = infinie
+    Loops:      Word;   // Nombre de boucle de l'animation 0 = infinie  // nb loop
     BufferSize: DWord;  // Taille du tampon. Usage ?????
   End;
 
@@ -160,13 +160,13 @@ Type
     Constructor Create(AStream : TStream);
     Destructor Destroy; Override;
 
-    { Lit un Byte dans le flux }
+    { Lit un Byte dans le tampon / Read a byte in buffer }
     Function ReadByte: Byte;
-    { Lit un Word dans le flux }
+    { Lit un Word dans le tampon / Read a word in buffer}
     Function ReadWord: Word;
-    { Lit un DWord dans le flux }
+    { Lit un DWord dans le tampon / Read a DWord in buffer }
     Function ReadDWord: DWord;
-    { Lit et retourne un tampon "Buffer" de taille "Count" octets }
+    { Lit et retourne un tampon "Buffer" de taille "Count" octets / Read a buffer of size "count" }
     Function Read(Var Buffer; Count : Int64): Int64;
     { Déplacement dans le flux de "Offset" depuis  "Origin"
       TSeekOrigin =
@@ -180,13 +180,13 @@ Type
     { Indique si la fin du flux est atteinte (EOS = End Of Stream) }
     Function EOS: Boolean;
 
-    { Retourne la taille du flux en octet }
+    { Retourne la taille du flux en octet // Size in byte of the buffer}
     Property Size: Int64 read FSize;
-    { Retourne la position courrante de lecture dans le flux }
+    { Retourne la position courrante de lecture dans le tampon // Current position in buffer }
     Property Position: Int64 read FPosition;
   End;
 
-  { TGIFLoadErrorEvent : Fonction d'évènement levée en cas d'erreur(s) dans le chargement }
+  { TGIFLoadErrorEvent : Fonction d'évènement levée en cas d'erreur(s) dans le chargement // Event raise on error }
   TGIFLoadErrorEvent = Procedure(Sender : TObject; Const ErrorCount : Integer; Const ErrorList : TStringList) Of Object;
 
   { TGIFImageListItem }
@@ -206,7 +206,7 @@ Type
 
     { Objet contenant l'image }
     Property Bitmap: TFastBitmap read FBitmap write FBitmap;
-    { Mode de rendu de l'image }
+    { Mode de rendu de l'image // Render Mode}
     Property DrawMode: TGIFDisposalFlag read FDrawMode write FDrawMode;
     { Position gauche de l'image }
     Property Left: Integer read FLeft write FLeft;
@@ -222,13 +222,14 @@ Type
 
   { TGIFImageList }
   { Classe d'aide à la gestion des images contenues dans le fichier GIF }
+  { Helper class for manage image in GIF }
   TGIFImageList = Class(TObjectList)
   Private
   Protected
     Function GetItems(Index : Integer): TGIFImageListItem;
     Procedure SetItems(Index : Integer; AGifImage : TGIFImageListItem);
   Public
-    { Efface la liste }
+    { Efface la liste  }
     Procedure Clear; Override;
     { Ajoute une nouvelle image vide à la liste }
     Function AddNewImage: TGIFImageListItem;
@@ -253,6 +254,7 @@ Type
 
   { TGIFImageLoader }
   { Classe spécialisée pour la lecture d'une image au format GIF }
+  { Special class for read a GIF }
   TGIFImageLoader = Class
   Private
     FCurrentLayerIndex: Integer;
@@ -302,25 +304,26 @@ Type
     Property Height: Integer read FHeight;
     { Retourne la couleur de l'image GIF si elle existe,. Sinon retourne une couleur transparente (clrTransparent) }
     Property BackgroundColor: TColor32 read FBackgroundColor write FBackgroundColor;
-    { Prise en charge de la transparence dans l'image GIF }
+    { Prise en charge de la transparence dans l'image GIF  // Take transparency in account}
     Property Transparent: Boolean read FTransparent write FTransparent;
-    { Retourne l'index courrant de l'image de l'animation traité}
+    { Retourne l'index courrant de l'image de l'animation traité  // Return the current index frame}
     Property CurrentFrameIndex: Integer read FCurrentLayerIndex write SetCurrentLayerIndex;
-    { Liste des images de l'animation }
+    { Liste des images de l'animation // List of frame}
     Property Frames: TGIFImageList read FFrames;
-    { Nombre d'image de l'animation }
+    { Nombre d'image de l'animation // Nb frames }
     Property FrameCount: Integer read GetFrameCount;
-    { Nombre d'erreur produite loars d'un cahrgement ou d'un enregistrement }
+    { Nombre d'erreur produite loars d'un cahrgement ou d'un enregistrement // Nb error }
     Property ErrorCount: Integer read FErrorCount;
-    { Liste des erreurs }
+    { Liste des erreurs // List of error }
     Property Errors: TStringList read FErrorList;
 
-    { Evenement pour intercepter les erreurs notifiées lors du chargement des données }
+    { Evenement pour intercepter les erreurs notifiées lors du chargement des données // Error Event }
     Property OnLoadError: TGIFLoadErrorEvent read FOnLoadError write FOnLoadError;
   End;
 
   { TGIFRenderCacheListItem }
   { Définition d'une image cache de l'animation }
+  { Image cache class }
   TGIFRenderCacheListItem = Class
   Private
     FBitmap: Graphics.TBitmap;
@@ -336,6 +339,7 @@ Type
 
   { TGIFRenderCacheList }
   { Classe d'aide à la gestion des images rendues de l'animation }
+  { Helper class for manage list of image cache }
   TGIFRenderCacheList = Class(TObjectList)
   Private
   Protected
@@ -361,15 +365,27 @@ Type
     { Insertion d'un cache à la position "Index" }
     Procedure Insert(Index : Integer; AGIFRenderCache : TGIFRenderCacheListItem);
     { Vérifie si "anIndex" ne dépasse pas la nombre d'élément dans la liste. Retroune FALSE si l'index est hors limite }
+    { Check if 'anIndex' does not exceed the number of items in the list. Retrieve FALSE if the index is out of range }
     function IsIndexOk(anIndex : Integer) : Boolean;
     { Liste des caches }
     Property Items[Index: Integer]: TGIFRenderCacheListItem read GetItems write SetItems; Default;
   End;
 
+  { TGIFAutoStretchMode
+    Mode de redimensionnement :
+      smManual : Manuelle via la propriété stretch
+      smAuto   : Adapte toute les images
+      smOnlyStretchBigger  : Adapte seulement les images plus grande
+      smOnlyStretchSmaller : Adapte seulement les images plus petite
+  }
+  TGIFAutoStretchMode = (smManual, smAuto, smOnlyStretchBigger, smOnlyStretchSmaller );
+  TOnStretchChanged = procedure (Sender:TObject; IsStretched : Boolean) of object;
   { TGIFViewer }
   { Composant visuel pour afficher une image GIF animée }
+  { Visual component for display the animated GIF }
   TGIFViewer = Class(TGraphicControl)
   Private
+    FAutoStretchMode: TGIFAutoStretchMode;
     FGIFLoader: TGIFImageLoader;
     FFileName:  String;
 
@@ -383,8 +399,10 @@ Type
     FAnimateTimer:     TTimer;
     FAnimateSpeed:     Integer;
     FAnimated, FPause: Boolean;
-    FPainting:         Boolean;
     FAutoPlay:         Boolean;
+
+    FPainting:         Boolean;
+
     FBorderShow:       Boolean;
     FBorderColor:      TColor;
     FBorderWidth:      Byte;
@@ -395,11 +413,13 @@ Type
     FCenter, FStretch, FTransparent: Boolean;
 
     FOnStart, FOnStop, FOnPause, FOnFrameChange: TNotifyEvent;
-    FOnLoadError: TGIFLoadErrorEvent;
+    FOnLoadError : TGIFLoadErrorEvent;
+    FOnStretchChanged : TOnStretchChanged;
 
     Function GetCanvas: TCanvas;
     Function GetFrameCount: Integer;
     Function GetGIFVersion: String;
+    Procedure SetAutoStretchMode(AValue: TGIFAutoStretchMode);
     Procedure SetCenter(Const Value : Boolean);
     Procedure SetStretch(Const Value : Boolean);
     Procedure SetPause(Const Value : Boolean);
@@ -449,56 +469,72 @@ Type
     Procedure DisplayFrame(Index : Integer);
     { Affiche l'image brute de l'animation à la position Index }
     Procedure DisplayRawFrame(Index : Integer);
-
-    {  Retourne le Canvas du composant }
+    { Extrait l'image de l'animation mise en cache à la position Index vers un TBitmap }
+    procedure ExtractFrame(Index : Integer; Var bmp:TBitmap) ;
+    { Extrait l'image brute de l'animation à la position Index vers un TBitmap}
+    procedure ExtractRawFrame(Index : Integer; Var bmp:TBitmap);
+    { Retourne le Canvas du composant }
     Property Canvas: TCanvas read GetCanvas;
     { Retourne TRUE si l'animation est en pause }
     Property Paused: Boolean read FPause;
     { Retourne TRUE si l'animation est en cours }
     Property Playing: Boolean read FAnimated;
-    { Retourne l'index actuel de l'image affichée }
+    { Retourne l'index actuel de l'image affichée // Current Index of displayed frame }
     Property CurrentFrameIndex: Integer read FCurrentFrameIndex;
-    { Liste des images de l'animation }
+    { Liste des images de l'animation // List of frame}
     Property Frames[Index: Integer]: TBitmap read GetFrame;
-    { Retourne le nombre d'image de l'animation }
+    { Retourne le nombre d'image de l'animation // Number of frames }
     Property FrameCount: Integer read GetFrameCount;
-    { Retourne la version du fichier GIF chargé }
+    { Retourne la version du fichier GIF chargé // version of the gif }
     Property Version: String read GetGIFVersion;
-    { Image courante de l'animation affichée }
+    { Image courante de l'animation affichée // Current displayed image }
     Property CurrentView: Graphics.TBitmap read FCurrentView;
+
   Published
     Property Color: TColor read FColor write FColor;
-    { Bordure visible autour du composant }
+    { Bordure visible autour du composant // Border visible around component }
     Property Border: Boolean read FBorderShow write FBorderShow;
-    { Couleur de la bordure }
+    { Couleur de la bordure // Color of border }
     Property BorderColor: TColor read FBorderColor write FBorderColor;
-    { Epaisseur de la bordure }
+    { Epaisseur de la bordure // Width of border }
     Property BorderWidth: Byte read FBorderWidth write FBorderWidth;
+
     Property BevelColor: TColor read FBevelColor write FBevelColor;
     Property BevelInner: TPanelBevel read FBevelInner write SetBevelInner Default bvNone;
     Property BevelOuter: TPanelBevel read FBevelOuter write SetBevelOuter Default bvRaised;
     Property BevelWidth: TBevelWidth read FBevelWidth write SetBevelWidth Default 1;
 
     { Joue l'animation automatiquement lors du chargement d'une image GIF animée }
+    { Play animation automatically when loading an animated GIF image }
     Property AutoPlay: Boolean read FAutoPlay write FAutoPlay;
     { Affichage du GIF avec prise en charge de la transparence }
+    { GIF view with transparency support }
     Property Transparent: Boolean read FTransparent write SetTransparent;
-    { Centrer l'affichage }
+    { Centrer l'affichage // Center display }
     Property Center: Boolean read FCenter write SetCenter;
-    { Redimensionner l'affichage proportionnellement }
+    { Mode du redimensionnement // Automatic stretch mode }
+    property AutoStretchMode : TGIFAutoStretchMode read FAutoStretchMode write SetAutoStretchMode;
+    { Redimensionner l'affichage proportionnellement // Resize the display proportionally }
     Property Stretch: Boolean read FStretch write SetStretch;
-    { Nom du fichier à charger }
+    { Nom du fichier à charger // Name of file to load }
     Property FileName: String read FFileName write SetFileName;
     { Evènement déclenché lorsque l'animation débute }
+    { Event triggered when the animation starts }
     Property OnStart: TNotifyEvent read FOnStart write FOnStart;
     { Evènement déclenché lorsque l'animation s'arrête }
+    { Event triggered when the animation stops }
     Property OnStop: TNotifyEvent read FOnStop write FOnStop;
-    { Evènement déclenché lorsque l'animation est en pause }
+    { Evènement déclenché lorsque l'animation est mise en pause }
+    { Event triggered when the animation is paused }
     Property OnPause: TNotifyEvent read FOnPause write FOnPause;
     { Evènement déclenché lorsque une nouvelle image est affiché lors de l'animation }
+    { Event triggered when a new image is displayed during the animation }
     Property OnFrameChange: TNotifyEvent read FOnFrameChange write FOnFrameChange;
     { Evenement pour intercepter les erreurs notifiées lors du chargement des données }
     Property OnLoadError: TGIFLoadErrorEvent read FOnLoadError write FOnLoadError;
+    { Evenement pour intercepter le changement du mode stretch. Uniquement si AutoStretchMode <> smManual }
+    { Event to intercept the change of the stretch mode. Only if AutoStretchMode <> smManual }
+    property OnStretchChanged : TOnStretchChanged read FOnStretchChanged write FOnStretchChanged;
 
     { Propriétés héritées }
     Property Align;
@@ -527,29 +563,10 @@ Type
 Implementation
 
 Uses
-  GraphType; // Pour l'integration de l'éditeur de propriété dans l'EDI
+  GraphType;
+
 
 {%region=====[ Constantes et types internes ]===================================}
-
-ResourceString
-  // Messages d'erreurs ou de notifications
-  sScreenBadColorSize       = 'Nombre de couleur dans la palette globale invalide.';
-  sImageBadColorSize        = 'Nombre de couleur dans la palette locale invalide.';
-  sBadSignature             = 'Signature GIF invalide : %s';
-  sBadScreenSize            = 'Dimension de l''image Invalides : %dx%d';
-  sEmptyColorMap            = 'Erreur aucune palette de couleur disponible pour cette image !';
-  sEmptyImage               = 'L''Image est vide';
-  sUnknownVersion           = 'Version GIF inconnue';
-  sFileNotFound             = 'Le fichier %s est introuvable !';
-  sResourceNotFound         = 'Resource %s not found !';
-  sBufferOverFlow           = 'Image #%d : Le décodeur s''est arrêté pour empêcher un débordement de tampon';
-  sInvalidOutputBufferSize  = 'Image #%d : La taille du tampon de sortie est invalide ( Taille <= 0)';
-  sInvalidInputBufferSize   = 'Image #%d : La taille du tampon d''entrée est invalide ( Taille <= 0)';
-  sInvalidBufferSize        = 'Image #%d : La taille du tampon d''entrée et de sortie sont invalides ( Taille <= 0)';
-  dsLZWInternalErrorOutputBufferOverflow = 'Dépassement du buffer de sortie dans le décodeur GIF LZW. Signaler ce bug. C''est un bug sérieux !';
-  dsLZWInternalErrorInputBufferOverflow  = 'Dépassement du buffer d''entrée dans le décodeur GIF LZW. Signaler ce bug. C''est un bug sérieux !';
-  dsLZWInvalidInput         = 'Image #%d : Le décodeur a rencontré une entrée invalide (données corrompues)';
-  sLZWOutputBufferTooSmall  = 'Image #%d : Le décodeur n''a pas pu décoder toutes les données car le tampon de sortie est trop petit';
 
 
 Type
@@ -856,12 +873,12 @@ Begin
     FVersion := String(FGIFFileHeader.Version);
     If (FVersion = GIFVersions[gv87a]) Or (FVersion = GIFVersions[gv89a]) Then Result := ReadImageProperties // On lit les propriétés
     Else
-      Raise Exception.Create(sUnknownVersion);
+      Raise Exception.Create(rsUnknownVersion);
   End
   Else
   Begin
     // Signature du fichier GIF Invalide. On lève une exception
-    Raise Exception.Create(Format(sBadSignature,[uppercase(String(FGIFFileHeader.Signature))]));
+    Raise Exception.Create(Format(rsBadSignature,[uppercase(String(FGIFFileHeader.Signature))]));
   End;
 End;
 
@@ -878,7 +895,7 @@ Begin
   If (FWidth < 1) Or (FHeight < 1) Then
   Begin
     // Dimensions incorrectes on lève une exception
-    Raise Exception.Create(Format(sBadScreenSize,[FWidth,FHeight]));
+    Raise Exception.Create(Format(rsBadScreenSize,[FWidth,FHeight]));
     exit;
   End;
   FHasGlobalPalette := (FLogicalScreenChunk.PackedFields And GIF_GLOBALCOLORTABLE) <> 0;
@@ -983,7 +1000,7 @@ Var
       PaletteCount := 2 Shl (FLogicalScreenChunk.PackedFields And GIF_COLORTABLESIZE);
       // Le cas ou le nombre de couleurs serait plus grand que 256. On prend en charge.
       If (PaletteCount < 2) Then //or (PaletteCount>256) then
-        Raise Exception.Create(sScreenBadColorSize + ' : ' + PaletteCount.ToString);
+        Raise Exception.Create(rsScreenBadColorSize + ' : ' + IntToStr(PaletteCount));
 
       // On charge la palette
       For J := 0 To PaletteCount - 1 Do
@@ -1009,7 +1026,7 @@ Var
     ColorCount := (2 Shl (ImageDescriptor.PackedFields And GIF_COLORTABLESIZE));
     // Le cas ou le nombre de couleurs serait plus grand que 256. On prend en charge qudn même et on charge la palette.
     If (ColorCount < 2) Then //or (ColorCount>256) then
-      Raise Exception.Create(sImageBadColorSize + ' : ' + ColorCount.ToString);
+      Raise Exception.Create(rsImageBadColorSize + ' : ' + IntToStr(ColorCount));
 
     // On charge la palette
     For J := 0 To ColorCount - 1 Do
@@ -1087,7 +1104,7 @@ Var
           End;
 
           //else if (BlockSize<11) then
-          //   RaiseInvalidImageFile(sBadApplicationExtensionBlockSize + ' : ' + BlockSize.ToString+' octets. ( Taille valide = 11 octets )'); }
+          //   RaiseInvalidImageFile(sBadApplicationExtensionBlockSize + ' : ' + BlockSize)+' octets. ( Taille valide = 11 octets )'); }
 
           Memory.Read(ApplicationExtensionChunk, SizeOf(TGIFApplicationExtensionRec));
           Repeat
@@ -1265,7 +1282,7 @@ Var
             // Code ne peux à être supérieur à FreeCode. Nous avons donc une image cassée.
             // On notifie l'erreur à l'utilisateur. Et on considère qu'il n'ya pas d'erreur.
             DecoderStatus := dsInvalidInput;
-            AddError(Format(dsLZWInvalidInput,[CurrentFrameIndex]));
+            AddError(Format(rsLZWInvalidInput,[CurrentFrameIndex]));
             //NotifyUser('Le décodeur a rencontré une entrée invalide (données corrompues)');
             Code := ClearCode;
             //Break; //Ici, on continue le chargement du reste de l'image au lieu de le stopper
@@ -1331,7 +1348,7 @@ Var
                 // On notifie l'erreur à l'utilisateur. Et on considère qu'il n'ya pas d'erreur.
                 // Afin de pouvoir afficher le GIF et continuer le chargement des images suivantes
                 Result := dsOutputBufferTooSmall;
-                AddError(Format(sLZWOutputBufferTooSmall,[CurrentFrameIndex]));
+                AddError(Format(rsLZWOutputBufferTooSmall,[CurrentFrameIndex]));
                 break;
               End;
               Dec(StackPointer);
@@ -1353,7 +1370,7 @@ Var
                 // On a intercepter une donnée corrompue. On continue quand la même décompression sans en tenir compte.
                 // On notifie juste l'erreur à l'utilisateur
                 DecoderStatus := dsInvalidInput;
-                AddError(Format(dsLZWInvalidInput,[CurrentFrameIndex]));
+                AddError(Format(rsLZWInvalidInput,[CurrentFrameIndex]));
                 //NotifyUser('Le décodeur a rencontré une entrée invalide (données corrompues)');
                 MaxCode       := True;
               End;
@@ -1390,7 +1407,7 @@ Var
         Begin
           Result := dsInternalError;
           // C'est une erreur sérieuse : nous avons eu un dépassement de tampon d'entrée que nous aurions dû intercepter. Nous devons arrêter maintenant.
-          Raise Exception.Create(dsLZWInternalErrorInputBufferOverflow);
+          Raise Exception.Create(rsLZWInternalErrorInputBufferOverflow);
           Exit;
         End;
         If UnpackedSize <> 0 Then
@@ -1399,7 +1416,7 @@ Var
           //begin
           //  //  Image corrompue
           //  DecoderStatus := dsNotEnoughInput;
-          //  AddError('Image #'+CurrentFrameIndex.ToString+' : Le décodeur n''a pas pu décoder toutes les données car le tampon d''entrée est trop petit');
+          //  AddError('Image #'+CurrentFrameIndex)+' : Le décodeur n''a pas pu décoder toutes les données car le tampon d''entrée est trop petit');
           //  //NotifyUser('Le décodeur  n''a pas pu décoder toutes les données car le tampon d''entrée est trop petit');
           //End
           //else
@@ -1407,7 +1424,7 @@ Var
           Begin
             Result := dsInternalError;
             // C'est une erreur sérieuse : nous avons eu un dépassement de tampon de sortie que nous aurions dû intercepter. Nous devons arrêter maintenant.
-            Raise Exception.Create(dsLZWInternalErrorOutputBufferOverFlow);
+            Raise Exception.Create(rsLZWInternalErrorOutputBufferOverFlow);
           End;
         End;
       End;
@@ -1571,7 +1588,7 @@ Var
               End
               Else
               Begin
-                AddError(sEmptyColorMap);
+                AddError(rsEmptyColorMap);
                 Exit;
               End;
             End
@@ -1594,7 +1611,7 @@ Var
               End
               Else
               Begin
-                AddError(sEmptyColorMap);
+                AddError(rsEmptyColorMap);
                 Exit;
               End;
             End;
@@ -1670,7 +1687,7 @@ Var
                 End
                 Else
                 Begin
-                  AddError(sEmptyColorMap);
+                  AddError(rsEmptyColorMap);
                   Exit;
                 End;
               End
@@ -1688,7 +1705,7 @@ Var
                 End
                 Else
                 Begin
-                  AddError(sEmptyColorMap);
+                  AddError(rsEmptyColorMap);
                   Exit;
                 End;
               End;
@@ -1720,10 +1737,10 @@ Var
     Else
     Begin
       Case Ret Of
-        dsInvalidBufferSize: AddError(Format(sInvalidBufferSize,[CurrentFrameIndex]));
-        dsInvalidInputBufferSize: AddError(Format(sInvalidInputBufferSize,[CurrentFrameIndex]));
-        dsInvalidOutputBufferSize: AddError(Format(sInvalidOutputBufferSize,[CurrentFrameIndex]));
-        dsBufferOverflow: AddError(Format(sBufferOverFlow,[CurrentFrameIndex]));
+        dsInvalidBufferSize: AddError(Format(rsInvalidBufferSize,[CurrentFrameIndex]));
+        dsInvalidInputBufferSize: AddError(Format(rsInvalidInputBufferSize,[CurrentFrameIndex]));
+        dsInvalidOutputBufferSize: AddError(Format(rsInvalidOutputBufferSize,[CurrentFrameIndex]));
+        dsBufferOverflow: AddError(Format(rsBufferOverFlow,[CurrentFrameIndex]));
         dsOutputBufferTooSmall :
          (* begin
             // On supprime l'image. Le tampon de sortie étant trop petit, cela va générer des erreurs lors du transfert des données décompressées vers l'image
@@ -1818,7 +1835,7 @@ Begin
   NotifyError;
 
   // Il n'y a aucune images on notifie l'erreur
-  If FFrames.Count = 0 Then Raise Exception.Create(sEmptyImage);
+  If FFrames.Count = 0 Then Raise Exception.Create(rsEmptyImage);
 
   // On libere la mémoire, prise par nos palettes de couleurs si besoin
   If (LocalPalette <> nil) Then
@@ -1932,7 +1949,7 @@ End;
 
 {%region=====[ TGIFViewer ]=====================================================}
 
-constructor TGIFViewer.Create(AOwner: TComponent);
+Constructor TGIFViewer.Create(AOwner: TComponent);
 Begin
   Inherited Create(AOwner);
   ControlStyle := [csCaptureMouse, csClickEvents, csDoubleClicks];
@@ -1969,9 +1986,10 @@ Begin
   FCurrentFrameIndex := 0;
   FGIFWidth  := 90;
   FGIFHeight := 90;
+  FAutoStretchMode := smManual;
 End;
 
-destructor TGIFViewer.Destroy;
+Destructor TGIFViewer.Destroy;
 Begin
   FAnimateTimer.Enabled := False;
 
@@ -1986,36 +2004,43 @@ Begin
   Inherited Destroy;
 End;
 
-procedure TGIFViewer.SetCenter(const Value: Boolean);
+Procedure TGIFViewer.SetCenter(Const Value: Boolean);
 Begin
   If Value = FCenter Then exit;
   FCenter := Value;
   Invalidate;
 End;
 
-function TGIFViewer.GetCanvas: TCanvas;
+Function TGIFViewer.GetCanvas: TCanvas;
 Begin
   Result := Inherited Canvas;// FCurrentView.Canvas
 End;
 
-function TGIFViewer.GetFrameCount: Integer;
+Function TGIFViewer.GetFrameCount: Integer;
 Begin
   Result := FRenderCache.Count;//FGifLoader.FrameCount;
 End;
 
-function TGIFViewer.GetGIFVersion: String;
+Function TGIFViewer.GetGIFVersion: String;
 Begin
   Result := FGIFLoader.Version;
 End;
 
-procedure TGIFViewer.SetStretch(const Value: Boolean);
+Procedure TGIFViewer.SetAutoStretchMode(AValue: TGIFAutoStretchMode);
+Begin
+  If FAutoStretchMode = AValue Then Exit;
+  FAutoStretchMode := AValue;
+  Invalidate;
+End;
+
+Procedure TGIFViewer.SetStretch(Const Value: Boolean);
 Begin
   If Value = FStretch Then exit;
   FStretch := Value;
   Invalidate;
 End;
 
-procedure TGIFViewer.SetPause(const Value: Boolean);
+Procedure TGIFViewer.SetPause(Const Value: Boolean);
 Begin
   If Value = FPause Then exit;
   FPause := Value;
@@ -2023,20 +2048,20 @@ Begin
   If Assigned(FOnPause) Then FOnPause(Self);
 End;
 
-procedure TGIFViewer.SetFileName(const Value: String);
+Procedure TGIFViewer.SetFileName(Const Value: String);
 Begin
   If Value = FFileName Then exit;
   FFileName := Value;
   LoadFromFile(FFileName);
 End;
 
-function TGIFViewer.GetFrame(const Index: Integer): Graphics.TBitmap;
+Function TGIFViewer.GetFrame(Const Index: Integer): Graphics.TBitmap;
 Begin
   Result := nil;
   If (Index > 0) And (Index < FrameCount) Then Result := FRenderCache.Items[Index].Bitmap;
 End;
 
-procedure TGIFViewer.SetTransparent(const Value: Boolean);
+Procedure TGIFViewer.SetTransparent(Const Value: Boolean);
 Begin
   If FTransparent = Value Then exit;
   FTransparent := Value;
@@ -2044,7 +2069,7 @@ Begin
   If FFileName <> '' Then LoadFromFile(FFileName);
 End;
 
-procedure TGIFViewer.SetBevelWidth(const Value: TBevelWidth);
+Procedure TGIFViewer.SetBevelWidth(Const Value: TBevelWidth);
 Begin
   If FBevelWidth <> Value Then
   Begin
@@ -2053,7 +2078,7 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.SetBevelInner(const Value: TPanelBevel);
+Procedure TGIFViewer.SetBevelInner(Const Value: TPanelBevel);
 Begin
   If BevelInner <> Value Then
   Begin
@@ -2062,7 +2087,7 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.SetBevelOuter(const Value: TPanelBevel);
+Procedure TGIFViewer.SetBevelOuter(Const Value: TPanelBevel);
 Begin
   If BevelOuter <> Value Then
   Begin
@@ -2071,13 +2096,12 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.DoInternalOnLoadError(Sender: TObject;
-  const ErrorCount: Integer; const ErrorList: TStringList);
+Procedure TGIFViewer.DoInternalOnLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
 Begin
   If Assigned(FOnLoadError) Then FOnloadError(Self, ErrorCount, ErrorList);
 End;
 
-procedure TGIFViewer.DoTimerAnimate(Sender: TObject);
+Procedure TGIFViewer.DoTimerAnimate(Sender: TObject);
 Begin
   Inc(FCurrentFrameIndex);
   If FCurrentFrameIndex > (FRenderCache.Count - 1) Then FCurrentFrameIndex := 0;
@@ -2087,7 +2111,7 @@ Begin
   Invalidate;
 End;
 
-procedure TGIFViewer.RenderFrame(Index: Integer);
+Procedure TGIFViewer.RenderFrame(Index: Integer);
 Var
   Src:         TFastBitmap;
   pTop, pLeft: Integer;
@@ -2159,7 +2183,7 @@ Begin
   If FGIFLoader.FFrames[Index].Delay <> 0 Then FAnimateTimer.Interval := FGIFLoader.FFrames[Index].Delay * FAnimateSpeed;
 End;
 
-procedure TGIFViewer.ComputeCache;
+Procedure TGIFViewer.ComputeCache;
 Var
   I: Integer;
 Begin
@@ -2176,8 +2200,7 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.CalculatePreferredSize(var PreferredWidth,
-  PreferredHeight: Integer; WithThemeSpace: Boolean);
+Procedure TGIFViewer.CalculatePreferredSize(Var PreferredWidth, PreferredHeight: Integer; WithThemeSpace: Boolean);
 Var
   extraWidth: Integer;
 Begin
@@ -2187,17 +2210,32 @@ Begin
   PreferredHeight := FGIFHeight + extraWidth + 2;
 End;
 
-class function TGIFViewer.GetControlClassDefaultSize: TSize;
+Class Function TGIFViewer.GetControlClassDefaultSize: TSize;
 Begin
   Result.CX := 90; // = ClientWidth
   Result.CY := 90; // = ClientHeight
 End;
 
-function TGIFViewer.DestRect: TRect;
+Function TGIFViewer.DestRect: TRect;
 Var
   PicWidth, PicHeight: Integer;
   ImgWidth, ImgHeight: Integer;
-  w, h, n: Integer;
+  n: Integer;
+
+  procedure KeepAspectRatio( Var aWidth, aHeight : Integer; MaxWidth, MaxHeight : Integer);
+  var
+     w, h : Integer;
+  begin
+      w :=  MaxWidth;
+      h := (aHeight * w) Div aWidth;
+      If h > MaxHeight Then
+      Begin
+        h := MaxHeight;
+        w := (aWidth * h) Div aHeight;
+      End;
+      aWidth := w;
+      aHeight := h;
+  End;
 
 Begin
   PicWidth  := FCurrentView.Width;
@@ -2206,17 +2244,19 @@ Begin
   ImgHeight := ClientHeight;
   If (PicWidth = 0) Or (PicHeight = 0) Then Exit(Rect(0, 0, 0, 0));
 
-  If Stretch Then
+  if FAutoStretchMode <> smManual then
+  begin
+    Case FAutoStretchMode of
+     smAuto : FStretch := True;
+     smOnlyStretchBigger : if (PicWidth > ImgWidth) or (PicHeight > ImgHeight) then FStretch := True else FStretch := False;
+     smOnlyStretchSmaller : if (PicWidth < ImgWidth) or (PicHeight < ImgHeight) then FStretch := True else FStretch := False;
+    end;
+    if Assigned(FOnStretchChanged) then FOnStretchChanged(Self,FStretch);
+  End;
+
+  If FStretch Then
   Begin
-    w := ImgWidth;
-    h := (PicHeight * w) Div PicWidth;
-    If h > ImgHeight Then
-    Begin
-      h := ImgHeight;
-      w := (PicWidth * h) Div PicHeight;
-    End;
-    PicWidth := w;
-    PicHeight := h;
+   KeepAspectRatio(PicWidth, PicHeight,ImgWidth, ImgHeight);
   End;
 
   n  := FBorderWidth + FBevelWidth;
@@ -2227,7 +2267,7 @@ Begin
   Else
     Result := Rect(0, 0, PicWidth, PicHeight);
 
-  If Center Then
+  If FCenter Then
   Begin
     If FBorderShow Then
     Begin
@@ -2244,7 +2284,7 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.Paint;
+Procedure TGIFViewer.Paint;
 
   Procedure DrawFrame;
   Begin
@@ -2270,8 +2310,8 @@ Begin
   If csDesigning In ComponentState Then DrawFrame;
 
   C         := Inherited Canvas;
-  R         := DestRect;
   FPainting := True;
+  R         := DestRect;
   Try
     C.Lock;
     // Fond
@@ -2316,19 +2356,19 @@ Begin
   Inherited Paint;
 End;
 
-procedure TGIFViewer.Loaded;
+Procedure TGIFViewer.Loaded;
 begin
   if FFileName<>'' then LoadFromFile(FFileName);
   inherited Loaded;
 end;
 
-procedure TGIFViewer.Invalidate;
+Procedure TGIFViewer.Invalidate;
 Begin
   If FPainting Then exit;
   Inherited Invalidate;
 End;
 
-procedure TGIFViewer.LoadFromFile(const aFileName: String);
+Procedure TGIFViewer.LoadFromFile(Const aFileName: String);
 Begin
   FAnimateTimer.Enabled := False;
   FPause     := False;
@@ -2336,7 +2376,7 @@ Begin
   FCurrentFrameIndex := 0;
   if Not(FileExists(aFileName)) then
   begin
-    MessageDlg(Format(sFileNotFound,[aFileName]), mtError, [mbOK],0);
+    MessageDlg(Format(rsFileNotFound,[aFileName]), mtError, [mbOK],0);
     Exit;
   end;
   FGIFLoader.LoadFromFile(aFileName);
@@ -2354,7 +2394,7 @@ Begin
   If FAutoPlay Then Start;
 End;
 
-procedure TGIFViewer.LoadFromResource(const ResName: String);
+Procedure TGIFViewer.LoadFromResource(Const ResName: String);
 Var
   Resource: TLResource;
 Begin
@@ -2363,7 +2403,7 @@ Begin
   FAnimated := False;
   FCurrentFrameIndex := 0;
   Resource  := LazarusResources.Find(ResName);
-  If Resource = nil Then Raise Exception.Create(Format(sResourceNotFound,[ResName]))
+  If Resource = nil Then Raise Exception.Create(Format(rsResourceNotFound,[ResName]))
   Else If CompareText(LazarusResources.Find(ResName).ValueType, 'gif') = 0 Then
   Begin
     FGIFLoader.LoadFromResource(ResName);
@@ -2381,7 +2421,7 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.Start;
+Procedure TGIFViewer.Start;
 Begin
   If Not (FPause) Then FCurrentFrameIndex := 0;
   FPause    := False;
@@ -2390,7 +2430,7 @@ Begin
   If Assigned(FOnStart) Then FOnStart(Self);
 End;
 
-procedure TGIFViewer.Stop;
+Procedure TGIFViewer.Stop;
 Begin
   FAnimateTimer.Enabled := False;
   FAnimated := False;
@@ -2402,25 +2442,25 @@ Begin
   Invalidate;
 End;
 
-procedure TGIFViewer.Pause;
+Procedure TGIFViewer.Pause;
 Begin
   FAnimateTimer.Enabled := False;
   FPause := True;
 End;
 
-function TGIFViewer.GetRawFrame(Index: Integer): TBitmap;
+Function TGIFViewer.GetRawFrame(Index: Integer): TBitmap;
 Begin
   Result := FGIFLoader.Frames[Index].Bitmap.GetBitmap;
 End;
 
-procedure TGIFViewer.DisplayFrame(Index: Integer);
+Procedure TGIFViewer.DisplayFrame(Index: Integer);
 Begin
   If not(FRenderCache.IsIndexOk(Index)) then exit;
   FCurrentView.Assign(FRenderCache.Items[Index].Bitmap);
   Invalidate;
 End;
 
-procedure TGIFViewer.DisplayRawFrame(Index: Integer);
+Procedure TGIFViewer.DisplayRawFrame(Index: Integer);
 Var
   Tmp: Graphics.TBitmap;
 Begin
@@ -2429,6 +2469,22 @@ Begin
   FCurrentView.Assign(Tmp);
   FreeAndNil(Tmp);
   Invalidate;
+End;
+
+procedure TGIFViewer.ExtractFrame(Index: Integer; Var bmp:TBitmap);
+Begin
+  If not(FRenderCache.IsIndexOk(Index)) then exit;
+  Bmp.Assign(FRenderCache.Items[Index].Bitmap);
+End;
+
+procedure TGIFViewer.ExtractRawFrame(Index: Integer; Var bmp:TBitmap);
+Var
+  Tmp: Graphics.TBitmap;
+Begin
+  If not(FRenderCache.IsIndexOk(Index)) Then exit;
+  Tmp := GetRawFrame(Index);
+  Bmp.Assign(Tmp);
+  FreeAndNil(Tmp);
 End;
 
 {%endregion}

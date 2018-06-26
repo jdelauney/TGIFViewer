@@ -35,7 +35,15 @@ unit GVTranslate;
 interface
 
 uses
-  Classes, SysUtils, Forms;
+  Classes, SysUtils, Forms
+  {$IFDEF windows}
+  , Windows
+  {$ELSE}
+  , Unix
+    {$IFDEF LCLCarbon}
+  , MacOSAll
+    {$ENDIF}
+  {$ENDIF};
 
 type
 
@@ -46,6 +54,7 @@ type
     fFileName: string;
     fFileDir: string;
     fLanguage: string;
+    fAutoTranslate : Boolean;
 
     FOnTranslate : TGVOnTranslateEvent;
 
@@ -53,7 +62,7 @@ type
     procedure SetFileName(const AValue: string);
     procedure SetFileDir(const AValue: string);
     procedure SetLanguage(const AValue: string);
-
+    function GetOSLanguage: string;
   public
     constructor Create;
     procedure Restart;
@@ -64,6 +73,7 @@ type
     property FileName: string read fFileName write SetFileName;
     property FileDir: string read fFileDir write SetFileDir;
     property LanguageFile: string read GetLanguageFile;
+    property OSLanguage : String Read GetOSLanguage;
 
     property OnTranslate : TGVOnTranslateEvent Read FOnTranslate Write FOnTranslate;
   end;
@@ -88,6 +98,41 @@ resourcestring
   RS_FallBackLanguage = 'auto';
 
 { TGVTranslate }
+function TGVTranslate.GetOSLanguage: string;
+{platform-independent method to read the language of the user interface}
+var
+  l, fbl: string;
+  {$IFDEF LCLCarbon}
+  theLocaleRef: CFLocaleRef;
+  locale: CFStringRef;
+  buffer: StringPtr;
+  bufferSize: CFIndex;
+  encoding: CFStringEncoding;
+  success: boolean;
+  {$ENDIF}
+begin
+  {$IFDEF LCLCarbon}
+  theLocaleRef := CFLocaleCopyCurrent;
+  locale := CFLocaleGetIdentifier(theLocaleRef);
+  encoding := 0;
+  bufferSize := 256;
+  buffer := new(StringPtr);
+  success := CFStringGetPascalString(locale, buffer, bufferSize, encoding);
+  if success then
+    l := string(buffer^)
+  else
+    l := '';
+  fbl := Copy(l, 1, 2);
+  dispose(buffer);
+  {$ELSE}
+  {$IFDEF LINUX}
+  fbl := Copy(GetEnvironmentVariable('LC_CTYPE'), 1, 2);
+    {$ELSE}
+  GetLanguageIDs(l, fbl);
+    {$ENDIF}
+  {$ENDIF}
+  Result := fbl;
+end;
 
 Procedure TGVTranslate.SetLanguage(Const AValue: string);
 // *** détermine la langue pour la traduction ***

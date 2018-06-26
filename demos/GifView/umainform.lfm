@@ -1,46 +1,47 @@
 object MainForm: TMainForm
   Left = 0
-  Height = 479
+  Height = 480
   Top = 0
-  Width = 550
+  Width = 600
   ActiveControl = chkCenterGIF
   AllowDropFiles = True
   Caption = 'GIF Viewer'
-  ClientHeight = 479
-  ClientWidth = 550
-  Constraints.MinHeight = 460
-  Constraints.MinWidth = 550
+  ClientHeight = 480
+  ClientWidth = 600
+  Constraints.MinHeight = 480
+  Constraints.MinWidth = 600
   Font.Height = -11
   Font.Name = 'Verdana'
   FormStyle = fsSystemStayOnTop
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnDropFiles = FormDropFiles
+  OnShow = FormShow
   Position = poScreenCenter
   Visible = False
   object Panel1: TPanel
     Left = 0
-    Height = 50
+    Height = 64
     Top = 0
-    Width = 550
+    Width = 600
     Align = alTop
-    ClientHeight = 50
-    ClientWidth = 550
+    ClientHeight = 64
+    ClientWidth = 600
     TabOrder = 0
     object Panel5: TPanel
       Left = 1
-      Height = 20
-      Top = 29
-      Width = 548
+      Height = 27
+      Top = 36
+      Width = 598
       Align = alClient
       BorderSpacing.Top = 4
       BevelOuter = bvNone
-      ClientHeight = 20
-      ClientWidth = 548
+      ClientHeight = 27
+      ClientWidth = 598
       TabOrder = 0
       object Label2: TLabel
         Left = 4
-        Height = 17
+        Height = 24
         Top = 0
         Width = 51
         Align = alLeft
@@ -52,7 +53,7 @@ object MainForm: TMainForm
       end
       object lblVersion: TLabel
         Left = 59
-        Height = 17
+        Height = 24
         Top = 0
         Width = 24
         Align = alLeft
@@ -68,7 +69,7 @@ object MainForm: TMainForm
       end
       object Label3: TLabel
         Left = 87
-        Height = 17
+        Height = 24
         Top = 0
         Width = 109
         Align = alLeft
@@ -80,7 +81,7 @@ object MainForm: TMainForm
       end
       object lblFrameCount: TLabel
         Left = 200
-        Height = 17
+        Height = 24
         Top = 0
         Width = 24
         Align = alLeft
@@ -95,8 +96,8 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object btnChooseBackgroundColor: TColorButton
-        Left = 500
-        Height = 17
+        Left = 550
+        Height = 24
         Top = 0
         Width = 44
         Align = alRight
@@ -109,8 +110,8 @@ object MainForm: TMainForm
         OnColorChanged = btnChooseBackgroundColorColorChanged
       end
       object Label4: TLabel
-        Left = 391
-        Height = 17
+        Left = 441
+        Height = 24
         Top = 0
         Width = 105
         Align = alRight
@@ -124,17 +125,17 @@ object MainForm: TMainForm
     end
     object Panel6: TPanel
       Left = 1
-      Height = 24
+      Height = 31
       Top = 1
-      Width = 548
+      Width = 598
       Align = alTop
       BevelOuter = bvNone
-      ClientHeight = 24
-      ClientWidth = 548
+      ClientHeight = 31
+      ClientWidth = 598
       TabOrder = 1
       object lblFileName: TLabel
         Left = 4
-        Height = 20
+        Height = 27
         Top = 4
         Width = 392
         Align = alLeft
@@ -152,7 +153,7 @@ object MainForm: TMainForm
       end
       object Label5: TLabel
         Left = 400
-        Height = 16
+        Height = 23
         Top = 4
         Width = 78
         Align = alLeft
@@ -170,30 +171,30 @@ object MainForm: TMainForm
         Left = 482
         Height = 21
         Top = 2
-        Width = 66
+        Width = 116
         Align = alClient
         BorderSpacing.Top = 2
         ItemHeight = 13
         ItemIndex = 0
         Items.Strings = (
-          'auto'
-          'en'
           'fr'
+          'en'
         )
         OnSelect = cbxLangSelect
+        Style = csDropDownList
         TabOrder = 0
-        Text = 'auto'
+        Text = 'fr'
       end
     end
   end
   object Panel2: TPanel
     Left = 0
     Height = 50
-    Top = 429
-    Width = 550
+    Top = 430
+    Width = 600
     Align = alBottom
     ClientHeight = 50
-    ClientWidth = 550
+    ClientWidth = 600
     TabOrder = 1
     object pnlAnimationPlayer: TPanel
       Left = 1
@@ -249,10 +250,10 @@ object MainForm: TMainForm
       Left = 248
       Height = 48
       Top = 1
-      Width = 301
+      Width = 351
       Align = alClient
       ClientHeight = 48
-      ClientWidth = 301
+      ClientWidth = 351
       TabOrder = 1
       object Label1: TLabel
         Left = 5
@@ -318,9 +319,9 @@ object MainForm: TMainForm
   end
   object pnlView: TPanel
     Left = 0
-    Height = 344
-    Top = 50
-    Width = 550
+    Height = 331
+    Top = 64
+    Width = 600
     Align = alClient
     Color = clGreen
     ParentColor = False
@@ -329,12 +330,12 @@ object MainForm: TMainForm
   object Panel4: TPanel
     Left = 0
     Height = 35
-    Top = 394
-    Width = 550
+    Top = 395
+    Width = 600
     Align = alBottom
     AutoSize = True
     ClientHeight = 35
-    ClientWidth = 550
+    ClientWidth = 600
     TabOrder = 3
     object chkCenterGIF: TCheckBox
       Left = 5
@@ -354,26 +355,25 @@ object MainForm: TMainForm
       Left = 76
       Height = 25
       Top = 5
-      Width = 131
+      Width = 65
       Align = alLeft
-      AutoSize = False
       BorderSpacing.Around = 4
-      Caption = 'Adapter dimension'
+      Caption = 'Adapter'
       OnChange = chkStretchGIFChange
       TabOrder = 1
     end
     object pnlSelectFrame: TPanel
-      Left = 314
+      Left = 363
       Height = 33
       Top = 1
-      Width = 235
+      Width = 236
       Align = alClient
       BevelOuter = bvNone
       ClientHeight = 33
-      ClientWidth = 235
+      ClientWidth = 236
       TabOrder = 2
       object chkViewRawFrame: TCheckBox
-        Left = 2
+        Left = 3
         Height = 19
         Top = 7
         Width = 161
@@ -386,7 +386,7 @@ object MainForm: TMainForm
         TabOrder = 0
       end
       object edtViewFrameIndex: TSpinEdit
-        Left = 167
+        Left = 168
         Height = 25
         Top = 4
         Width = 64
@@ -400,7 +400,7 @@ object MainForm: TMainForm
       end
     end
     object chkTansparent: TCheckBox
-      Left = 211
+      Left = 260
       Height = 25
       Top = 5
       Width = 99
@@ -412,6 +412,28 @@ object MainForm: TMainForm
       OnChange = chkTansparentChange
       State = cbChecked
       TabOrder = 3
+    end
+    object cbxStretchMode: TComboBox
+      Left = 145
+      Height = 21
+      Top = 7
+      Width = 111
+      Align = alLeft
+      BorderSpacing.Left = 2
+      BorderSpacing.Top = 6
+      BorderSpacing.Bottom = 4
+      ItemHeight = 13
+      ItemIndex = 1
+      Items.Strings = (
+        'Manuel'
+        'Automatique'
+        'Les plus grande'
+        'Les plus petite'
+      )
+      OnSelect = cbxStretchModeSelect
+      Style = csDropDownList
+      TabOrder = 4
+      Text = 'Automatique'
     end
   end
 end

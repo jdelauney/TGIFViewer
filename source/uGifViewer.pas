@@ -372,12 +372,7 @@ Type
   End;
 
   { TGIFAutoStretchMode
-    Mode de redimensionnement :
-      smManual : Manuelle via la propriété stretch
-      smAuto   : Adapte toute les images
-      smOnlyStretchBigger  : Adapte seulement les images plus grande
-      smOnlyStretchSmaller : Adapte seulement les images plus petite
-  }
+    Mode de redimensionnement automatique}
   TGIFAutoStretchMode = (smManual, smStretchAll, smOnlyStretchBigger, smOnlyStretchSmaller );
   TOnStretchChanged = procedure (Sender:TObject; IsStretched : Boolean) of object;
   { TGIFViewer }
@@ -512,7 +507,12 @@ Type
     Property Transparent: Boolean read FTransparent write SetTransparent;
     { Centrer l'affichage // Center display }
     Property Center: Boolean read FCenter write SetCenter;
-    { Mode du redimensionnement // Automatic stretch mode }
+    { Mode du redimensionnement // Automatic stretch mode
+      smManual             : Adpatation Manuelle via la propriété stretch
+      smStretchAll         : Adapte toute les images
+      smOnlyStretchBigger  : Adapte seulement les images plus grande
+      smOnlyStretchSmaller : Adapte seulement les images plus petite
+     }
     property AutoStretchMode : TGIFAutoStretchMode read FAutoStretchMode write SetAutoStretchMode;
     { Redimensionner l'affichage proportionnellement // Resize the display proportionally }
     Property Stretch: Boolean read FStretch write SetStretch;

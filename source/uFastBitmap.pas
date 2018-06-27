@@ -238,7 +238,7 @@ Type
        Mode : TFastBitmapDrawMode
         - dmSet : Copie brute de l'image
         - dmAlpha : Copie les pixel de l'image source en mixant les couleurs avec celles du bitmap en fonction de leur valeur Alpha
-        - dmAlphaCheck : Copie les pixel de l'image source seulement si le pixel n'est pas invisible. les autres pixels sont copié de la façon que le mode dmAlpha
+        - dmAlphaCheck : Copie les pixels de l'image source seulement si le pixel est visible (Alpha <> 0)
        Note : les dimensions et les positions entre le bitmap et l'image source sont automatiquement ajustées si besoin.
 
     --------------------------
@@ -247,7 +247,7 @@ Type
        Mode: TFastBitmapDrawMode
         - dmSet: Raw copy of the image
         - dmAlpha: Copy the pixels of the source image by mixing the colors with those of the bitmap according to their Alpha value
-        - dmAlphaCheck: Copies the pixels of the source image only if the pixel is not invisible. the other pixels are copied in the way that dmAlpha mode
+        - dmAlphaCheck: Copy the pixels of the source image only if the pixel is invisible (Alpha <> 0)
        Note: The dimensions and positions between the bitmap and the source image are automatically adjusted if necessary.
     }
     procedure PutImage(Src : TFastBitmap; SrcX, SrcY, SrcWidth, SrcHeight, DstX, DstY : Integer; Mode : TFastBitmapDrawMode);
@@ -975,7 +975,6 @@ Begin
         dmAlpha :
         begin
           DstPtr^ := DstCol.Blend(SrcCol);
-          //DstPtr^.Alpha := 255;
         End;
         dmAlphaCheck :
         begin
@@ -983,7 +982,6 @@ Begin
             DstPtr^ := DstCol.Blend(SrcCol)
           Else
             DstPtr^ := DstCol;
-          //DstPtr^.Alpha := 255;
         End;
       End;
       Inc(xx);

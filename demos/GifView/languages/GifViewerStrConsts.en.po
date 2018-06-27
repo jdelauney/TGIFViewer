@@ -37,7 +37,7 @@ msgid "fr"
 msgstr ""
 
 #: tmainform.cbxstretchmode.text
-msgid "Automatique"
+msgid "Toutes"
 msgstr ""
 
 #: tmainform.chkcentergif.caption
@@ -73,7 +73,7 @@ msgid "Couleur du fond : "
 msgstr ""
 
 #: tmainform.label5.caption
-msgid "Languages :"
+msgid "Language :"
 msgstr ""
 
 #: tmainform.label6.caption

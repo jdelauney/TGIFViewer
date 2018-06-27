@@ -169,7 +169,7 @@ Procedure TMainForm.cbxStretchModeSelect(Sender: TObject);
 Begin
   Case cbxStretchMode.ItemIndex of
     0 : GifViewer.AutoStretchMode := smManual;
-    1 : GifViewer.AutoStretchMode := smAuto;
+    1 : GifViewer.AutoStretchMode := smStretchAll;
     2 : GifViewer.AutoStretchMode := smOnlyStretchBigger;
     3 : GifViewer.AutoStretchMode := smOnlyStretchSmaller;
   End;
@@ -221,7 +221,7 @@ Begin
     OnLoadError := @DoOnBitmapLoadError;
     OnFrameChange := @DoOnFrameChange;
     OnStretchChanged := @DoOnStetchChanged;
-    AutoStretchMode := smAuto;
+    AutoStretchMode := smStretchAll;
   End;
   chkStretchGIF.Enabled := false;
   LangManager.Translate;

@@ -378,7 +378,7 @@ Type
       smOnlyStretchBigger  : Adapte seulement les images plus grande
       smOnlyStretchSmaller : Adapte seulement les images plus petite
   }
-  TGIFAutoStretchMode = (smManual, smAuto, smOnlyStretchBigger, smOnlyStretchSmaller );
+  TGIFAutoStretchMode = (smManual, smStretchAll, smOnlyStretchBigger, smOnlyStretchSmaller );
   TOnStretchChanged = procedure (Sender:TObject; IsStretched : Boolean) of object;
   { TGIFViewer }
   { Composant visuel pour afficher une image GIF animée }
@@ -2247,7 +2247,7 @@ Begin
   if FAutoStretchMode <> smManual then
   begin
     Case FAutoStretchMode of
-     smAuto : FStretch := True;
+     smStretchAll : FStretch := True;
      smOnlyStretchBigger : if (PicWidth > ImgWidth) or (PicHeight > ImgHeight) then FStretch := True else FStretch := False;
      smOnlyStretchSmaller : if (PicWidth < ImgWidth) or (PicHeight < ImgHeight) then FStretch := True else FStretch := False;
     end;

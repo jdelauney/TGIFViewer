@@ -135,19 +135,20 @@ object MainForm: TMainForm
       TabOrder = 1
       object lblFileName: TLabel
         Left = 4
-        Height = 27
-        Top = 4
+        Height = 29
+        Top = 2
         Width = 392
         Align = alLeft
         Alignment = taCenter
         AutoSize = False
         BorderSpacing.Left = 4
-        BorderSpacing.Top = 4
+        BorderSpacing.Top = 2
         BorderSpacing.Right = 4
         Caption = 'Glissez et déposez un fichier pour l''ouvrir'
         Font.Height = -11
         Font.Name = 'Verdana'
         Font.Style = [fsBold]
+        Layout = tlCenter
         ParentColor = False
         ParentFont = False
       end
@@ -155,11 +156,11 @@ object MainForm: TMainForm
         Left = 400
         Height = 23
         Top = 4
-        Width = 78
+        Width = 71
         Align = alLeft
         Alignment = taRightJustify
         BorderSpacing.Around = 4
-        Caption = 'Languages :'
+        Caption = 'Language :'
         Font.Height = -11
         Font.Name = 'Verdana'
         Font.Style = [fsBold]
@@ -168,10 +169,10 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object cbxLang: TComboBox
-        Left = 482
+        Left = 475
         Height = 21
         Top = 2
-        Width = 116
+        Width = 123
         Align = alClient
         BorderSpacing.Top = 2
         ItemHeight = 13
@@ -426,14 +427,14 @@ object MainForm: TMainForm
       ItemIndex = 1
       Items.Strings = (
         'Manuel'
-        'Automatique'
-        'Les plus grande'
-        'Les plus petite'
+        'Toutes'
+        'Les plus grandes'
+        'Les plus petites'
       )
       OnSelect = cbxStretchModeSelect
       Style = csDropDownList
       TabOrder = 4
-      Text = 'Automatique'
+      Text = 'Toutes'
     end
   end
 end

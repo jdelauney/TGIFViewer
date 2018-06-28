@@ -35,7 +35,7 @@ unit GVTranslate;
 interface
 
 uses
-  Classes, SysUtils, Forms
+  Classes, SysUtils, Forms, dialogs
   {$IFDEF windows}
   , Windows
   {$ELSE}
@@ -54,6 +54,8 @@ type
     fFileName: string;
     fFileDir: string;
     fLanguage: string;
+    FDefaultLanguage : String;
+
     fAutoTranslate : Boolean;
 
     FOnTranslate : TGVOnTranslateEvent;
@@ -92,7 +94,7 @@ uses
 const
   C_DefaultDir = 'languages';
   C_PoExtension = 'po';
-  C_DefaultLanguage = 'fr';
+  //C_DefaultLanguage = 'en';
 
 resourcestring
   RS_FallBackLanguage = 'auto';
@@ -142,7 +144,8 @@ begin
   if AValue = RS_FallBackLanguage then // langue de la machine ?
   begin
     LDummyLang := '';
-    GetLanguageIDs(LDummyLang,fLanguage); // on retrouve son identifiant
+    FLanguage := FDefaultLanguage;
+    //GetLanguageIDs(LDummyLang,fLanguage); // on retrouve son identifiant
   end
   else
     fLanguage := AValue; // nouvelle valeur
@@ -152,10 +155,13 @@ Constructor TGVTranslate.Create;
 // *** création ***
 begin
   inherited Create;
+  FDefaultLanguage := GetOSLanguage;
+
   if Application.ParamCount > 0 then // au moins un paramètre ?
     Language := Application.Params[1] // c'est l'identifiant de la langue
   else
-    Language := C_DefaultLanguage; // langue par défaut
+    Language := FDefaultLanguage; // langue par défaut
+
   if Application.ParamCount > 1 then // au moins deux paramètres ?
     FileDir := Application.Params[2] // c'est le répertoire des fichiers
   else
@@ -219,20 +225,21 @@ var
   LF: string;
   Folder : String;
 begin
-  if Language = C_DefaultLanguage then // l'anglais n'a pas besoin d'être traité
-    Exit;
+  if Language = FDefaultLanguage then Exit;  // La langue par défaut n'a pas besoin d'être traité
   LF := LanguageFile; // fichier de traduction
   if FileExistsUTF8(LF) then // existe-t-il ?
-    SetDefaultLang(Language, FileDir) // on traduit
+  begin
+    SetDefaultLang(Language, FileDir); // on traduit
+  End
   else
-    Language := C_DefaultLanguage; // langue par défaut si erreur
-  // accès au fichier de traduction de la LCL
-  Folder := '.' + PathDelim + FileDir + PathDelim;
-  LF := Folder + 'lclstrconsts' + '.' +
-    Language + '.' + C_PoExtension;
-  if FileExistsUTF8(LF) then // existe-t-il ?
-    Translations.TranslateUnitResourceStrings('LCLStrConsts', LF); // on traduit
-
+  begin
+    Language := FDefaultLanguage; // langue par défaut si erreur
+    // accès au fichier de traduction de la LCL
+    Folder := '.' + PathDelim + FileDir + PathDelim;
+    LF := Folder + 'lclstrconsts' + '.' + Language + '.' + C_PoExtension;
+    if FileExistsUTF8(LF) then // existe-t-il ?
+      Translations.TranslateUnitResourceStrings('LCLStrConsts', LF,Language, UpperCase(Language)); // on traduit
+  end;
   if Assigned(FOnTranslate) then FOnTranslate(Self, Folder, Language, UpperCase(Language));
 end;
 
@@ -244,7 +251,9 @@ Begin
    Folder := '.' + PathDelim + FileDir + PathDelim;
    LF := Folder + anUnitName + '.'+Language + '.' + C_PoExtension;
    if FileExistsUTF8(LF) then // existe-t-il ?
+   begin
       Translations.TranslateUnitResourceStrings(anUnitName, LF, Language, UpperCase(Language)); // on traduit
+   end;
 End;
 
 end.

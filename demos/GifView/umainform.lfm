@@ -424,17 +424,9 @@ object MainForm: TMainForm
       BorderSpacing.Top = 6
       BorderSpacing.Bottom = 4
       ItemHeight = 13
-      ItemIndex = 1
-      Items.Strings = (
-        'Manuel'
-        'Toutes'
-        'Les plus grandes'
-        'Les plus petites'
-      )
       OnSelect = cbxStretchModeSelect
       Style = csDropDownList
       TabOrder = 4
-      Text = 'Toutes'
     end
   end
 end

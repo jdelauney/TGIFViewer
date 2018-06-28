@@ -8,8 +8,9 @@ msgstr ""
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: en\n"
+"Language: en_150\n"
 "X-Generator: Poedit 2.0.8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: terrorboxform.button1.caption
 msgid "Fermer"
@@ -35,19 +36,13 @@ msgstr "Stop"
 msgid "fr"
 msgstr ""
 
-#: tmainform.cbxstretchmode.text
-msgid "Toutes"
-msgstr ""
-
 #: tmainform.chkcentergif.caption
 msgid "Centrer"
 msgstr "Center"
 
 #: tmainform.chkstretchgif.caption
-#, fuzzy
-#| msgid "Adapter dimension"
 msgid "Adapter"
-msgstr "Fit to Screen"
+msgstr "Stretch"
 
 #: tmainform.chktansparent.caption
 msgid "Transparent"
@@ -84,7 +79,7 @@ msgstr ""
 #: tmainform.lblcurrentframe.caption
 msgctxt "tmainform.lblcurrentframe.caption"
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: tmainform.lblfilename.caption
 msgid "Glissez et déposez un fichier pour l'ouvrir"
@@ -98,10 +93,27 @@ msgstr ""
 #: tmainform.lbltotalframe.caption
 msgctxt "tmainform.lbltotalframe.caption"
 msgid "0"
-msgstr ""
+msgstr "0"
 
 #: tmainform.lblversion.caption
 msgctxt "tmainform.lblversion.caption"
 msgid "----"
 msgstr ""
+
+#: umainform.rsstretchall
+msgctxt "umainform.rsstretchall"
+msgid "Toutes"
+msgstr "All"
+
+#: umainform.rsstretchmanual
+msgid "Manuel"
+msgstr "Manual"
+
+#: umainform.rsstretchonlybigger
+msgid "Les plus grandes"
+msgstr "The biggest"
+
+#: umainform.rsstretchonlysmaller
+msgid "Les plus petites"
+msgstr "The smallest"
 

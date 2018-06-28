@@ -36,10 +36,6 @@ msgstr ""
 msgid "fr"
 msgstr ""
 
-#: tmainform.cbxstretchmode.text
-msgid "Toutes"
-msgstr ""
-
 #: tmainform.chkcentergif.caption
 msgid "Centrer"
 msgstr ""
@@ -102,5 +98,22 @@ msgstr ""
 #: tmainform.lblversion.caption
 msgctxt "tmainform.lblversion.caption"
 msgid "----"
+msgstr ""
+
+#: umainform.rsstretchall
+msgctxt "umainform.rsstretchall"
+msgid "Toutes"
+msgstr ""
+
+#: umainform.rsstretchmanual
+msgid "Manuel"
+msgstr ""
+
+#: umainform.rsstretchonlybigger
+msgid "Les plus grandes"
+msgstr ""
+
+#: umainform.rsstretchonlysmaller
+msgid "Les plus petites"
 msgstr ""
 

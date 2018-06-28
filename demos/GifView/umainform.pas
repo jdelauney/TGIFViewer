@@ -84,6 +84,11 @@ Implementation
 
 Uses  FileCtrl, uErrorBoxForm;
 
+resourcestring
+  rsStretchManual = 'Manuel';
+  rsStretchAll = 'Toutes';
+  rsSTretchOnlyBigger = 'Les plus grandes';
+  rsStretchOnlySmaller = 'Les plus petites';
 
 { TMainForm }
 
@@ -135,6 +140,15 @@ end;
 
 Procedure TMainForm.FormShow(Sender: TObject);
 Begin
+  with cbxStretchMode.Items do
+  begin
+    clear;
+    Add(rsStretchManual);
+    Add(rsStretchAll);
+    Add(rsStretchOnlyBigger);
+    Add(rsStretchOnlySmaller);
+  End;
+  cbxStretchMode.ItemIndex := 1;
   if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
 end;
 

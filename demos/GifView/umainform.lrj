@@ -17,6 +17,5 @@
 {"hash":163952770,"name":"tmainform.chkcentergif.caption","sourcebytes":[67,101,110,116,114,101,114],"value":"Centrer"},
 {"hash":128481922,"name":"tmainform.chkstretchgif.caption","sourcebytes":[65,100,97,112,116,101,114],"value":"Adapter"},
 {"hash":204577363,"name":"tmainform.chkviewrawframe.caption","sourcebytes":[80,97,114,99,111,117,114,105,114,32,105,109,97,103,101,115,32,98,114,117,116,101,115],"value":"Parcourir images brutes"},
-{"hash":171115524,"name":"tmainform.chktansparent.caption","sourcebytes":[84,114,97,110,115,112,97,114,101,110,116],"value":"Transparent"},
-{"hash":95865539,"name":"tmainform.cbxstretchmode.text","sourcebytes":[84,111,117,116,101,115],"value":"Toutes"}
+{"hash":171115524,"name":"tmainform.chktansparent.caption","sourcebytes":[84,114,97,110,115,112,97,114,101,110,116],"value":"Transparent"}
 ]}

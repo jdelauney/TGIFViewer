@@ -12,108 +12,79 @@ msgstr ""
 "Language: en\n"
 "X-Generator: Poedit 2.0.8\n"
 
-#: terrorboxform.button1.caption
-msgid "Fermer"
-msgstr ""
+#: gifviewerstrconsts.rsbadscreensize
+msgid "Dimension de l'image Invalides : %dx%d"
+msgstr "Invalid image size: %dx%d"
 
-#: terrorboxform.panel1.caption
-msgid "ATTENTION ! Des erreurs se sont produites lors du chargement de l'image"
-msgstr ""
+#: gifviewerstrconsts.rsbadsignature
+msgid "Signature GIF invalide : %s"
+msgstr "GIF invalid signature: %s"
 
-#: tmainform.btnpauseanimation.caption
-msgid "Pause"
-msgstr ""
+#: gifviewerstrconsts.rsbitmapcreateerror
+msgid "Erreur lors de la création du TBitmap"
+msgstr "An Error occured while creating TBitmap"
 
-#: tmainform.btnstartanimation.caption
-msgid "Start"
-msgstr ""
+#: gifviewerstrconsts.rsbitmapscanlineoutofrange
+msgid "Scanline : Indice hors limite"
+msgstr "Scanline : Index Out of range"
 
-#: tmainform.btnstopanimation.caption
-msgid "Stop"
-msgstr ""
+#: gifviewerstrconsts.rsbufferoverflow
+msgid "Image #%d : Le décodeur s'est arrêté pour empêcher un débordement de tampon"
+msgstr "Image #%d: the decoder is stopped to prevent a buffer overflow"
 
-#: tmainform.cbxlang.text
-msgid "fr"
-msgstr ""
+#: gifviewerstrconsts.rsemptycolormap
+msgid "Erreur aucune palette de couleur disponible pour cette image !"
+msgstr "Error no palette of color available for this image!"
 
-#: tmainform.chkcentergif.caption
-msgid "Centrer"
-msgstr ""
+#: gifviewerstrconsts.rsemptyimage
+msgid "L'Image est vide"
+msgstr "The picture is empty"
 
-#: tmainform.chkstretchgif.caption
-msgid "Adapter"
-msgstr ""
+#: gifviewerstrconsts.rsfilenotfound
+msgid "Le fichier %s est introuvable !"
+msgstr "The file %s  not found !"
 
-#: tmainform.chktansparent.caption
-msgid "Transparent"
-msgstr ""
+#: gifviewerstrconsts.rsimagebadcolorsize
+msgid "Nombre de couleur dans la palette locale invalide."
+msgstr "Number of colors is invalid in local palette."
 
-#: tmainform.chkviewrawframe.caption
-msgid "Parcourir images brutes"
-msgstr ""
+#: gifviewerstrconsts.rsinvalidbuffersize
+msgid "Image #%d : La taille du tampon d'entrée et de sortie sont invalides ( Taille <= 0)"
+msgstr "Image #%d: the size of the input and output buffer are invalid (size < = 0)"
 
-#: tmainform.label1.caption
-msgid "Images : "
-msgstr ""
+#: gifviewerstrconsts.rsinvalidinputbuffersize
+msgid "Image #%d : La taille du tampon d'entrée est invalide ( Taille <= 0)"
+msgstr "Image #%d: the size of the input buffer is invalid (size < = 0)"
 
-#: tmainform.label2.caption
-msgid "Version :"
-msgstr ""
+#: gifviewerstrconsts.rsinvalidoutputbuffersize
+msgid "Image #%d : La taille du tampon de sortie est invalide ( Taille <= 0)"
+msgstr "Image #%d: the size of the output buffer is invalid (size < = 0)"
 
-#: tmainform.label3.caption
-msgid "Nombre d'images :"
-msgstr ""
+#: gifviewerstrconsts.rslzwinternalerrorinputbufferoverflow
+msgid "Dépassement du buffer d'entrée dans le décodeur GIF LZW. Signaler ce bug. C'est un bug sérieux !"
+msgstr "Exceeding the input buffer in the GIF LZW decoder. Report this bug. This is a serious bug!"
 
-#: tmainform.label4.caption
-msgid "Couleur du fond : "
-msgstr ""
+#: gifviewerstrconsts.rslzwinternalerroroutputbufferoverflow
+msgid "Dépassement du buffer de sortie dans le décodeur GIF LZW. Signaler ce bug. C'est un bug sérieux !"
+msgstr "Exceeding the output in the GIF LZW decoder buffer. Report this bug. This is a serious bug!"
 
-#: tmainform.label5.caption
-msgid "Language :"
-msgstr ""
+#: gifviewerstrconsts.rslzwinvalidinput
+msgid "Image #%d : Le décodeur a rencontré une entrée invalide (données corrompues)"
+msgstr "Image #%d: the decoder has met an entry invalid (corrupt data)"
 
-#: tmainform.label6.caption
-msgid "/ "
-msgstr ""
+#: gifviewerstrconsts.rslzwoutputbuffertoosmall
+msgid "Image #%d : Le décodeur n'a pas pu décoder toutes les données car le tampon de sortie est trop petit"
+msgstr "Image #%d: the decoder could not decode all data as the output buffer is too small"
 
-#: tmainform.lblcurrentframe.caption
-msgctxt "tmainform.lblcurrentframe.caption"
-msgid "0"
-msgstr ""
+#: gifviewerstrconsts.rsresourcenotfound
+msgid "Resource %s not found !"
+msgstr "Resource %s not found!"
 
-#: tmainform.lblfilename.caption
-msgid "Glissez et déposez un fichier pour l'ouvrir"
-msgstr ""
+#: gifviewerstrconsts.rsscreenbadcolorsize
+msgid "Nombre de couleur dans la palette globale invalide."
+msgstr "Invalid number of color in the palette overall."
 
-#: tmainform.lblframecount.caption
-msgctxt "tmainform.lblframecount.caption"
-msgid "----"
-msgstr ""
-
-#: tmainform.lbltotalframe.caption
-msgctxt "tmainform.lbltotalframe.caption"
-msgid "0"
-msgstr ""
-
-#: tmainform.lblversion.caption
-msgctxt "tmainform.lblversion.caption"
-msgid "----"
-msgstr ""
-
-#: umainform.rsstretchall
-msgctxt "umainform.rsstretchall"
-msgid "Toutes"
-msgstr ""
-
-#: umainform.rsstretchmanual
-msgid "Manuel"
-msgstr ""
-
-#: umainform.rsstretchonlybigger
-msgid "Les plus grandes"
-msgstr ""
-
-#: umainform.rsstretchonlysmaller
-msgid "Les plus petites"
-msgstr ""
+#: gifviewerstrconsts.rsunknownversion
+msgid "Version GIF inconnue"
+msgstr "Unknown GIF version"
 

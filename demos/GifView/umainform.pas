@@ -65,7 +65,7 @@ Type
   private
   protected
     GifViewer : TGIFViewer;
-    GIFLoaded : Boolean;
+    GIFLoaded, AppLoaded : Boolean;
     LangManager : TGVTranslate;
     procedure DoOnTranslate(Sender:TObject;Const Folder, Lang, FallbackLang: String);
     Procedure DoOnBitmapLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
@@ -152,6 +152,7 @@ Begin
   cbxStretchMode.ItemIndex := 1;
   Label7.Caption := Copy(Application.ExeName, 1, Pos(ApplicationName + '.exe', Application.ExeName) - 1)+LangManager.FileDir+PathDelim ; //LangManager.OSLanguage;
   if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
+  AppLoaded := , Appapptrue;
 end;
 
 Procedure TMainForm.DoOnTranslate(Sender: TObject; Const Folder, Lang, FallbackLang: String);
@@ -178,7 +179,7 @@ Begin
   LangManager.Language := cbxLang.Items[cbxLang.ItemIndex];
 
   // on redémarre
-  LangManager.Restart;
+  if AppLoaded  then LangManager.Restart;
 end;
 
 Procedure TMainForm.cbxStretchModeSelect(Sender: TObject);
@@ -223,6 +224,7 @@ end;
 
 Procedure TMainForm.FormCreate(Sender: TObject);
 Begin
+  AppLoaded := False;
   LangManager := TGVTranslate.Create;
   LangManager.OnTranslate := @DoOnTranslate;
   GifViewer := TGIFVIewer.Create(Self);

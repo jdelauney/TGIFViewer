@@ -1088,11 +1088,11 @@ Var
               Memory.Read(BufStr, BlockSize);
               BufStr[BlockSize] := #0;
               // On place le texte dans les commentaires
-              //CurrentLayer.Comment.Add(String(BufStr));
+              CurrentLayer.Comment.Add(String(BufStr));
             End;
           Until (BlockSize <= 0);
           // On ajoute une ligne vide de séparation
-          //CurrentLayer.Comment.Add('');
+          CurrentLayer.Comment.Add('');
         End;
         GIF_APPLICATIONEXTENSION:
         Begin
@@ -1667,7 +1667,7 @@ Var
           End;
           While (CurrentLine < CurrentFrameInfos.Height) Do
           Begin
-            LinePtr  := FFrames.Items[CurrentFrameIndex].Bitmap.GetScanLine(CurrentLine);
+            LinePtr  :=OutBmp.GetScanLine(CurrentLine); // FFrames.Items[CurrentFrameIndex].Bitmap
             For x    := 0 To (FFrames.Items[CurrentFrameIndex].Bitmap.Width - 1) Do
             Begin
               // Lecture de l'index de la couleur dans la palette

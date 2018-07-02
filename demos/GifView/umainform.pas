@@ -150,7 +150,7 @@ Begin
     Add(rsStretchOnlySmaller);
   End;
   cbxStretchMode.ItemIndex := 1;
-  Label7.Caption := LangManager.OSLanguage;
+  Label7.Caption := Copy(Application.ExeName, 1, Pos(ApplicationName + '.exe', Application.ExeName) - 1)+LangManager.FileDir+PathDelim ; //LangManager.OSLanguage;
   if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
 end;
 

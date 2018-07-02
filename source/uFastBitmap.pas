@@ -262,6 +262,7 @@ Type
     { Inverse les composante de couleur Rouge et Bleu du bitmap  / Swap Red and Blue channel }
     procedure SwapRB;
 
+   // procedure HLine(X,Y,X2 : Integer; aColor : TColor32);
     { Information sur la couleur assignée à la transparence (seulement valable si différent de clrTransparent) / Return the transparency color }
     property TransparentColor : TColor Read FTransparentColor Write FTransparentColor;
     { Largeur du bitmap / Width }

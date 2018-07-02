@@ -189,9 +189,15 @@ end;
 
 Function TGVTranslate.GetLanguageFile: string;
 // *** construit et renvoie le chemin complet du fichier de traduction ***
+Var
+  PathToLangFiles: String;
 begin
-  Result := '.' + PathDelim + FileDir + PathDelim + FileName + '.' +
-    Language + '.' + C_POExtension;
+  {$IFDEF LCLcarbon}
+    PathToLangFiles := Copy(Application.ExeName, 1, Pos(ApplicationName + '.app', Application.ExeName) - 1) + PathDelim + FileDir + PathDelim;
+  {$ELSE}
+    PathToLangFiles :=  Copy(Application.ExeName, 1, Pos(ApplicationName + '.exe', Application.ExeName) - 1)  + FileDir + PathDelim;
+  {$ENDIF}
+  Result := PathToLangFiles  + FileName + '.' + Language + '.' + C_POExtension;
 end;
 
 Procedure TGVTranslate.SetFileDir(Const AValue: string);
@@ -226,35 +232,49 @@ Procedure TGVTranslate.Translate;
 // *** traduction ***
 var
   LF: string;
-  Folder : String;
+  PathToLangFiles: String;
 begin
-//  if Language = FDefaultLanguage then Exit;  // La langue par défaut n'a pas besoin d'être traité
+
+ // if Language = FDefaultLanguage then Exit;  // La langue par défaut n'a pas besoin d'être traité
   LF := LanguageFile; // fichier de traduction
+
+
   if FileExistsUTF8(LF) then // existe-t-il ?
   begin
+    ShowMessage('OK');
     SetDefaultLang(Language, FileDir); // on traduit
   End
   else
   begin
     Language := FDefaultLanguage; // langue par défaut si erreur
+    {$IFDEF LCLcarbon}
+      PathToLangFiles := Copy(Application.ExeName, 1, Pos(ApplicationName + '.app', Application.ExeName) - 1) + PathDelim + FileDir + PathDelim;
+    {$ELSE}
+      PathToLangFiles :=  Copy(Application.ExeName, 1, Pos(ApplicationName + '.exe', Application.ExeName) - 1)  + FileDir + PathDelim;
+    {$ENDIF}
     // accès au fichier de traduction de la LCL
-    Folder := '.' + PathDelim + FileDir + PathDelim;
-    LF := Folder + 'lclstrconsts' + '.' + Language + '.' + C_PoExtension;
+    //Folder := '.' + PathDelim + FileDir + PathDelim;
+    LF := PathToLangFiles + 'lclstrconsts' + '.' + Language + '.' + C_PoExtension;
     if FileExistsUTF8(LF) then // existe-t-il ?
       Translations.TranslateUnitResourceStrings('LCLStrConsts', LF,Language, UpperCase(Language)); // on traduit
   end;
 
-  if Assigned(FOnTranslate) then FOnTranslate(Self, Folder, Language, UpperCase(Language));
+  if Assigned(FOnTranslate) then FOnTranslate(Self, PathToLangFiles, Language, UpperCase(Language));
 end;
 
 Procedure TGVTranslate.Translate(Const anUnitName: String);
 var
   LF: string;
-   Folder : String;
-Begin
-   Folder := '.' + PathDelim + FileDir + PathDelim;
-   LF := Folder + anUnitName + '.'+Language + '.' + C_PoExtension;
-   ShowMessage(LF);
+  PathToLangFiles: String;
+begin
+  {$IFDEF LCLcarbon}
+    PathToLangFiles := Copy(Application.ExeName, 1, Pos(ApplicationName + '.app', Application.ExeName) - 1) + PathDelim + FileDir + PathDelim;
+  {$ELSE}
+    PathToLangFiles :=  Copy(Application.ExeName, 1, Pos(ApplicationName + '.exe', Application.ExeName) - 1)  + FileDir + PathDelim;
+  {$ENDIF}
+   //Folder := '.' + PathDelim + FileDir + PathDelim;
+   LF := PathToLangFiles + anUnitName + '.'+Language + '.' + C_PoExtension;
+   //ShowMessage(LF);
    if FileExistsUTF8(LF) then // existe-t-il ?
    begin
       Translations.TranslateUnitResourceStrings(anUnitName, LF, Language, UpperCase(Language)); // on traduit

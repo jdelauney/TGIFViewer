@@ -30,6 +30,7 @@ Type
     Label1: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    Label7: TLabel;
     lblCurrentFrame: TLabel;
     Label6: TLabel;
     lblFileName: TLabel;
@@ -149,6 +150,7 @@ Begin
     Add(rsStretchOnlySmaller);
   End;
   cbxStretchMode.ItemIndex := 1;
+  Label7.Caption := LangManager.OSLanguage;
   if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
 end;
 

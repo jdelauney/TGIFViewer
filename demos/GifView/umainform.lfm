@@ -18,6 +18,7 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '1.8.5.0'
   Visible = False
   object Panel1: TPanel
     Left = 0
@@ -120,6 +121,14 @@ object MainForm: TMainForm
         BorderSpacing.Bottom = 3
         Caption = 'Couleur du fond : '
         Layout = tlCenter
+        ParentColor = False
+      end
+      object Label7: TLabel
+        Left = 289
+        Height = 13
+        Top = 12
+        Width = 37
+        Caption = 'Label7'
         ParentColor = False
       end
     end

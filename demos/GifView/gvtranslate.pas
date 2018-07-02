@@ -127,10 +127,12 @@ begin
   fbl := Copy(l, 1, 2);
   dispose(buffer);
   {$ELSE}
-  {$IFDEF LINUX}
-  fbl := Copy(GetEnvironmentVariable('LC_CTYPE'), 1, 2);
+    {$IFDEF LINUX}
+    fbl := Copy(GetEnvironmentVariableUTF8('LC_CTYPE'), 1, 2);
+    if fb='' then fbl := Copy(GetEnvironmentVariableUTF8('LANG'), 1, 2);
+    if fb='' then fb:= 'en';
     {$ELSE}
-  GetLanguageIDs(l, fbl);
+        GetLanguageIDs(l, fbl);
     {$ENDIF}
   {$ENDIF}
   Result := fbl;
@@ -156,6 +158,7 @@ Constructor TGVTranslate.Create;
 begin
   inherited Create;
   FDefaultLanguage := GetOSLanguage;
+  FLanguage := FDefaultLanguage;
 
   if Application.ParamCount > 0 then // au moins un paramètre ?
     Language := Application.Params[1] // c'est l'identifiant de la langue
@@ -225,7 +228,7 @@ var
   LF: string;
   Folder : String;
 begin
-  if Language = FDefaultLanguage then Exit;  // La langue par défaut n'a pas besoin d'être traité
+//  if Language = FDefaultLanguage then Exit;  // La langue par défaut n'a pas besoin d'être traité
   LF := LanguageFile; // fichier de traduction
   if FileExistsUTF8(LF) then // existe-t-il ?
   begin
@@ -240,6 +243,7 @@ begin
     if FileExistsUTF8(LF) then // existe-t-il ?
       Translations.TranslateUnitResourceStrings('LCLStrConsts', LF,Language, UpperCase(Language)); // on traduit
   end;
+
   if Assigned(FOnTranslate) then FOnTranslate(Self, Folder, Language, UpperCase(Language));
 end;
 
@@ -250,6 +254,7 @@ var
 Begin
    Folder := '.' + PathDelim + FileDir + PathDelim;
    LF := Folder + anUnitName + '.'+Language + '.' + C_PoExtension;
+   ShowMessage(LF);
    if FileExistsUTF8(LF) then // existe-t-il ?
    begin
       Translations.TranslateUnitResourceStrings(anUnitName, LF, Language, UpperCase(Language)); // on traduit

@@ -25,7 +25,7 @@ ResourceString
   rsLZWInternalErrorInputBufferOverflow  = 'Dépassement du buffer d''entrée dans le décodeur GIF LZW. Signaler ce bug. C''est un bug sérieux !';
   rsLZWInvalidInput         = 'Image #%d : Le décodeur a rencontré une entrée invalide (données corrompues)';
   rsLZWOutputBufferTooSmall  = 'Image #%d : Le décodeur n''a pas pu décoder toutes les données car le tampon de sortie est trop petit';
-
+  rsAllFrameCorrupted        = 'Toutes les images dans le GIF sont corrompue. Fichier GIF. Affichage impossible';
   //uFastBitmap
   rsBitmapCreateError = 'Erreur lors de la création du TBitmap';
   rsBitmapScanlineOutOfRange = 'Scanline : Indice hors limite';

@@ -214,10 +214,10 @@ Var
   PathToApp : String;
 begin
   {$ifdef windows}
-    PathToApp  :=  Copy(Application.ExeName, 1, Pos(ApplicationName + '.exe', Application.ExeName) - 1);
+    PathToApp  :=  Application.Location; //Copy(Application.ExeName, 1, Pos(ApplicationName + '.exe', Application.ExeName) - 1);
   {$else}
     {$ifdef Linux}
-      PathToApp := Copy(Application.ExeName, 1, Pos(ApplicationName, Application.ExeName) - 1);
+      PathToApp := Application.Location; //Copy(Application.ExeName, 1, Pos(ApplicationName, Application.ExeName) - 1);
 
     {$endif}
     {$ifdef darwin}

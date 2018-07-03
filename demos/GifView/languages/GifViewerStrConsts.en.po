@@ -18,7 +18,7 @@ msgstr "Invalid image size: %dx%d"
 
 #: gifviewerstrconsts.rsbadsignature
 msgid "Signature GIF invalide : %s"
-msgstr "GIF invalid signature: %s"
+msgstr "GIF Header invalid signature: %s"
 
 #: gifviewerstrconsts.rsbitmapcreateerror
 msgid "Erreur lors de la création du TBitmap"

@@ -31,7 +31,6 @@ Type
     Label1: TLabel;
     Label4: TLabel;
     Label5: TLabel;
-    Label7: TLabel;
     lblCurrentFrame: TLabel;
     Label6: TLabel;
     lblFileName: TLabel;
@@ -188,7 +187,6 @@ Begin
     LangManager.RestartApplication;
   end;
 
-  if AppLoaded  then LangManager.RestartApplication;
 end;
 
 Procedure TMainForm.cbxStretchModeSelect(Sender: TObject);

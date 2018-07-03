@@ -18,7 +18,6 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.8.5.0'
   Visible = False
   object Panel1: TPanel
     Left = 0
@@ -325,19 +324,9 @@ object MainForm: TMainForm
     Top = 64
     Width = 600
     Align = alClient
-    ClientHeight = 331
-    ClientWidth = 600
     Color = clGreen
     ParentColor = False
     TabOrder = 2
-    object Label7: TLabel
-      Left = 5
-      Height = 13
-      Top = 144
-      Width = 37
-      Caption = 'Label7'
-      ParentColor = False
-    end
   end
   object Panel4: TPanel
     Left = 0

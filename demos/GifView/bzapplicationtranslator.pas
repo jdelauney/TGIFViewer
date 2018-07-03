@@ -41,7 +41,6 @@ type
     FLanguageFileDir : String;
 
     FOnTranslate : TBZOnTranslateEvent;
-    FOnNeedRestartApplication : TNotifyEvent;
 
     function GetDefaultLanguage: String;
     function GetLanguageApplicationFileName: String;

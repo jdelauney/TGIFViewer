@@ -1753,6 +1753,7 @@ Var
       begin
         outBmp.Clear(ClrTransparent);
         FFrames.Items[FCurrentLayerIndex].IsCorrupted := True;
+        FFrames.Items[FCurrentLayerIndex].Delay:= 1;
       End;
       Inc(FCurrentLayerIndex);   // Index pour la prochaine image
     End
@@ -1770,7 +1771,13 @@ Var
 
           end;*)
           dec(FCurrentLayerIndex);
+
       End;
+      if Ret<>dsOutputBufferTooSmall then
+      begin
+        FFrames.Items[FCurrentLayerIndex].IsCorrupted := True;
+        FFrames.Items[FCurrentLayerIndex].Delay:= 1;
+      end;
     End;
 
     // On libére la mémoire allouée pour nos tampons
@@ -2176,7 +2183,8 @@ Begin
     begin
       FAnimateTimer.Interval := FRenderCache.Items[FCurrentFrameIndex].Delay;
       FCurrentView.Assign(FRenderCache.Items[FCurrentFrameIndex].Bitmap);
-    End;
+    End
+    else FAnimateTimer.Interval := FRenderCache.Items[FCurrentFrameIndex].Delay;
   end
   else
   begin

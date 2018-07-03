@@ -199,6 +199,7 @@ Type
     FComment:     TStringList;
     FDelay:       Integer;
     FTransparent: Boolean;
+    FIsCorrupted : Boolean;
   Protected
   Public
     Constructor Create;
@@ -218,6 +219,8 @@ Type
     Property Comment: TStringList read FComment write FComment;
     { Retourne TRUE si l'image utilise la transparence }
     Property IsTransparent: Boolean read FTransparent write FTransparent;
+    { Indique si l'image est corrompue }
+    property IsCorrupted : Boolean read FIsCorrupted write FIsCorrupted;
   End;
 
   { TGIFImageList }
@@ -328,6 +331,7 @@ Type
   Private
     FBitmap: Graphics.TBitmap;
     FDelay:  Integer;
+    FIsCorrupted : Boolean;
   Public
     Constructor Create;
     Destructor Destroy; Override;
@@ -335,6 +339,8 @@ Type
     Property Bitmap: Graphics.TBitmap read FBitmap write FBitmap;
     { Temps d'attente en ms avec l'image suivante }
     Property Delay: Integer read FDelay write FDelay;
+    { Indique si l'image est corrompue }
+    property IsCorrupted : Boolean read FIsCorrupted write FIsCorrupted;
   End;
 
   { TGIFRenderCacheList }
@@ -395,6 +401,7 @@ Type
     FAnimateSpeed:     Integer;
     FAnimated, FPause: Boolean;
     FAutoPlay:         Boolean;
+    FDisplayInvalidFrames : Boolean;
 
     FPainting:         Boolean;
 
@@ -424,6 +431,8 @@ Type
     Procedure SetBevelInner(Const Value : TPanelBevel);
     Procedure SetBevelOuter(Const Value : TPanelBevel);
     Procedure SetBevelWidth(Const Value : TBevelWidth);
+
+    procedure ResetCurrentView;
   Protected
     Procedure DoInternalOnLoadError(Sender : TObject; Const ErrorCount : Integer; Const ErrorList : TStringList);
     Procedure DoTimerAnimate(Sender : TObject);
@@ -518,6 +527,9 @@ Type
     Property Stretch: Boolean read FStretch write SetStretch;
     { Nom du fichier à charger // Name of file to load }
     Property FileName: String read FFileName write SetFileName;
+    { Définis si les images corrompues doivent être affichées. Si le GIF contient que une seule image ce paramètre n'est pas appliqué }
+    property DisplayInvalidFrames : Boolean read FDisplayInvalidFrames write FDisplayInvalidFrames;
+
     { Evènement déclenché lorsque l'animation débute }
     { Event triggered when the animation starts }
     Property OnStart: TNotifyEvent read FOnStart write FOnStart;
@@ -754,6 +766,7 @@ Begin
   FDelay    := 0;
   FDrawMode := dmNone;
   FComment  := TStringList.Create;
+  FIsCorrupted := False;
 End;
 
 Destructor TGIFImageListItem.Destroy;
@@ -1284,7 +1297,7 @@ Var
             DecoderStatus := dsInvalidInput;
             AddError(Format(rsLZWInvalidInput,[CurrentFrameIndex]));
             //NotifyUser('Le décodeur a rencontré une entrée invalide (données corrompues)');
-            Code := ClearCode;
+            Code :=  ClearCode;
             //Break; //Ici, on continue le chargement du reste de l'image au lieu de le stopper
           End;
 
@@ -1371,8 +1384,10 @@ Var
                 // On notifie juste l'erreur à l'utilisateur
                 DecoderStatus := dsInvalidInput;
                 AddError(Format(rsLZWInvalidInput,[CurrentFrameIndex]));
-                //NotifyUser('Le décodeur a rencontré une entrée invalide (données corrompues)');
-                MaxCode       := True;
+                FreeCode :=  _LZWGIFCodeMax;
+                Prefix[FreeCode] := OldCode;
+                Suffix[FreeCode] := FirstChar;
+                //MaxCode       := True;
               End;
 
               // On augmente la taille du Code si nécessaire
@@ -1557,89 +1572,90 @@ Var
     Begin
       TargetBufferPtr := TargetBuffer;
       OutBmp.Clear(clrTransparent);
-
-      // Image non entrelacée
-      If Not (CurrentFrameInfos.Interlaced) Then
-      Begin
-        CurrentLine := 0;
-        While (CurrentLine <= CurrentFrameInfos.Height - 1) Do
+      if DecoderStatus = dsOk then
+      begin
+        // Image non entrelacée
+        If Not (CurrentFrameInfos.Interlaced) Then
         Begin
-          LinePtr  := OutBmp.GetScanLine(CurrentLine);// FFrames.Items[CurrentFrameIndex].Bitmap.GetScanLine(CurrentLine);
-          For x    := 0 To (CurrentFrameInfos.Width - 1) Do
+          CurrentLine := 0;
+          While (CurrentLine <= CurrentFrameInfos.Height - 1) Do
           Begin
-            // Lecture de l'index de la couleur dans la palette
-            ColIdx := TargetBufferPtr^;
-            // On utilise la palette de couleur locale
-            If CurrentFrameInfos.HasLocalPalette Then
+            LinePtr  := OutBmp.GetScanLine(CurrentLine);// FFrames.Items[CurrentFrameIndex].Bitmap.GetScanLine(CurrentLine);
+            For x    := 0 To (CurrentFrameInfos.Width - 1) Do
             Begin
-              If LocalPalette <> nil Then // La palette est-elle chargée ?
+              // Lecture de l'index de la couleur dans la palette
+              ColIdx := TargetBufferPtr^;
+              // On utilise la palette de couleur locale
+              If CurrentFrameInfos.HasLocalPalette Then
               Begin
-                //if (ColIdx> ColorCount-1) then ColIdx := ColorCount -1;
-                If (ColIdx < ColorCount) Then TargetColor := LocalPalette.Colors[ColIdx].Value
+                If LocalPalette <> nil Then // La palette est-elle chargée ?
+                Begin
+                  //if (ColIdx> ColorCount-1) then ColIdx := ColorCount -1;
+                  If (ColIdx < ColorCount) Then TargetColor := LocalPalette.Colors[ColIdx].Value
+                  Else
+                    TargetColor := clrTransparent;
+                End
+                Else If FGlobalPalette <> nil Then // Non, alors on utilise la palette globale si elle est présente
+                Begin
+                  //if (ColIdx> PaletteCount-1) then ColIdx := PaletteCount -1;
+                  If (ColIdx < PaletteCount) Then TargetColor := FGlobalPalette.Colors[ColIdx].Value
+                  Else
+                    TargetColor := clrTransparent;
+                End
                 Else
-                  TargetColor := clrTransparent;
+                Begin
+                  AddError(rsEmptyColorMap);
+                  Exit;
+                End;
               End
-              Else If FGlobalPalette <> nil Then // Non, alors on utilise la palette globale si elle est présente
+              Else // On utilise la palette de couleur globale
               Begin
-                //if (ColIdx> PaletteCount-1) then ColIdx := PaletteCount -1;
-                If (ColIdx < PaletteCount) Then TargetColor := FGlobalPalette.Colors[ColIdx].Value
+                If FGlobalPalette <> nil Then
+                Begin
+                  //if (ColIdx> PaletteCount-1) then ColIdx := PaletteCount -1;
+                  If (ColIdx < PaletteCount) Then TargetColor := FGlobalPalette.Colors[ColIdx].Value
+                  Else
+                    TargetColor := clrTransparent;
+                End
+                Else If LocalPalette <> nil Then
+                Begin
+                  //if (ColIdx> ColorCount-1) then ColIdx := ColorCount -1;
+                  If (ColIdx > ColorCount - 1) Then //ColIdx := ColorCount -1;
+                    TargetColor := LocalPalette.Colors[ColIdx].Value
+                  Else
+                    TargetColor := clrTransparent;
+                End
                 Else
-                  TargetColor := clrTransparent;
-              End
-              Else
-              Begin
-                AddError(rsEmptyColorMap);
-                Exit;
+                Begin
+                  AddError(rsEmptyColorMap);
+                  Exit;
+                End;
               End;
-            End
-            Else // On utilise la palette de couleur globale
-            Begin
-              If FGlobalPalette <> nil Then
-              Begin
-                //if (ColIdx> PaletteCount-1) then ColIdx := PaletteCount -1;
-                If (ColIdx < PaletteCount) Then TargetColor := FGlobalPalette.Colors[ColIdx].Value
-                Else
-                  TargetColor := clrTransparent;
-              End
-              Else If LocalPalette <> nil Then
-              Begin
-                //if (ColIdx> ColorCount-1) then ColIdx := ColorCount -1;
-                If (ColIdx > ColorCount - 1) Then //ColIdx := ColorCount -1;
-                  TargetColor := LocalPalette.Colors[ColIdx].Value
-                Else
-                  TargetColor := clrTransparent;
-              End
-              Else
-              Begin
-                AddError(rsEmptyColorMap);
-                Exit;
-              End;
-            End;
 
-            If CurrentFrameInfos.IsTransparent Then
-            Begin
-              If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
-                Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
-
-              If (Self.FTransparent) Then
+              If CurrentFrameInfos.IsTransparent Then
               Begin
-                If (ColIdx = CurrentFrameInfos.TransparentColorIndex) Then
-                begin
-                  TargetColor.Alpha := 0; // clrTransparent;
-                end;
-                If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FbackgroundColor.Alpha := 0; //clrTransparent;
+                If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
+                  Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
+
+                If (Self.FTransparent) Then
+                Begin
+                  If (ColIdx = CurrentFrameInfos.TransparentColorIndex) Then
+                  begin
+                    TargetColor.Alpha := 0; // clrTransparent;
+                  end;
+                  If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FbackgroundColor.Alpha := 0; //clrTransparent;
+                End;
               End;
+              LinePtr^ := TargetColor;
+              // On avance de 1 élément dans nos "pointer"
+              Inc(TargetBufferPtr);
+              Inc(LinePtr);
             End;
-            LinePtr^ := TargetColor;
-            // On avance de 1 élément dans nos "pointer"
-            Inc(TargetBufferPtr);
-            Inc(LinePtr);
+            Inc(CurrentLine);
           End;
-          Inc(CurrentLine);
-        End;
-      End
-      Else // Image entrelacée
-      Begin
+        End
+        Else // Image entrelacée
+        Begin
         CurrentLine := 0;
         For pass    := 0 To 3 Do
         Begin
@@ -1731,6 +1747,12 @@ Var
             Inc(CurrentLine, Increment);
           End;
         End;
+      End;
+      end
+      else
+      begin
+        outBmp.Clear(ClrTransparent);
+        FFrames.Items[FCurrentLayerIndex].IsCorrupted := True;
       End;
       Inc(FCurrentLayerIndex);   // Index pour la prochaine image
     End
@@ -1949,7 +1971,7 @@ End;
 
 {%region=====[ TGIFViewer ]=====================================================}
 
-Constructor TGIFViewer.Create(AOwner: TComponent);
+constructor TGIFViewer.Create(AOwner: TComponent);
 Begin
   Inherited Create(AOwner);
   ControlStyle := [csCaptureMouse, csClickEvents, csDoubleClicks];
@@ -1974,7 +1996,7 @@ Begin
   FBevelOuter    := bvNone;
   FBevelWidth    := 1;
   FColor         := clNone;
-
+  FDisplayInvalidFrames := False;
   FAnimateTimer := TTimer.Create(nil);
   With FAnimateTimer Do
   Begin
@@ -1989,7 +2011,7 @@ Begin
   FAutoStretchMode := smManual;
 End;
 
-Destructor TGIFViewer.Destroy;
+destructor TGIFViewer.Destroy;
 Begin
   FAnimateTimer.Enabled := False;
 
@@ -2004,43 +2026,43 @@ Begin
   Inherited Destroy;
 End;
 
-Procedure TGIFViewer.SetCenter(Const Value: Boolean);
+procedure TGIFViewer.SetCenter(const Value: Boolean);
 Begin
   If Value = FCenter Then exit;
   FCenter := Value;
   Invalidate;
 End;
 
-Function TGIFViewer.GetCanvas: TCanvas;
+function TGIFViewer.GetCanvas: TCanvas;
 Begin
   Result := Inherited Canvas;// FCurrentView.Canvas
 End;
 
-Function TGIFViewer.GetFrameCount: Integer;
+function TGIFViewer.GetFrameCount: Integer;
 Begin
   Result := FRenderCache.Count;//FGifLoader.FrameCount;
 End;
 
-Function TGIFViewer.GetGIFVersion: String;
+function TGIFViewer.GetGIFVersion: String;
 Begin
   Result := FGIFLoader.Version;
 End;
 
-Procedure TGIFViewer.SetAutoStretchMode(AValue: TGIFAutoStretchMode);
+procedure TGIFViewer.SetAutoStretchMode(AValue: TGIFAutoStretchMode);
 Begin
   If FAutoStretchMode = AValue Then Exit;
   FAutoStretchMode := AValue;
   Invalidate;
 End;
 
-Procedure TGIFViewer.SetStretch(Const Value: Boolean);
+procedure TGIFViewer.SetStretch(const Value: Boolean);
 Begin
   If Value = FStretch Then exit;
   FStretch := Value;
   Invalidate;
 End;
 
-Procedure TGIFViewer.SetPause(Const Value: Boolean);
+procedure TGIFViewer.SetPause(const Value: Boolean);
 Begin
   If Value = FPause Then exit;
   FPause := Value;
@@ -2048,20 +2070,20 @@ Begin
   If Assigned(FOnPause) Then FOnPause(Self);
 End;
 
-Procedure TGIFViewer.SetFileName(Const Value: String);
+procedure TGIFViewer.SetFileName(const Value: String);
 Begin
   If Value = FFileName Then exit;
   FFileName := Value;
   LoadFromFile(FFileName);
 End;
 
-Function TGIFViewer.GetFrame(Const Index: Integer): Graphics.TBitmap;
+function TGIFViewer.GetFrame(const Index: Integer): Graphics.TBitmap;
 Begin
   Result := nil;
   If (Index > 0) And (Index < FrameCount) Then Result := FRenderCache.Items[Index].Bitmap;
 End;
 
-Procedure TGIFViewer.SetTransparent(Const Value: Boolean);
+procedure TGIFViewer.SetTransparent(const Value: Boolean);
 Begin
   If FTransparent = Value Then exit;
   FTransparent := Value;
@@ -2069,7 +2091,7 @@ Begin
   If FFileName <> '' Then LoadFromFile(FFileName);
 End;
 
-Procedure TGIFViewer.SetBevelWidth(Const Value: TBevelWidth);
+procedure TGIFViewer.SetBevelWidth(const Value: TBevelWidth);
 Begin
   If FBevelWidth <> Value Then
   Begin
@@ -2078,7 +2100,48 @@ Begin
   End;
 End;
 
-Procedure TGIFViewer.SetBevelInner(Const Value: TPanelBevel);
+procedure TGIFViewer.ResetCurrentView;
+Var
+  I: Integer;
+  Corrupted : Boolean;
+begin
+  if FRenderCache.Count>1 then
+  begin
+    if not(FDisplayInvalidFrames) then
+    begin
+      Corrupted := false;
+      i := 0;
+      Repeat
+        Corrupted := FRenderCache.Items[i].IsCorrupted;
+        inc(i);
+      until (i>FRenderCache.Count-1) or (Corrupted = false);
+      if (i>FRenderCache.Count-1) and (Corrupted = true) then
+      begin
+        Raise Exception.Create(rsAllFrameCorrupted);
+        exit;
+      end
+      else
+      begin
+        Dec(i);
+        FCurrentframeIndex     := i;
+        FAnimateTimer.Interval := FRenderCache.Items[i].Delay;
+        FCurrentView.Assign(FRenderCache.Items[i].Bitmap);
+      end;
+    end
+    else
+    begin
+      FAnimateTimer.Interval := FRenderCache.Items[0].Delay;
+      FCurrentView.Assign(FRenderCache.Items[0].Bitmap);
+    end;
+  end
+  else
+  begin
+    FAnimateTimer.Interval := FRenderCache.Items[0].Delay;
+    FCurrentView.Assign(FRenderCache.Items[0].Bitmap);
+  end;
+End;
+
+procedure TGIFViewer.SetBevelInner(const Value: TPanelBevel);
 Begin
   If BevelInner <> Value Then
   Begin
@@ -2087,7 +2150,7 @@ Begin
   End;
 End;
 
-Procedure TGIFViewer.SetBevelOuter(Const Value: TPanelBevel);
+procedure TGIFViewer.SetBevelOuter(const Value: TPanelBevel);
 Begin
   If BevelOuter <> Value Then
   Begin
@@ -2096,34 +2159,48 @@ Begin
   End;
 End;
 
-Procedure TGIFViewer.DoInternalOnLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
+procedure TGIFViewer.DoInternalOnLoadError(Sender: TObject;
+  const ErrorCount: Integer; const ErrorList: TStringList);
 Begin
   If Assigned(FOnLoadError) Then FOnloadError(Self, ErrorCount, ErrorList);
 End;
 
-Procedure TGIFViewer.DoTimerAnimate(Sender: TObject);
+procedure TGIFViewer.DoTimerAnimate(Sender: TObject);
 Begin
   Inc(FCurrentFrameIndex);
   If FCurrentFrameIndex > (FRenderCache.Count - 1) Then FCurrentFrameIndex := 0;
   If Assigned(FOnFrameChange) Then FOnFrameChange(Self);
-  FAnimateTimer.Interval := FRenderCache.Items[FCurrentFrameIndex].Delay;
-  FCurrentView.Assign(FRenderCache.Items[FCurrentFrameIndex].Bitmap);
+  if not(FDisplayInvalidFrames) then
+  begin
+    if not(FRenderCache.Items[FCurrentFrameIndex].IsCorrupted) then
+    begin
+      FAnimateTimer.Interval := FRenderCache.Items[FCurrentFrameIndex].Delay;
+      FCurrentView.Assign(FRenderCache.Items[FCurrentFrameIndex].Bitmap);
+    End;
+  end
+  else
+  begin
+    FAnimateTimer.Interval := FRenderCache.Items[FCurrentFrameIndex].Delay;
+    FCurrentView.Assign(FRenderCache.Items[FCurrentFrameIndex].Bitmap);
+  end;
   Invalidate;
 End;
 
-Procedure TGIFViewer.RenderFrame(Index: Integer);
+procedure TGIFViewer.RenderFrame(Index: Integer);
 Var
   Src:         TFastBitmap;
   pTop, pLeft: Integer;
   iDrawMode:   TFastBitmapDrawMode;
   TmpBmp : Graphics.TBitmap;
 Begin
+
   Src   := FGIFLoader.Frames.Items[Index].Bitmap;
   pLeft := FGIFLoader.Frames.Items[Index].Left;
   pTop  := FGIFLoader.Frames.Items[Index].Top;
 
   FRenderCache.AddNewCache;
   FRenderCache.Items[Index].Delay  := FGIFLoader.Frames[Index].Delay;
+  FRenderCache.Items[Index].IsCorrupted  := FGIFLoader.Frames[Index].IsCorrupted;
 
   If Index = 0 Then
   Begin
@@ -2183,7 +2260,7 @@ Begin
   If FGIFLoader.FFrames[Index].Delay <> 0 Then FAnimateTimer.Interval := FGIFLoader.FFrames[Index].Delay * FAnimateSpeed;
 End;
 
-Procedure TGIFViewer.ComputeCache;
+procedure TGIFViewer.ComputeCache;
 Var
   I: Integer;
 Begin
@@ -2195,12 +2272,12 @@ Begin
     Begin
       RenderFrame(I);
     End;
-    FAnimateTimer.Interval := FRenderCache.Items[0].Delay;
-    FCurrentView.Assign(FRenderCache.Items[0].Bitmap);
-  End;
+  end;
+  ResetCurrentView;
 End;
 
-Procedure TGIFViewer.CalculatePreferredSize(Var PreferredWidth, PreferredHeight: Integer; WithThemeSpace: Boolean);
+procedure TGIFViewer.CalculatePreferredSize(var PreferredWidth,
+  PreferredHeight: Integer; WithThemeSpace: Boolean);
 Var
   extraWidth: Integer;
 Begin
@@ -2210,13 +2287,13 @@ Begin
   PreferredHeight := FGIFHeight + extraWidth + 2;
 End;
 
-Class Function TGIFViewer.GetControlClassDefaultSize: TSize;
+class function TGIFViewer.GetControlClassDefaultSize: TSize;
 Begin
   Result.CX := 90; // = ClientWidth
   Result.CY := 90; // = ClientHeight
 End;
 
-Function TGIFViewer.DestRect: TRect;
+function TGIFViewer.DestRect: TRect;
 Var
   PicWidth, PicHeight: Integer;
   ImgWidth, ImgHeight: Integer;
@@ -2249,7 +2326,7 @@ Begin
     Case FAutoStretchMode of
      smStretchAll : FStretch := True;
      smOnlyStretchBigger : if (PicWidth > ImgWidth) or (PicHeight > ImgHeight) then FStretch := True else FStretch := False;
-     smOnlyStretchSmaller : if (PicWidth < ImgWidth) or (PicHeight < ImgHeight) then FStretch := True else FStretch := False;
+     smOnlyStretchSmaller : if (PicWidth < ImgWidth) and (PicHeight < ImgHeight) then FStretch := True else FStretch := False;
     end;
     if Assigned(FOnStretchChanged) then FOnStretchChanged(Self,FStretch);
   End;
@@ -2284,7 +2361,7 @@ Begin
   End;
 End;
 
-Procedure TGIFViewer.Paint;
+procedure TGIFViewer.Paint;
 
   Procedure DrawFrame;
   Begin
@@ -2356,19 +2433,19 @@ Begin
   Inherited Paint;
 End;
 
-Procedure TGIFViewer.Loaded;
+procedure TGIFViewer.Loaded;
 begin
   if FFileName<>'' then LoadFromFile(FFileName);
   inherited Loaded;
 end;
 
-Procedure TGIFViewer.Invalidate;
+procedure TGIFViewer.Invalidate;
 Begin
   If FPainting Then exit;
   Inherited Invalidate;
 End;
 
-Procedure TGIFViewer.LoadFromFile(Const aFileName: String);
+procedure TGIFViewer.LoadFromFile(const aFileName: String);
 Begin
   FAnimateTimer.Enabled := False;
   FPause     := False;
@@ -2394,7 +2471,7 @@ Begin
   If FAutoPlay Then Start;
 End;
 
-Procedure TGIFViewer.LoadFromResource(Const ResName: String);
+procedure TGIFViewer.LoadFromResource(const ResName: String);
 Var
   Resource: TLResource;
 Begin
@@ -2421,7 +2498,7 @@ Begin
   End;
 End;
 
-Procedure TGIFViewer.Start;
+procedure TGIFViewer.Start;
 Begin
   If Not (FPause) Then FCurrentFrameIndex := 0;
   FPause    := False;
@@ -2430,37 +2507,51 @@ Begin
   If Assigned(FOnStart) Then FOnStart(Self);
 End;
 
-Procedure TGIFViewer.Stop;
+procedure TGIFViewer.Stop;
 Begin
   FAnimateTimer.Enabled := False;
   FAnimated := False;
   FPause    := False;
   If Assigned(FOnStop) Then FOnStop(Self);
   FCurrentframeIndex     := 0;
-  FAnimateTimer.Interval := FRenderCache.Items[0].Delay;
-  FCurrentView.Assign(FRenderCache.Items[0].Bitmap);
+  ResetCurrentView;
   Invalidate;
 End;
 
-Procedure TGIFViewer.Pause;
+procedure TGIFViewer.Pause;
 Begin
   FAnimateTimer.Enabled := False;
   FPause := True;
 End;
 
-Function TGIFViewer.GetRawFrame(Index: Integer): TBitmap;
+function TGIFViewer.GetRawFrame(Index: Integer): TBitmap;
 Begin
   Result := FGIFLoader.Frames[Index].Bitmap.GetBitmap;
 End;
 
-Procedure TGIFViewer.DisplayFrame(Index: Integer);
+procedure TGIFViewer.DisplayFrame(Index: Integer);
 Begin
   If not(FRenderCache.IsIndexOk(Index)) then exit;
-  FCurrentView.Assign(FRenderCache.Items[Index].Bitmap);
+  if Not(DisplayInvalidFrames) then
+  begin
+    if FRenderCache.Items[Index].IsCorrupted then
+    begin
+      inc(Index);
+      DisplayFrame(Index);
+    End
+    else
+    begin
+      FCurrentView.Assign(FRenderCache.Items[Index].Bitmap);
+    End;
+  end
+  else
+  begin
+    FCurrentView.Assign(FRenderCache.Items[Index].Bitmap);
+  End;
   Invalidate;
 End;
 
-Procedure TGIFViewer.DisplayRawFrame(Index: Integer);
+procedure TGIFViewer.DisplayRawFrame(Index: Integer);
 Var
   Tmp: Graphics.TBitmap;
 Begin
@@ -2471,13 +2562,13 @@ Begin
   Invalidate;
 End;
 
-procedure TGIFViewer.ExtractFrame(Index: Integer; Var bmp:TBitmap);
+procedure TGIFViewer.ExtractFrame(Index: Integer; var bmp: TBitmap);
 Begin
   If not(FRenderCache.IsIndexOk(Index)) then exit;
   Bmp.Assign(FRenderCache.Items[Index].Bitmap);
 End;
 
-procedure TGIFViewer.ExtractRawFrame(Index: Integer; Var bmp:TBitmap);
+procedure TGIFViewer.ExtractRawFrame(Index: Integer; var bmp: TBitmap);
 Var
   Tmp: Graphics.TBitmap;
 Begin

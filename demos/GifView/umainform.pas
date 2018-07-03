@@ -153,6 +153,7 @@ Begin
   End;
   cbxStretchMode.ItemIndex := 1;
   //Label7.Caption := Copy(Application.ExeName, 1, Pos(ApplicationName + '.app', Application.ExeName) - 1)+LangManager.LanguageFileDir+PathDelim ; //LangManager.OSLanguage;
+
   if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
   AppLoaded := true;
 

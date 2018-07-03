@@ -87,3 +87,7 @@ msgstr "Invalid number of color in the palette overall."
 #: gifviewerstrconsts.rsunknownversion
 msgid "Version GIF inconnue"
 msgstr "Unknown GIF version"
+
+#: gifviewerstrconsts.rrsallframecorrupted
+msgid "Toutes les images dans le GIF sont corrompue. Fichier GIF. Affichage impossible"
+msgstr "All frame in the GIF are corrupted. Display impossible" 

@@ -224,7 +224,7 @@ begin
       PathToApp := Copy(Application.ExeName, 1, Pos(ApplicationName + '.app', Application.ExeName) - 1);
     {$endif}
   {$endif}
-  Result := PathToApp;
+  Result := Application.Location;//PathToApp;
 end;
 
 constructor TBZApplicationTranslator.Create;
@@ -293,7 +293,6 @@ begin
 
   if FileExistsUTF8(LF) then // existe-t-il ?
   begin
-        ShowMessage(LF);
     Translations.TranslateUnitResourceStrings(anUnitName,LF);// Language, UpperCase(Language)); // on traduit
   end;
 end;

@@ -67,7 +67,11 @@ Type
   protected
     GifViewer : TGIFViewer;
     GIFLoaded, AppLoaded : Boolean;
+<<<<<<< HEAD
     LangManager : TBZApplicationTranslator; //TGVTranslate;
+=======
+    LangManager : TGVTranslate;
+>>>>>>> 3bbd1704a0493d7ae63a48e2d8d26b2a16597550
     procedure DoOnTranslate(Sender:TObject;Const Folder, Lang, FallbackLang: String);
     Procedure DoOnBitmapLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
     Procedure DoOnFrameChange(Sender: TObject);
@@ -153,7 +157,11 @@ Begin
   cbxStretchMode.ItemIndex := 1;
   //Label7.Caption := Copy(Application.ExeName, 1, Pos(ApplicationName + '.app', Application.ExeName) - 1)+LangManager.LanguageFileDir+PathDelim ; //LangManager.OSLanguage;
   if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
+<<<<<<< HEAD
   AppLoaded := true;
+=======
+  AppLoaded := , Appapptrue;
+>>>>>>> 3bbd1704a0493d7ae63a48e2d8d26b2a16597550
 end;
 
 Procedure TMainForm.DoOnTranslate(Sender: TObject; Const Folder, Lang, FallbackLang: String);
@@ -178,11 +186,15 @@ end;
 Procedure TMainForm.cbxLangSelect(Sender: TObject);
 Begin
   // on redémarre
+<<<<<<< HEAD
   if AppLoaded then
   begin
     LangManager.Language := cbxLang.Items[cbxLang.ItemIndex];
     LangManager.RestartApplication;
   end;
+=======
+  if AppLoaded  then LangManager.Restart;
+>>>>>>> 3bbd1704a0493d7ae63a48e2d8d26b2a16597550
 end;
 
 Procedure TMainForm.cbxStretchModeSelect(Sender: TObject);
@@ -228,7 +240,11 @@ end;
 Procedure TMainForm.FormCreate(Sender: TObject);
 Begin
   AppLoaded := False;
+<<<<<<< HEAD
   LangManager := TBZApplicationTranslator.Create;// TGVTranslate.Create;
+=======
+  LangManager := TGVTranslate.Create;
+>>>>>>> 3bbd1704a0493d7ae63a48e2d8d26b2a16597550
   LangManager.OnTranslate := @DoOnTranslate;
   GifViewer := TGIFVIewer.Create(Self);
   With GifViewer do

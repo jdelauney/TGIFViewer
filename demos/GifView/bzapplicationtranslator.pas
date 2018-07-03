@@ -26,10 +26,17 @@ uses
     {$ENDIF}
   {$ENDIF};
 
+const
+  cDefaultLanguageDir  = 'languages';
+  cPoExtension         = 'po';
+  cDefaultAutoLanguage = 'auto';
+  cDefaultLanguage     = 'fr';  // A modifié en fonction de la langue par defaut de votre application
+
 type
 
-  { TBZApplicationTranslator }
+
   TBZOnTranslateEvent = procedure(Sender : TObject; Const Folder, Lang, FallbackLang: String ) of Object;
+  { TBZApplicationTranslator : Classe d'aide pour la traduction de l'IHM d'une application }
   TBZApplicationTranslator = Class
   strict private
     FLanguageApplicationFileName : String;
@@ -57,20 +64,32 @@ type
   public
     constructor Create;
 
+    { Vérification des paramètres de la ligne de commande de l'application }
     procedure Run;
+    { Traduit  IHM de l'application }
     procedure Translate; overload;
+    { Traduit un fichier de resourcestrings }
     procedure Translate(anUnitName:String); overload;
+    { Redémarre l'application }
     procedure RestartApplication;
 
+    { Retourne la langue utilisé par le système }
     property SystemLanguage : String Read GetSystemLanguage;
+    { Retourne le chemin absolu de l'application }
     property ApplicationPath: String Read GetApplicationPath;
   published
+    { Langue utilisée }
     property Language : String read FLanguage write SetLanguage;
+    { Dossier relatif des fichiers de traduction }
     property LanguageFileDir : String read FLanguageFileDir write SetLanguageFileDir;
+    { Nom du fichier de traduction pour l'application }
     property LanguageFileName : String read GetLanguageApplicationFileName write SetLanguageApplicationFileName;
+    { Language par défaut à utilisé. Si "auto" alors utilisation du language utilisé par le système.
+      Si vide utilisation de la langue définie par la constante "cDefaultLanguage" }
     property DefaultLanguage : String read GetDefaultLanguage write SetDefaultLanguage;
+    { Definis si on doit forcer l'utilisation de la langue du systeme }
     property UseSystemLanguage : Boolean read FUseSystemLanguage write SetUseSystemLanguage;
-
+    { Evenement déclencher lors de la traduction globale de l'application (procedure Translate();) }
     property OnTranslate : TBZOnTranslateEvent Read FOnTranslate Write FOnTranslate;
 
   end;
@@ -86,11 +105,6 @@ uses
   LResources,
   Translations;
 
-const
-  cDefaultLanguageDir  = 'languages';
-  cPoExtension         = 'po';
-  cDefaultAutoLanguage = 'auto';
-  cDefaultLanguage     = 'fr';  // A modifié en fonction de la langue par defaut de votre application
 
 {%region=====[ TBZApplicationTranslator ]=======================================}
 
@@ -140,8 +154,8 @@ begin
   {$ELSE}
     {$IFDEF LINUX}
     fbl := Copy(GetEnvironmentVariableUTF8('LC_CTYPE'), 1, 2);
-    if fb='' then fbl := Copy(GetEnvironmentVariableUTF8('LANG'), 1, 2);
-    if fb='' then fb:= cDefaultLanguage;
+    if fbl='' then fbl := Copy(GetEnvironmentVariableUTF8('LANG'), 1, 2);
+    if fbl='' then fbl:= cDefaultLanguage;
     {$ELSE}
         GetLanguageIDs(l, fbl);
     {$ENDIF}

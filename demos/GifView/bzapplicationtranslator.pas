@@ -194,7 +194,7 @@ Var
   PathToApp : String;
 begin
   {$ifdef windows}
-    PathToApp := PathToLangFiles :=  Copy(Application.ExeName, 1, Pos(ApplicationName + '.exe', Application.ExeName) - 1);
+    PathToApp  :=  Copy(Application.ExeName, 1, Pos(ApplicationName + '.exe', Application.ExeName) - 1);
   {$else}
     {$ifdef Linux}
       PathToApp := Copy(Application.ExeName, 1, Pos(ApplicationName, Application.ExeName) - 1);

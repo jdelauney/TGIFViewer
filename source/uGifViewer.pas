@@ -1572,186 +1572,184 @@ Var
     Begin
       TargetBufferPtr := TargetBuffer;
       OutBmp.Clear(clrTransparent);
-      if DecoderStatus = dsOk then
-      begin
-        // Image non entrelacée
-        If Not (CurrentFrameInfos.Interlaced) Then
-        Begin
-          CurrentLine := 0;
-          While (CurrentLine <= CurrentFrameInfos.Height - 1) Do
-          Begin
-            LinePtr  := OutBmp.GetScanLine(CurrentLine);// FFrames.Items[CurrentFrameIndex].Bitmap.GetScanLine(CurrentLine);
-            For x    := 0 To (CurrentFrameInfos.Width - 1) Do
-            Begin
-              // Lecture de l'index de la couleur dans la palette
-              ColIdx := TargetBufferPtr^;
-              // On utilise la palette de couleur locale
-              If CurrentFrameInfos.HasLocalPalette Then
-              Begin
-                If LocalPalette <> nil Then // La palette est-elle chargée ?
-                Begin
-                  //if (ColIdx> ColorCount-1) then ColIdx := ColorCount -1;
-                  If (ColIdx < ColorCount) Then TargetColor := LocalPalette.Colors[ColIdx].Value
-                  Else
-                    TargetColor := clrTransparent;
-                End
-                Else If FGlobalPalette <> nil Then // Non, alors on utilise la palette globale si elle est présente
-                Begin
-                  //if (ColIdx> PaletteCount-1) then ColIdx := PaletteCount -1;
-                  If (ColIdx < PaletteCount) Then TargetColor := FGlobalPalette.Colors[ColIdx].Value
-                  Else
-                    TargetColor := clrTransparent;
-                End
-                Else
-                Begin
-                  AddError(rsEmptyColorMap);
-                  Exit;
-                End;
-              End
-              Else // On utilise la palette de couleur globale
-              Begin
-                If FGlobalPalette <> nil Then
-                Begin
-                  //if (ColIdx> PaletteCount-1) then ColIdx := PaletteCount -1;
-                  If (ColIdx < PaletteCount) Then TargetColor := FGlobalPalette.Colors[ColIdx].Value
-                  Else
-                    TargetColor := clrTransparent;
-                End
-                Else If LocalPalette <> nil Then
-                Begin
-                  //if (ColIdx> ColorCount-1) then ColIdx := ColorCount -1;
-                  If (ColIdx > ColorCount - 1) Then //ColIdx := ColorCount -1;
-                    TargetColor := LocalPalette.Colors[ColIdx].Value
-                  Else
-                    TargetColor := clrTransparent;
-                End
-                Else
-                Begin
-                  AddError(rsEmptyColorMap);
-                  Exit;
-                End;
-              End;
 
-              If CurrentFrameInfos.IsTransparent Then
-              Begin
-                If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
-                  Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
-
-                If (Self.FTransparent) Then
-                Begin
-                  If (ColIdx = CurrentFrameInfos.TransparentColorIndex) Then
-                  begin
-                    TargetColor.Alpha := 0; // clrTransparent;
-                  end;
-                  If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FbackgroundColor.Alpha := 0; //clrTransparent;
-                End;
-              End;
-              LinePtr^ := TargetColor;
-              // On avance de 1 élément dans nos "pointer"
-              Inc(TargetBufferPtr);
-              Inc(LinePtr);
-            End;
-            Inc(CurrentLine);
-          End;
-        End
-        Else // Image entrelacée
-        Begin
+      // Image non entrelacée
+      If Not (CurrentFrameInfos.Interlaced) Then
+      Begin
         CurrentLine := 0;
-        For pass    := 0 To 3 Do
+        While (CurrentLine <= CurrentFrameInfos.Height - 1) Do
         Begin
-          Case Pass Of
-            0:
-            Begin
-              CurrentLine := 0;
-              Increment   := 8;
-            End;
-            1:
-            Begin
-              CurrentLine := 4;
-              Increment   := 8;
-            End;
-            2:
-            Begin
-              CurrentLine := 2;
-              Increment   := 4;
-            End;
-            Else
-            Begin
-              CurrentLine := 1;
-              Increment   := 2;
-            End;
-          End;
-          While (CurrentLine < CurrentFrameInfos.Height) Do
+          LinePtr  := OutBmp.GetScanLine(CurrentLine);// FFrames.Items[CurrentFrameIndex].Bitmap.GetScanLine(CurrentLine);
+          For x    := 0 To (CurrentFrameInfos.Width - 1) Do
           Begin
-            LinePtr  :=OutBmp.GetScanLine(CurrentLine); // FFrames.Items[CurrentFrameIndex].Bitmap
-            For x    := 0 To (FFrames.Items[CurrentFrameIndex].Bitmap.Width - 1) Do
+            // Lecture de l'index de la couleur dans la palette
+            ColIdx := TargetBufferPtr^;
+            // On utilise la palette de couleur locale
+            If CurrentFrameInfos.HasLocalPalette Then
             Begin
-              // Lecture de l'index de la couleur dans la palette
-              ColIdx := TargetBufferPtr^;
-              // On utilise la palette de couleur locale
-              If CurrentFrameInfos.HasLocalPalette Then
+              If LocalPalette <> nil Then // La palette est-elle chargée ?
               Begin
-                If LocalPalette <> nil Then // La palette est-elle chargée ?
-                Begin
-                  If (ColIdx < ColorCount) Then // Dans le cas contraire il s'agit d'un index pour la transparence
-                    TargetColor := LocalPalette.Colors[ColIdx].Value;
-                End
-                Else If FGlobalPalette <> nil Then // Non, alors on utilise la palette globale si elle est présente
-                Begin
-                  If (ColIdx < PaletteCount) Then //if (ColIdx< PaletteCount-1) then ColIdx := PaletteCount -1;
-                    TargetColor := FGlobalPalette.Colors[ColIdx].Value;
-                End
+                //if (ColIdx> ColorCount-1) then ColIdx := ColorCount -1;
+                If (ColIdx < ColorCount) Then TargetColor := LocalPalette.Colors[ColIdx].Value
                 Else
-                Begin
-                  AddError(rsEmptyColorMap);
-                  Exit;
-                End;
+                  TargetColor := clrTransparent;
               End
-              Else // On utilise la palette de couleur globale
+              Else If FGlobalPalette <> nil Then // Non, alors on utilise la palette globale si elle est présente
               Begin
-                If FGlobalPalette <> nil Then
-                Begin
-                  If (ColIdx > PaletteCount - 1) Then ColIdx := PaletteCount - 1;
-                  TargetColor := FGlobalPalette.Colors[ColIdx].Value;
-                End
-                Else If LocalPalette <> nil Then
-                Begin
-                  If (ColIdx > ColorCount - 1) Then ColIdx := ColorCount - 1;
-                  TargetColor := LocalPalette.Colors[ColIdx].Value;
-                End
+                //if (ColIdx> PaletteCount-1) then ColIdx := PaletteCount -1;
+                If (ColIdx < PaletteCount) Then TargetColor := FGlobalPalette.Colors[ColIdx].Value
                 Else
-                Begin
-                  AddError(rsEmptyColorMap);
-                  Exit;
-                End;
-              End;
-
-              If CurrentFrameInfos.IsTransparent Then
+                  TargetColor := clrTransparent;
+              End
+              Else
               Begin
-                If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
-                  Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
-                If (FTransparent) Then
-                Begin
-                  If CurrentFrameInfos.TransparentColorIndex = colIdx Then
-                  begin
-                     TargetColor.Alpha := 0; // := clrTransparent;
-                  End;
-                  If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FBackgroundColor.Alpha := 0;
-                End;
+                AddError(rsEmptyColorMap);
+                Exit;
               End;
-
-              LinePtr^ := TargetColor;
-              Inc(TargetBufferPtr);
-              If (CurrentLine < CurrentFrameInfos.Height - 1) Then Inc(LinePtr);
+            End
+            Else // On utilise la palette de couleur globale
+            Begin
+              If FGlobalPalette <> nil Then
+              Begin
+                //if (ColIdx> PaletteCount-1) then ColIdx := PaletteCount -1;
+                If (ColIdx < PaletteCount) Then TargetColor := FGlobalPalette.Colors[ColIdx].Value
+                Else
+                  TargetColor := clrTransparent;
+              End
+              Else If LocalPalette <> nil Then
+              Begin
+                //if (ColIdx> ColorCount-1) then ColIdx := ColorCount -1;
+                If (ColIdx > ColorCount - 1) Then //ColIdx := ColorCount -1;
+                  TargetColor := LocalPalette.Colors[ColIdx].Value
+                Else
+                  TargetColor := clrTransparent;
+              End
+              Else
+              Begin
+                AddError(rsEmptyColorMap);
+                Exit;
+              End;
             End;
-            Inc(CurrentLine, Increment);
+
+            If CurrentFrameInfos.IsTransparent Then
+            Begin
+              If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
+                Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
+
+              If (Self.FTransparent) Then
+              Begin
+                If (ColIdx = CurrentFrameInfos.TransparentColorIndex) Then
+                begin
+                  TargetColor.Alpha := 0; // clrTransparent;
+                end;
+                If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FbackgroundColor.Alpha := 0; //clrTransparent;
+              End;
+            End;
+            LinePtr^ := TargetColor;
+            // On avance de 1 élément dans nos "pointer"
+            Inc(TargetBufferPtr);
+            Inc(LinePtr);
+          End;
+          Inc(CurrentLine);
+        End;
+      End
+      Else // Image entrelacée
+      Begin
+      CurrentLine := 0;
+      For pass    := 0 To 3 Do
+      Begin
+        Case Pass Of
+          0:
+          Begin
+            CurrentLine := 0;
+            Increment   := 8;
+          End;
+          1:
+          Begin
+            CurrentLine := 4;
+            Increment   := 8;
+          End;
+          2:
+          Begin
+            CurrentLine := 2;
+            Increment   := 4;
+          End;
+          Else
+          Begin
+            CurrentLine := 1;
+            Increment   := 2;
           End;
         End;
+        While (CurrentLine < CurrentFrameInfos.Height) Do
+        Begin
+          LinePtr  :=OutBmp.GetScanLine(CurrentLine); // FFrames.Items[CurrentFrameIndex].Bitmap
+          For x    := 0 To (FFrames.Items[CurrentFrameIndex].Bitmap.Width - 1) Do
+          Begin
+            // Lecture de l'index de la couleur dans la palette
+            ColIdx := TargetBufferPtr^;
+            // On utilise la palette de couleur locale
+            If CurrentFrameInfos.HasLocalPalette Then
+            Begin
+              If LocalPalette <> nil Then // La palette est-elle chargée ?
+              Begin
+                If (ColIdx < ColorCount) Then // Dans le cas contraire il s'agit d'un index pour la transparence
+                  TargetColor := LocalPalette.Colors[ColIdx].Value;
+              End
+              Else If FGlobalPalette <> nil Then // Non, alors on utilise la palette globale si elle est présente
+              Begin
+                If (ColIdx < PaletteCount) Then //if (ColIdx< PaletteCount-1) then ColIdx := PaletteCount -1;
+                  TargetColor := FGlobalPalette.Colors[ColIdx].Value;
+              End
+              Else
+              Begin
+                AddError(rsEmptyColorMap);
+                Exit;
+              End;
+            End
+            Else // On utilise la palette de couleur globale
+            Begin
+              If FGlobalPalette <> nil Then
+              Begin
+                If (ColIdx > PaletteCount - 1) Then ColIdx := PaletteCount - 1;
+                TargetColor := FGlobalPalette.Colors[ColIdx].Value;
+              End
+              Else If LocalPalette <> nil Then
+              Begin
+                If (ColIdx > ColorCount - 1) Then ColIdx := ColorCount - 1;
+                TargetColor := LocalPalette.Colors[ColIdx].Value;
+              End
+              Else
+              Begin
+                AddError(rsEmptyColorMap);
+                Exit;
+              End;
+            End;
+
+            If CurrentFrameInfos.IsTransparent Then
+            Begin
+              If FHasGlobalPalette Then If ColIdx < FGlobalPalette.Count Then OutBmp.TransparentColor := FGlobalPalette.Colors[ColIdx].Value.ToColor
+                Else If ColIdx < LocalPalette.Count Then OutBmp.TransparentColor := LocalPalette.Colors[ColIdx].Value.ToColor;
+              If (FTransparent) Then
+              Begin
+                If CurrentFrameInfos.TransparentColorIndex = colIdx Then
+                begin
+                   TargetColor.Alpha := 0; // := clrTransparent;
+                End;
+                If (CurrentFrameInfos.TransparentColorIndex = CurrentFrameInfos.BackgroundColorIndex) Then FBackgroundColor.Alpha := 0;
+              End;
+            End;
+
+            LinePtr^ := TargetColor;
+            Inc(TargetBufferPtr);
+            If (CurrentLine < CurrentFrameInfos.Height - 1) Then Inc(LinePtr);
+          End;
+          Inc(CurrentLine, Increment);
+        End;
       End;
-      end
-      else
+    End;
+      if DecoderStatus <> dsOk then
       begin
-        outBmp.Clear(ClrTransparent);
+        //outBmp.Clear(ClrTransparent);
         FFrames.Items[FCurrentLayerIndex].IsCorrupted := True;
         FFrames.Items[FCurrentLayerIndex].Delay:= 1;
       End;
@@ -1783,8 +1781,6 @@ Var
     // On libére la mémoire allouée pour nos tampons
     If (TargetBufferSize > 0) And (targetBuffer <> nil) Then FreeMem(TargetBuffer);
     If (BufferSize > 0) And (Buffer <> nil) Then FreeMem(Buffer);
-
-    //if not(ImageFound) then ImageFound := (FCurrentLayerIndex >0);
   End;
 
 Begin
@@ -2143,7 +2139,6 @@ begin
   end
   else
   begin
-    FAnimateTimer.Interval := FRenderCache.Items[0].Delay;
     FCurrentView.Assign(FRenderCache.Items[0].Bitmap);
   end;
 End;
@@ -2207,7 +2202,7 @@ Begin
   pTop  := FGIFLoader.Frames.Items[Index].Top;
 
   FRenderCache.AddNewCache;
-  FRenderCache.Items[Index].Delay  := FGIFLoader.Frames[Index].Delay;
+  FRenderCache.Items[Index].Delay  := FGIFLoader.Frames[Index].Delay * FAnimateSpeed;
   FRenderCache.Items[Index].IsCorrupted  := FGIFLoader.Frames[Index].IsCorrupted;
 
   If Index = 0 Then
@@ -2265,7 +2260,6 @@ Begin
   TmpBmp := FVirtualView.GetBitmap;
   FRenderCache.Items[Index].Bitmap.Assign(TmpBmp);
   FreeAndNil(TmpBmp);
-  If FGIFLoader.FFrames[Index].Delay <> 0 Then FAnimateTimer.Interval := FGIFLoader.FFrames[Index].Delay * FAnimateSpeed;
 End;
 
 procedure TGIFViewer.ComputeCache;

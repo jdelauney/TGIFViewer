@@ -293,7 +293,6 @@ begin
 
   if FileExistsUTF8(LF) then // existe-t-il ?
   begin
-        ShowMessage(LF);
     Translations.TranslateUnitResourceStrings(anUnitName,LF);// Language, UpperCase(Language)); // on traduit
   end;
 end;

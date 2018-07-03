@@ -2007,7 +2007,7 @@ Begin
     Interval := 1000;
     OnTimer  := @DoTimerAnimate;
   End;
-  FAnimateSpeed := 12;
+  FAnimateSpeed := 1;
   FCurrentFrameIndex := 0;
   FGIFWidth  := 90;
   FGIFHeight := 90;

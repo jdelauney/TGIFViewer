@@ -17,9 +17,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, dialogs
-  {$IFDEF windows}
-  , Windows
-  {$ELSE}
+  {$IFDEF UNIX}
   , Unix
     {$IFDEF LCLCarbon}
   , MacOSAll
@@ -43,8 +41,6 @@ type
     FLanguage : String;
     FDefaultLanguage : String;
     FUseSystemLanguage : Boolean;
-    FSystemLanguage : String;
-    FPathToApp : String;
     FLanguageFileDir : String;
 
     FOnTranslate : TBZOnTranslateEvent;
@@ -157,7 +153,7 @@ begin
     if fbl='' then fbl := Copy(GetEnvironmentVariableUTF8('LANG'), 1, 2);
     if fbl='' then fbl:= cDefaultLanguage;
     {$ELSE}
-        GetLanguageIDs(l, fbl);
+        GetLanguageIDs({%H-}l, {%H-}fbl);
     {$ENDIF}
   {$ENDIF}
   Result := fbl;
@@ -222,6 +218,7 @@ begin
   {$else}
     {$ifdef Linux}
       PathToApp := Copy(Application.ExeName, 1, Pos(ApplicationName, Application.ExeName) - 1);
+
     {$endif}
     {$ifdef darwin}
       PathToApp := Copy(Application.ExeName, 1, Pos(ApplicationName + '.app', Application.ExeName) - 1);
@@ -293,8 +290,10 @@ var
   LF : String;
 begin
   LF := GetApplicationPath + LanguageFileDir + PathDelim + anUnitName + '.'+Language + '.' + cPoExtension;
+
   if FileExistsUTF8(LF) then // existe-t-il ?
   begin
+        ShowMessage(LF);
     Translations.TranslateUnitResourceStrings(anUnitName,LF);// Language, UpperCase(Language)); // on traduit
   end;
 end;

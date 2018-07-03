@@ -1,5 +1,16 @@
 unit BZApplicationTranslator;
-
+(*==============================================================================
+ DESCRIPTION   : Classe d'aide pour traduire l'interface d'une application
+                 Helper for translate application's UI
+ DATE          : 03/07/2018
+ VERSION       : 1.0
+ AUTEUR        : J.Delauney (BeanzMaster)
+ LICENCE       : GPL / MPL
+ CREDITS       : Basé sur le composant TGVTranslate du tutoriel de Gilles Vasseur
+                 https://gilles-vasseur.developpez.com/tutoriels/lazarus-traduction/
+ COMPATIBILITE : Windows, Linux et MacOS
+================================================================================
+*)
 {$mode objfpc}{$H+}
 
 interface
@@ -62,7 +73,7 @@ type
     property UseSystemLanguage : Boolean read FUseSystemLanguage write SetUseSystemLanguage;
 
     property OnTranslate : TBZOnTranslateEvent Read FOnTranslate Write FOnTranslate;
-    //property OnNeedRestartApplication : TNotifyEvent Read FOnNeedRestartApplication write FOnNeedRestartApplication;
+
   end;
 
 implementation
@@ -80,7 +91,7 @@ const
   cDefaultLanguageDir  = 'languages';
   cPoExtension         = 'po';
   cDefaultAutoLanguage = 'auto';
-  cDefaultLanguage     = 'fr';
+  cDefaultLanguage     = 'fr';  // A modifié en fonction de la langue par defaut de votre application
 
 {%region=====[ TBZApplicationTranslator ]=======================================}
 
@@ -131,7 +142,7 @@ begin
     {$IFDEF LINUX}
     fbl := Copy(GetEnvironmentVariableUTF8('LC_CTYPE'), 1, 2);
     if fb='' then fbl := Copy(GetEnvironmentVariableUTF8('LANG'), 1, 2);
-    if fb='' then fb:= 'en';
+    if fb='' then fb:= cDefaultLanguage;
     {$ELSE}
         GetLanguageIDs(l, fbl);
     {$ENDIF}

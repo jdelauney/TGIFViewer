@@ -235,13 +235,10 @@ var
   PathToLangFiles: String;
 begin
 
- // if Language = FDefaultLanguage then Exit;  // La langue par défaut n'a pas besoin d'être traité
+  if Language = FDefaultLanguage then Exit;  // La langue par défaut n'a pas besoin d'être traité
   LF := LanguageFile; // fichier de traduction
-
-
   if FileExistsUTF8(LF) then // existe-t-il ?
   begin
-    ShowMessage('OK');
     SetDefaultLang(Language, FileDir); // on traduit
   End
   else

@@ -18,6 +18,7 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '1.8.5.0'
   Visible = False
   object Panel1: TPanel
     Left = 0
@@ -43,7 +44,7 @@ object MainForm: TMainForm
         Left = 4
         Height = 24
         Top = 0
-        Width = 51
+        Width = 49
         Align = alLeft
         BorderSpacing.Left = 4
         BorderSpacing.Bottom = 3
@@ -52,10 +53,10 @@ object MainForm: TMainForm
         ParentColor = False
       end
       object lblVersion: TLabel
-        Left = 59
+        Left = 57
         Height = 24
         Top = 0
-        Width = 24
+        Width = 21
         Align = alLeft
         BorderSpacing.Left = 4
         BorderSpacing.Bottom = 3
@@ -68,10 +69,10 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object Label3: TLabel
-        Left = 87
+        Left = 82
         Height = 24
         Top = 0
-        Width = 109
+        Width = 106
         Align = alLeft
         BorderSpacing.Left = 4
         BorderSpacing.Bottom = 3
@@ -80,10 +81,10 @@ object MainForm: TMainForm
         ParentColor = False
       end
       object lblFrameCount: TLabel
-        Left = 200
+        Left = 192
         Height = 24
         Top = 0
-        Width = 24
+        Width = 21
         Align = alLeft
         BorderSpacing.Left = 4
         BorderSpacing.Bottom = 3
@@ -110,10 +111,10 @@ object MainForm: TMainForm
         OnColorChanged = btnChooseBackgroundColorColorChanged
       end
       object Label4: TLabel
-        Left = 441
+        Left = 445
         Height = 24
         Top = 0
-        Width = 105
+        Width = 101
         Align = alRight
         BorderSpacing.Left = 4
         BorderSpacing.Right = 4
@@ -156,7 +157,7 @@ object MainForm: TMainForm
         Left = 400
         Height = 23
         Top = 4
-        Width = 71
+        Width = 68
         Align = alLeft
         Alignment = taRightJustify
         BorderSpacing.Around = 4
@@ -169,13 +170,13 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object cbxLang: TComboBox
-        Left = 475
-        Height = 21
+        Left = 472
+        Height = 15
         Top = 2
-        Width = 123
+        Width = 126
         Align = alClient
         BorderSpacing.Top = 2
-        ItemHeight = 13
+        ItemHeight = 0
         ItemIndex = 0
         Items.Strings = (
           'fr'
@@ -260,7 +261,7 @@ object MainForm: TMainForm
         Left = 5
         Height = 38
         Top = 5
-        Width = 56
+        Width = 54
         Align = alLeft
         BorderSpacing.Around = 4
         Caption = 'Images : '
@@ -268,7 +269,7 @@ object MainForm: TMainForm
         ParentColor = False
       end
       object lblCurrentFrame: TLabel
-        Left = 65
+        Left = 63
         Height = 38
         Top = 5
         Width = 36
@@ -285,10 +286,10 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object Label6: TLabel
-        Left = 105
+        Left = 103
         Height = 38
         Top = 5
-        Width = 12
+        Width = 11
         Align = alLeft
         BorderSpacing.Around = 4
         Caption = '/ '
@@ -300,7 +301,7 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object lblTotalFrame: TLabel
-        Left = 121
+        Left = 118
         Height = 38
         Top = 5
         Width = 36
@@ -320,11 +321,11 @@ object MainForm: TMainForm
   end
   object pnlView: TPanel
     Left = 0
-    Height = 331
+    Height = 332
     Top = 64
     Width = 600
     Align = alClient
-    ClientHeight = 331
+    ClientHeight = 332
     ClientWidth = 600
     Color = clGreen
     ParentColor = False
@@ -333,24 +334,24 @@ object MainForm: TMainForm
       Left = 5
       Height = 13
       Top = 144
-      Width = 37
+      Width = 36
       Caption = 'Label7'
       ParentColor = False
     end
   end
   object Panel4: TPanel
     Left = 0
-    Height = 35
-    Top = 395
+    Height = 34
+    Top = 396
     Width = 600
     Align = alBottom
     AutoSize = True
-    ClientHeight = 35
+    ClientHeight = 34
     ClientWidth = 600
     TabOrder = 3
     object chkCenterGIF: TCheckBox
       Left = 5
-      Height = 25
+      Height = 24
       Top = 5
       Width = 67
       Align = alLeft
@@ -364,9 +365,9 @@ object MainForm: TMainForm
     end
     object chkStretchGIF: TCheckBox
       Left = 76
-      Height = 25
+      Height = 24
       Top = 5
-      Width = 65
+      Width = 52
       Align = alLeft
       BorderSpacing.Around = 4
       Caption = 'Adapter'
@@ -374,18 +375,18 @@ object MainForm: TMainForm
       TabOrder = 1
     end
     object pnlSelectFrame: TPanel
-      Left = 363
-      Height = 33
+      Left = 350
+      Height = 32
       Top = 1
-      Width = 236
+      Width = 249
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 33
-      ClientWidth = 236
+      ClientHeight = 32
+      ClientWidth = 249
       TabOrder = 2
       object chkViewRawFrame: TCheckBox
-        Left = 3
-        Height = 19
+        Left = 16
+        Height = 18
         Top = 7
         Width = 161
         Align = alRight
@@ -397,8 +398,8 @@ object MainForm: TMainForm
         TabOrder = 0
       end
       object edtViewFrameIndex: TSpinEdit
-        Left = 168
-        Height = 25
+        Left = 181
+        Height = 24
         Top = 4
         Width = 64
         Align = alRight
@@ -411,8 +412,8 @@ object MainForm: TMainForm
       end
     end
     object chkTansparent: TCheckBox
-      Left = 260
-      Height = 25
+      Left = 247
+      Height = 24
       Top = 5
       Width = 99
       Align = alLeft
@@ -425,15 +426,15 @@ object MainForm: TMainForm
       TabOrder = 3
     end
     object cbxStretchMode: TComboBox
-      Left = 145
-      Height = 21
+      Left = 132
+      Height = 15
       Top = 7
       Width = 111
       Align = alLeft
       BorderSpacing.Left = 2
       BorderSpacing.Top = 6
       BorderSpacing.Bottom = 4
-      ItemHeight = 13
+      ItemHeight = 0
       OnSelect = cbxStretchModeSelect
       Style = csDropDownList
       TabOrder = 4

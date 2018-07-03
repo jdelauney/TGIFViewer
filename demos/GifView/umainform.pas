@@ -9,7 +9,8 @@ Uses
   // TGifViewer
   uGifViewer,
   // TGVTranslate Traduction de la langue / Translate language
-  gvTranslate;
+  //gvTranslate;
+  BZApplicationTranslator;
 
 Type
 
@@ -65,8 +66,8 @@ Type
   private
   protected
     GifViewer : TGIFViewer;
-    GIFLoaded : Boolean;
-    LangManager : TGVTranslate;
+    GIFLoaded, AppLoaded : Boolean;
+    LangManager : TBZApplicationTranslator; //TGVTranslate;
     procedure DoOnTranslate(Sender:TObject;Const Folder, Lang, FallbackLang: String);
     Procedure DoOnBitmapLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
     Procedure DoOnFrameChange(Sender: TObject);
@@ -150,8 +151,9 @@ Begin
     Add(rsStretchOnlySmaller);
   End;
   cbxStretchMode.ItemIndex := 1;
-  Label7.Caption := Copy(Application.ExeName, 1, Pos(ApplicationName + '.exe', Application.ExeName) - 1)+LangManager.FileDir+PathDelim ; //LangManager.OSLanguage;
+  //Label7.Caption := Copy(Application.ExeName, 1, Pos(ApplicationName + '.app', Application.ExeName) - 1)+LangManager.LanguageFileDir+PathDelim ; //LangManager.OSLanguage;
   if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
+  AppLoaded := true;
 end;
 
 Procedure TMainForm.DoOnTranslate(Sender: TObject; Const Folder, Lang, FallbackLang: String);
@@ -175,10 +177,12 @@ end;
 
 Procedure TMainForm.cbxLangSelect(Sender: TObject);
 Begin
-  LangManager.Language := cbxLang.Items[cbxLang.ItemIndex];
-
   // on redémarre
-  LangManager.Restart;
+  if AppLoaded then
+  begin
+    LangManager.Language := cbxLang.Items[cbxLang.ItemIndex];
+    LangManager.RestartApplication;
+  end;
 end;
 
 Procedure TMainForm.cbxStretchModeSelect(Sender: TObject);
@@ -223,7 +227,8 @@ end;
 
 Procedure TMainForm.FormCreate(Sender: TObject);
 Begin
-  LangManager := TGVTranslate.Create;
+  AppLoaded := False;
+  LangManager := TBZApplicationTranslator.Create;// TGVTranslate.Create;
   LangManager.OnTranslate := @DoOnTranslate;
   GifViewer := TGIFVIewer.Create(Self);
   With GifViewer do
@@ -240,7 +245,7 @@ Begin
     AutoStretchMode := smStretchAll;
   End;
   chkStretchGIF.Enabled := false;
-  LangManager.Translate;
+  LangManager.Run; //Translate;
 end;
 
 Procedure TMainForm.FormDestroy(Sender: TObject);

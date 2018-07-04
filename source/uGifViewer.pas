@@ -391,6 +391,7 @@ Type
   Private
     FAutoStretchMode: TGIFAutoStretchMode;
     FGIFLoader: TGIFImageLoader;
+    FLastDrawMode : TGIFDisposalFlag;
     FFileName:  String;
 
     FRestoreBitmap, FVirtualView: TFastBitmap;
@@ -2028,6 +2029,7 @@ Begin
   FColor         := clNone;
   FDisplayInvalidFrames := False;
   FAutoRemoveInvalidFrame := True;
+  FLastDrawMode  := dmNone;
 
   FAnimateTimer := TTimer.Create(nil);
   With FAnimateTimer Do
@@ -2170,6 +2172,7 @@ begin
   begin
     FCurrentView.Assign(FRenderCache.Items[0].Bitmap);
   end;
+  FLastDrawMode := dmNone;
 End;
 
 procedure TGIFViewer.SetBevelInner(const Value: TPanelBevel);
@@ -2261,6 +2264,12 @@ Begin
         End;
         dmKeep:
         Begin
+          if FLastDrawMode = dmErase then
+          begin
+            If (FGIFLoader.Frames.Items[Index].IsTransparent And FTransparent) Then FVirtualView.Clear(clrTransparent)
+            Else
+              FVirtualView.Clear(FGIFLoader.BackgroundColor);
+          end;
           FVirtualView.PutImage(Src, 0, 0, Src.Width, Src.Height, pLeft, pTop, iDrawMode);
           If Assigned(FRestoreBitmap) Then FreeAndNil(FRestoreBitmap);
           FRestoreBitmap := FVirtualView.Clone;
@@ -2274,12 +2283,20 @@ Begin
         End;
         dmRestore:
         Begin
-          FVirtualView.PutImage(FRestoreBitmap, 0, 0, FRestoreBitmap.Width, FRestoreBitmap.Height, 0, 0, dmSet);
+          if FLastDrawMode = dmErase then
+          begin
+            If (FGIFLoader.Frames.Items[Index].IsTransparent And FTransparent) Then FVirtualView.Clear(clrTransparent)
+            Else
+              FVirtualView.Clear(FGIFLoader.BackgroundColor);
+          End
+          else
+            If Assigned(FRestoreBitmap) Then FVirtualView.PutImage(FRestoreBitmap, 0, 0, FRestoreBitmap.Width, FRestoreBitmap.Height, 0, 0, dmSet);
           FVirtualView.PutImage(Src, 0, 0, Src.Width, Src.Height, pLeft, pTop, iDrawMode);
         End;
         Else
           FVirtualView.PutImage(Src, 0, 0, Src.Width, Src.Height, pLeft, pTop, dmSet);
       End;
+      FLastDrawMode := DrawMode;
     End;
   End;
   // Note : Sous MacOS on ne peux pas assigner FRenderCache.Items[Index].Bitmap directement avec

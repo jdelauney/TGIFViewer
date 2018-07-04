@@ -88,6 +88,7 @@ msgstr ""
 msgid "Version GIF inconnue"
 msgstr ""
 
-#: gifviewerstrconsts.rrsallframecorrupted
+#: gifviewerstrconsts.rsAllFrameCorrupted
 msgid "Toutes les images dans le GIF sont corrompue. Fichier GIF. Affichage impossible"
 msgstr ""
+

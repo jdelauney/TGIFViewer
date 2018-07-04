@@ -373,6 +373,9 @@ Type
     { Vérifie si "anIndex" ne dépasse pas la nombre d'élément dans la liste. Retroune FALSE si l'index est hors limite }
     { Check if 'anIndex' does not exceed the number of items in the list. Retrieve FALSE if the index is out of range }
     function IsIndexOk(anIndex : Integer) : Boolean;
+    { Supprime les éléments dont le drapeau "IsCorrupted" est vrai  }
+    { Remove items wich "IsCorrupted" flag is on True }
+    procedure Pack;
     { Liste des caches }
     Property Items[Index: Integer]: TGIFRenderCacheListItem read GetItems write SetItems; Default;
   End;
@@ -401,7 +404,9 @@ Type
     FAnimateSpeed:     Integer;
     FAnimated, FPause: Boolean;
     FAutoPlay:         Boolean;
+
     FDisplayInvalidFrames : Boolean;
+    FAutoRemoveInvalidFrame : Boolean;
 
     FPainting:         Boolean;
 
@@ -527,8 +532,10 @@ Type
     Property Stretch: Boolean read FStretch write SetStretch;
     { Nom du fichier à charger // Name of file to load }
     Property FileName: String read FFileName write SetFileName;
-    { Définis si les images corrompues doivent être affichées. Si le GIF contient que une seule image ce paramètre n'est pas appliqué }
+    { Définis si les images corrompues doivent être affichées. Si le GIF contient que une seule image ce paramètre n'est pas appliqué. Par defaut FALSE }
     property DisplayInvalidFrames : Boolean read FDisplayInvalidFrames write FDisplayInvalidFrames;
+    { Définis si les images corrompues doivent être effacées de la liste de l'animation automatiquement. Par defaut TRUE }
+    property AutoRemoveInvalidFrame : Boolean Read FAutoRemoveInvalidFrame write FAutoRemoveInvalidFrame;
 
     { Evènement déclenché lorsque l'animation débute }
     { Event triggered when the animation starts }
@@ -1970,6 +1977,26 @@ Begin
   If (anIndex < 0) or (anIndex > Count-1) then result := False;
 End;
 
+Procedure TGIFRenderCacheList.Pack;
+Var
+  i: Integer;
+Begin
+  if Count>1 then
+  begin
+    I := 0;
+    While I<Count do
+    begin
+      if Items[I].IsCorrupted then
+      begin
+        Remove(Items[I]);
+        break;
+      End;
+      inc(I);
+    End;
+    if I<Count then Pack;
+  End;
+End;
+
 {%endregion%}
 
 {%region=====[ TGIFViewer ]=====================================================}
@@ -2000,6 +2027,8 @@ Begin
   FBevelWidth    := 1;
   FColor         := clNone;
   FDisplayInvalidFrames := False;
+  FAutoRemoveInvalidFrame := True;
+
   FAnimateTimer := TTimer.Create(nil);
   With FAnimateTimer Do
   Begin
@@ -2275,6 +2304,7 @@ Begin
       RenderFrame(I);
     End;
   end;
+  if AutoRemoveInvalidFrame then FRenderCache.Pack;
   ResetCurrentView;
 End;
 

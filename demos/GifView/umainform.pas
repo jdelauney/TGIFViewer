@@ -28,6 +28,7 @@ Type
     cbxLang: TComboBox;
     cbxStretchMode: TComboBox;
     edtViewFrameIndex: TSpinEdit;
+    GroupBox1: TGroupBox;
     Label1: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -39,6 +40,7 @@ Type
     Label3: TLabel;
     lblVersion: TLabel;
     lblFrameCount: TLabel;
+    mmoComments: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
@@ -119,6 +121,7 @@ End;
 Procedure TMainForm.FormDropFiles(Sender: TObject; Const FileNames: Array Of String);
 var
    ImageFileName : String;
+   i: integer;
 Begin
     Try
       GIFLoaded := False;
@@ -136,6 +139,11 @@ Begin
       lblCurrentFrame.Caption := '1';
       lblTotalFrame.Caption := IntToStr(GifViewer.FrameCount);
       GIFLoaded := True;
+      mmoComments.Lines.Clear;
+      for i:=0 to GifViewer.FrameCount-1 do
+      begin
+        mmoComments.Lines.AddStrings(GifViewer.RawFrames[i].Comment);
+      End;
     Finally
       Screen.Cursor := crDefault;
     End;
@@ -152,7 +160,6 @@ Begin
     Add(rsStretchOnlySmaller);
   End;
   cbxStretchMode.ItemIndex := 1;
-  //Label7.Caption := Copy(Application.ExeName, 1, Pos(ApplicationName + '.app', Application.ExeName) - 1)+LangManager.LanguageFileDir+PathDelim ; //LangManager.OSLanguage;
 
   if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
   AppLoaded := true;

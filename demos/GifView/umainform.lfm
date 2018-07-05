@@ -18,6 +18,7 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnShow = FormShow
   Position = poScreenCenter
+  LCLVersion = '1.8.5.0'
   Visible = False
   object Panel1: TPanel
     Left = 0
@@ -170,7 +171,7 @@ object MainForm: TMainForm
       end
       object cbxLang: TComboBox
         Left = 515
-        Height = 21
+        Height = 24
         Top = 4
         Width = 119
         Align = alRight
@@ -192,7 +193,7 @@ object MainForm: TMainForm
   object Panel2: TPanel
     Left = 0
     Height = 50
-    Top = 469
+    Top = 430
     Width = 640
     Align = alBottom
     ClientHeight = 50
@@ -321,7 +322,7 @@ object MainForm: TMainForm
   end
   object pnlView: TPanel
     Left = 0
-    Height = 369
+    Height = 225
     Top = 64
     Width = 640
     Align = alClient
@@ -332,7 +333,7 @@ object MainForm: TMainForm
   object Panel4: TPanel
     Left = 0
     Height = 36
-    Top = 433
+    Top = 394
     Width = 640
     Align = alBottom
     AutoSize = True
@@ -417,7 +418,7 @@ object MainForm: TMainForm
     end
     object cbxStretchMode: TComboBox
       Left = 152
-      Height = 21
+      Height = 24
       Top = 7
       Width = 111
       Align = alLeft
@@ -428,6 +429,26 @@ object MainForm: TMainForm
       OnSelect = cbxStretchModeSelect
       Style = csDropDownList
       TabOrder = 4
+    end
+  end
+  object GroupBox1: TGroupBox
+    Left = 0
+    Height = 105
+    Top = 289
+    Width = 640
+    Align = alBottom
+    Caption = 'Commentaires '
+    ClientHeight = 84
+    ClientWidth = 636
+    TabOrder = 4
+    object mmoComments: TMemo
+      Left = 4
+      Height = 76
+      Top = 4
+      Width = 628
+      Align = alClient
+      BorderSpacing.Around = 4
+      TabOrder = 0
     end
   end
 end

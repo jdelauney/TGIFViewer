@@ -23,12 +23,12 @@ Type
     chkCenterGIF: TCheckBox;
     chkStretchGIF: TCheckBox;
     btnChooseBackgroundColor: TColorButton;
-    chkTansparent: TCheckBox;
+    chkTransparent: TCheckBox;
     chkViewRawFrame: TCheckBox;
     cbxLang: TComboBox;
     cbxStretchMode: TComboBox;
     edtViewFrameIndex: TSpinEdit;
-    GroupBox1: TGroupBox;
+    gbxComments: TGroupBox;
     Label1: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -58,7 +58,7 @@ Type
     Procedure cbxStretchModeSelect(Sender: TObject);
     Procedure chkCenterGIFClick(Sender: TObject);
     Procedure chkStretchGIFChange(Sender: TObject);
-    Procedure chkTansparentChange(Sender: TObject);
+    Procedure chkTransparentChange(Sender: TObject);
     Procedure edtViewFrameIndexChange(Sender: TObject);
     Procedure FormCreate(Sender: TObject);
     Procedure FormDestroy(Sender: TObject);
@@ -74,7 +74,7 @@ Type
     procedure DoOnTranslate(Sender:TObject;Const Folder, Lang, FallbackLang: String);
     Procedure DoOnBitmapLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
     Procedure DoOnFrameChange(Sender: TObject);
-    procedure DoOnStetchChanged(Sender: TObject;  IsStretched : Boolean);
+    procedure DoOnStretchChanged(Sender: TObject;  IsStretched : Boolean);
   public
 
 
@@ -92,11 +92,12 @@ Uses  FileCtrl, uErrorBoxForm;
 resourcestring
   rsStretchManual = 'Manuel';
   rsStretchAll = 'Toutes';
-  rsSTretchOnlyBigger = 'Les plus grandes';
+  rsStretchOnlyBigger = 'Les plus grandes';
   rsStretchOnlySmaller = 'Les plus petites';
 
 { TMainForm }
 
+{%region===[ Evènements pour TGifViewer ]=========================================================================}
 
 Procedure TMainForm.DoOnBitmapLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
 Begin
@@ -113,10 +114,84 @@ Begin
   lblCurrentFrame.Caption := IntToStr(Succ(GIFViewer.CurrentFrameIndex));
 End;
 
-Procedure TMainForm.DoOnStetchChanged(Sender: TObject; IsStretched: Boolean);
+Procedure TMainForm.DoOnStretchChanged(Sender: TObject; IsStretched: Boolean);
 Begin
   chkStretchGIF.Checked := IsStretched;
 End;
+
+{%endregion%}
+
+{%region===[ Evènements pour TBZApplicationTranslator ]===========================================================}
+
+Procedure TMainForm.DoOnTranslate(Sender: TObject; Const Folder, Lang, FallbackLang: String);
+Var
+  LastItemIndex : Integer;
+Begin
+  // Traduction de la liste
+  LastItemIndex := cbxStretchMode.ItemIndex;
+  with cbxStretchMode.Items do
+  begin
+    clear;
+    Add(rsStretchManual);
+    Add(rsStretchAll);
+    Add(rsStretchOnlyBigger);
+    Add(rsStretchOnlySmaller);
+  End;
+  cbxStretchMode.ItemIndex := LastItemIndex;
+  lblFileName.Caption := MiniMizeName(GifViewer.FileName, lblFileName.Canvas ,lblFileName.ClientWidth);
+  LangManager.Translate('GifViewerStrConsts');
+End;
+
+{%endregion%}
+
+Procedure TMainForm.FormCreate(Sender: TObject);
+Begin
+  AppLoaded := False;
+
+  LangManager := TBZApplicationTranslator.Create;// TGVTranslate.Create;
+
+  LangManager.OnTranslate := @DoOnTranslate;
+  GifViewer := TGIFVIewer.Create(Self);
+  With GifViewer do
+  Begin
+    Parent := pnlView;
+    Align := alClient;
+    Top := 10;
+    Left := 10;
+    Center := True;
+    AutoSize := true;
+    OnLoadError := @DoOnBitmapLoadError;
+    OnFrameChange := @DoOnFrameChange;
+    OnStretchChanged := @DoOnStretchChanged;
+    AutoStretchMode := smStretchOnlyBigger;
+  End;
+  chkStretchGIF.Enabled := false;
+  LangManager.Run; //Translate;
+end;
+
+Procedure TMainForm.FormDestroy(Sender: TObject);
+Begin
+  FreeAndNil(LangManager);
+  FreeAndNil(GifViewer);
+end;
+
+Procedure TMainForm.FormShow(Sender: TObject);
+Begin
+  with cbxStretchMode.Items do
+  begin
+    clear;
+    Add(rsStretchManual);
+    Add(rsStretchAll);
+    Add(rsStretchOnlyBigger);
+    Add(rsStretchOnlySmaller);
+  End;
+  cbxStretchMode.ItemIndex := 2;
+
+  if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
+  //Apploaded : pour eviter bug sur mac os seulement.
+  //OnSelect à le même comportement que OnChange si on modifie ItemIndex directement comme ci-dessus.
+  AppLoaded := true;
+end;
 
 Procedure TMainForm.FormDropFiles(Sender: TObject; Const FileNames: Array Of String);
 var
@@ -149,28 +224,6 @@ Begin
     End;
 end;
 
-Procedure TMainForm.FormShow(Sender: TObject);
-Begin
-  with cbxStretchMode.Items do
-  begin
-    clear;
-    Add(rsStretchManual);
-    Add(rsStretchAll);
-    Add(rsStretchOnlyBigger);
-    Add(rsStretchOnlySmaller);
-  End;
-  cbxStretchMode.ItemIndex := 1;
-
-  if LangManager.Language = 'fr' then cbxLang.ItemIndex := 0 else cbxLang.ItemIndex := 1;
-  AppLoaded := true;
-
-end;
-
-Procedure TMainForm.DoOnTranslate(Sender: TObject; Const Folder, Lang, FallbackLang: String);
-Begin
-  LangManager.Translate('GifViewerStrConsts');
-End;
-
 Procedure TMainForm.btnStartAnimationClick(Sender: TObject);
 Begin
   pnlSelectFrame.Enabled := False;
@@ -187,12 +240,11 @@ end;
 
 Procedure TMainForm.cbxLangSelect(Sender: TObject);
 Begin
-  // on redémarre
-
-  if AppLoaded then
+  if AppLoaded then //Apploaded : pour eviter bug sur mac os seulement. OnSelect à le même comportement que OnChange si on modifie ItemIndex directement
   begin
     LangManager.Language := cbxLang.Items[cbxLang.ItemIndex];
-    LangManager.RestartApplication;
+    LangManager.Translate;
+    // LangManager.RestartApplication; // Pas besoin de redémarrer l'application pour la prise en charge de la traduction
   end;
 
 end;
@@ -202,8 +254,8 @@ Begin
   Case cbxStretchMode.ItemIndex of
     0 : GifViewer.AutoStretchMode := smManual;
     1 : GifViewer.AutoStretchMode := smStretchAll;
-    2 : GifViewer.AutoStretchMode := smOnlyStretchBigger;
-    3 : GifViewer.AutoStretchMode := smOnlyStretchSmaller;
+    2 : GifViewer.AutoStretchMode := smStretchOnlyBigger;
+    3 : GifViewer.AutoStretchMode := smStretchOnlySmaller;
   End;
 
   chkStretchGIF.Enabled := (GifViewer.AutoStretchMode = smManual);
@@ -221,7 +273,7 @@ Begin
   GifViewer.Stretch := not(GifViewer.Stretch);
 end;
 
-Procedure TMainForm.chkTansparentChange(Sender: TObject);
+Procedure TMainForm.chkTransparentChange(Sender: TObject);
 Begin
   GifViewer.Transparent := not(GifViewer.Transparent);
 end;
@@ -235,37 +287,6 @@ Begin
     if not(chkViewRawFrame.Checked) then GIFViewer.DisplayFrame(edtViewFrameIndex.Value)
     else GIFViewer.DisplayRawFrame(edtViewFrameIndex.Value);
   End;
-end;
-
-Procedure TMainForm.FormCreate(Sender: TObject);
-Begin
-  AppLoaded := False;
-
-  LangManager := TBZApplicationTranslator.Create;// TGVTranslate.Create;
-
-  LangManager.OnTranslate := @DoOnTranslate;
-  GifViewer := TGIFVIewer.Create(Self);
-  With GifViewer do
-  Begin
-    Parent := pnlView;
-    Align := alClient;
-    Top := 10;
-    Left := 10;
-    Center := True;
-    AutoSize := true;
-    OnLoadError := @DoOnBitmapLoadError;
-    OnFrameChange := @DoOnFrameChange;
-    OnStretchChanged := @DoOnStetchChanged;
-    AutoStretchMode := smStretchAll;
-  End;
-  chkStretchGIF.Enabled := false;
-  LangManager.Run; //Translate;
-end;
-
-Procedure TMainForm.FormDestroy(Sender: TObject);
-Begin
-  FreeAndNil(LangManager);
-  FreeAndNil(GifViewer);
 end;
 
 Procedure TMainForm.btnPauseAnimationClick(Sender: TObject);

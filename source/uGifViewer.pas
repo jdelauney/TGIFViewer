@@ -4,6 +4,7 @@ Unit uGifViewer;
  DESCRIPTION   : Composant visuel pour l'affichage d'une image animée au format
                  GIF (Graphic Interchange Format)
  DATE          : 17/06/2018
+ MISE A JOUR   : 06/07/2018 01:40:16
  VERSION       : 1.0
  AUTEUR        : J.Delauney (BeanzMaster)
  CONTRIBUTEURS : Jipete, Jurassik Pork
@@ -382,7 +383,7 @@ Type
 
   { TGIFAutoStretchMode
     Mode de redimensionnement automatique}
-  TGIFAutoStretchMode = (smManual, smStretchAll, smOnlyStretchBigger, smOnlyStretchSmaller );
+  TGIFAutoStretchMode = (smManual, smStretchAll, smStretchOnlyBigger, smStretchOnlySmaller );
   TOnStretchChanged = procedure (Sender:TObject; IsStretched : Boolean) of object;
   { TGIFViewer }
   { Composant visuel pour afficher une image GIF animée }
@@ -527,8 +528,8 @@ Type
     { Mode du redimensionnement // Automatic stretch mode
       smManual             : Adpatation Manuelle via la propriété stretch
       smStretchAll         : Adapte toute les images
-      smOnlyStretchBigger  : Adapte seulement les images plus grande
-      smOnlyStretchSmaller : Adapte seulement les images plus petite
+      smStretchOnlyBigger  : Adapte seulement les images plus grande
+      smStretchOnlySmaller : Adapte seulement les images plus petite
      }
     property AutoStretchMode : TGIFAutoStretchMode read FAutoStretchMode write SetAutoStretchMode;
     { Redimensionner l'affichage proportionnellement // Resize the display proportionally }
@@ -2381,8 +2382,8 @@ Begin
   begin
     Case FAutoStretchMode of
      smStretchAll : FStretch := True;
-     smOnlyStretchBigger : if (PicWidth > ImgWidth) or (PicHeight > ImgHeight) then FStretch := True else FStretch := False;
-     smOnlyStretchSmaller : if (PicWidth < ImgWidth) and (PicHeight < ImgHeight) then FStretch := True else FStretch := False;
+     smStretchOnlyBigger : if (PicWidth > ImgWidth) or (PicHeight > ImgHeight) then FStretch := True else FStretch := False;
+     smStretchOnlySmaller : if (PicWidth < ImgWidth) and (PicHeight < ImgHeight) then FStretch := True else FStretch := False;
     end;
     if Assigned(FOnStretchChanged) then FOnStretchChanged(Self,FStretch);
   End;

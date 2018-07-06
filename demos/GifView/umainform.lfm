@@ -18,7 +18,6 @@ object MainForm: TMainForm
   OnDropFiles = FormDropFiles
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.8.5.0'
   Visible = False
   object Panel1: TPanel
     Left = 0
@@ -154,14 +153,14 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object Label5: TLabel
-        Left = 440
+        Left = 448
         Height = 23
         Top = 4
-        Width = 71
+        Width = 63
         Align = alRight
         Alignment = taRightJustify
         BorderSpacing.Around = 4
-        Caption = 'Language :'
+        Caption = 'Langage :'
         Font.Height = -11
         Font.Name = 'Verdana'
         Font.Style = [fsBold]
@@ -366,20 +365,20 @@ object MainForm: TMainForm
       TabOrder = 1
     end
     object pnlSelectFrame: TPanel
-      Left = 370
+      Left = 387
       Height = 34
       Top = 1
-      Width = 269
+      Width = 252
       Align = alClient
       BevelOuter = bvNone
       ClientHeight = 34
-      ClientWidth = 269
+      ClientWidth = 252
       TabOrder = 2
       object chkViewRawFrame: TCheckBox
-        Left = 12
+        Left = 8
         Height = 20
         Top = 7
-        Width = 185
+        Width = 172
         Align = alRight
         AutoSize = False
         BorderSpacing.Left = 4
@@ -389,7 +388,7 @@ object MainForm: TMainForm
         TabOrder = 0
       end
       object edtViewFrameIndex: TSpinEdit
-        Left = 201
+        Left = 184
         Height = 26
         Top = 4
         Width = 64
@@ -402,8 +401,8 @@ object MainForm: TMainForm
         TabOrder = 1
       end
     end
-    object chkTansparent: TCheckBox
-      Left = 267
+    object chkTransparent: TCheckBox
+      Left = 284
       Height = 26
       Top = 5
       Width = 99
@@ -412,7 +411,7 @@ object MainForm: TMainForm
       BorderSpacing.Around = 4
       Caption = 'Transparent'
       Checked = True
-      OnChange = chkTansparentChange
+      OnChange = chkTransparentChange
       State = cbChecked
       TabOrder = 3
     end
@@ -420,7 +419,7 @@ object MainForm: TMainForm
       Left = 152
       Height = 24
       Top = 7
-      Width = 111
+      Width = 128
       Align = alLeft
       BorderSpacing.Left = 2
       BorderSpacing.Top = 6
@@ -431,7 +430,7 @@ object MainForm: TMainForm
       TabOrder = 4
     end
   end
-  object GroupBox1: TGroupBox
+  object gbxComments: TGroupBox
     Left = 0
     Height = 105
     Top = 289

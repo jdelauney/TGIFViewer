@@ -1,4 +1,0 @@
-{"version":1,"strings":[
-{"hash":142248165,"name":"terrorboxform.panel1.caption","sourcebytes":[65,84,84,69,78,84,73,79,78,32,33,32,68,101,115,32,101,114,114,101,117,114,115,32,115,101,32,115,111,110,116,32,112,114,111,100,117,105,116,101,115,32,108,111,114,115,32,100,117,32,99,104,97,114,103,101,109,101,110,116,32,100,101,32,108,39,105,109,97,103,101],"value":"ATTENTION ! Des erreurs se sont produites lors du chargement de l'image"},
-{"hash":80516034,"name":"terrorboxform.button1.caption","sourcebytes":[70,101,114,109,101,114],"value":"Fermer"}
-]}

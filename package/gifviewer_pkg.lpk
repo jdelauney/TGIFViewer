@@ -46,7 +46,7 @@ Contient un composant visuel spécialiser dans l'affichage d'animation d'image a
     </Files>
     <i18n>
       <EnableI18N Value="True"/>
-      <OutDir Value="..\Locale\"/>
+      <OutDir Value="..\local"/>
       <EnableI18NForLFM Value="True"/>
     </i18n>
     <RequiredPkgs Count="3">

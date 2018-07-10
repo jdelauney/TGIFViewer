@@ -20,6 +20,10 @@ msgstr "Close"
 msgid "ATTENTION ! Des erreurs se sont produites lors du chargement de l'image"
 msgstr "WARNING ! Errors occurred while loading the image"
 
+#: tmainform.lblfilename.caption
+msgid "Glissez et déposez un fichier pour l'ouvrir"
+msgstr "Drag and drop a file to open it"
+
 #: tmainform.btnpauseanimation.caption
 msgid "Pause"
 msgstr "Pause"
@@ -31,11 +35,6 @@ msgstr "Start"
 #: tmainform.btnstopanimation.caption
 msgid "Stop"
 msgstr "Stop"
-
-#: tmainform.cbxlang.text
-#, fuzzy
-msgid "fr"
-msgstr "fr"
 
 #: tmainform.chkcentergif.caption
 msgid "Centrer"
@@ -81,10 +80,6 @@ msgstr "/"
 msgctxt "tmainform.lblcurrentframe.caption"
 msgid "0"
 msgstr "0"
-
-#: tmainform.lblfilename.caption
-msgid "Glissez et déposez un fichier pour l'ouvrir"
-msgstr "Drag and drop a file to open it"
 
 #: tmainform.gbxcomments.caption
 msgid "Commentaires"

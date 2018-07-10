@@ -8,8 +8,7 @@ Uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, Spin,
   // TGifViewer
   uGifViewer,
-  // TGVTranslate Traduction de la langue / Translate language
-  //gvTranslate;
+  // TBZApplicationTranslator : Traduction de la langue / Translate language
   BZApplicationTranslator;
 
 Type
@@ -69,7 +68,7 @@ Type
     GifViewer : TGIFViewer;
     GIFLoaded, AppLoaded : Boolean;
 
-    LangManager : TBZApplicationTranslator; //TGVTranslate;
+    LangManager : TBZApplicationTranslator;
 
     procedure DoOnTranslate(Sender:TObject;Const Folder, Lang, FallbackLang: String);
     Procedure DoOnBitmapLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
@@ -138,8 +137,9 @@ Begin
     Add(rsStretchOnlySmaller);
   End;
   cbxStretchMode.ItemIndex := LastItemIndex;
-  lblFileName.Caption := MiniMizeName(GifViewer.FileName, lblFileName.Canvas ,lblFileName.ClientWidth);
   LangManager.Translate('GifViewerStrConsts');
+  if GifViewer.FileName<>'' then lblFileName.Caption := MiniMizeName(GifViewer.FileName, lblFileName.Canvas ,lblFileName.ClientWidth);
+
 End;
 
 {%endregion%}
@@ -148,7 +148,7 @@ Procedure TMainForm.FormCreate(Sender: TObject);
 Begin
   AppLoaded := False;
 
-  LangManager := TBZApplicationTranslator.Create;// TGVTranslate.Create;
+  LangManager := TBZApplicationTranslator.Create;
 
   LangManager.OnTranslate := @DoOnTranslate;
   GifViewer := TGIFVIewer.Create(Self);
@@ -166,7 +166,8 @@ Begin
     AutoStretchMode := smStretchOnlyBigger;
   End;
   chkStretchGIF.Enabled := false;
-  LangManager.Run; //Translate;
+
+  LangManager.Translate; //.Run
 end;
 
 Procedure TMainForm.FormDestroy(Sender: TObject);

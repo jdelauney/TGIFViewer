@@ -21,29 +21,29 @@ object MainForm: TMainForm
   Visible = False
   object Panel1: TPanel
     Left = 0
-    Height = 64
+    Height = 70
     Top = 0
     Width = 640
     Align = alTop
-    ClientHeight = 64
+    ClientHeight = 70
     ClientWidth = 640
     TabOrder = 0
     object Panel5: TPanel
       Left = 1
-      Height = 27
-      Top = 36
+      Height = 28
+      Top = 41
       Width = 638
       Align = alClient
       BorderSpacing.Top = 4
       BevelOuter = bvNone
-      ClientHeight = 27
+      ClientHeight = 28
       ClientWidth = 638
       TabOrder = 0
       object Label2: TLabel
         Left = 4
-        Height = 24
+        Height = 25
         Top = 0
-        Width = 58
+        Width = 57
         Align = alLeft
         BorderSpacing.Left = 4
         BorderSpacing.Bottom = 3
@@ -52,10 +52,10 @@ object MainForm: TMainForm
         ParentColor = False
       end
       object lblVersion: TLabel
-        Left = 66
-        Height = 24
+        Left = 65
+        Height = 25
         Top = 0
-        Width = 24
+        Width = 20
         Align = alLeft
         BorderSpacing.Left = 4
         BorderSpacing.Bottom = 3
@@ -68,10 +68,10 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object Label3: TLabel
-        Left = 94
-        Height = 24
+        Left = 89
+        Height = 25
         Top = 0
-        Width = 121
+        Width = 124
         Align = alLeft
         BorderSpacing.Left = 4
         BorderSpacing.Bottom = 3
@@ -80,10 +80,10 @@ object MainForm: TMainForm
         ParentColor = False
       end
       object lblFrameCount: TLabel
-        Left = 219
-        Height = 24
+        Left = 217
+        Height = 25
         Top = 0
-        Width = 24
+        Width = 20
         Align = alLeft
         BorderSpacing.Left = 4
         BorderSpacing.Bottom = 3
@@ -97,7 +97,7 @@ object MainForm: TMainForm
       end
       object btnChooseBackgroundColor: TColorButton
         Left = 590
-        Height = 24
+        Height = 25
         Top = 0
         Width = 44
         Align = alRight
@@ -110,10 +110,10 @@ object MainForm: TMainForm
         OnColorChanged = btnChooseBackgroundColorColorChanged
       end
       object Label4: TLabel
-        Left = 466
-        Height = 24
+        Left = 471
+        Height = 25
         Top = 0
-        Width = 120
+        Width = 115
         Align = alRight
         BorderSpacing.Left = 4
         BorderSpacing.Right = 4
@@ -125,20 +125,20 @@ object MainForm: TMainForm
     end
     object Panel6: TPanel
       Left = 1
-      Height = 31
+      Height = 36
       Top = 1
       Width = 638
       Align = alTop
       BevelOuter = bvNone
-      ClientHeight = 31
+      ClientHeight = 36
       ClientWidth = 638
       TabOrder = 1
       object lblFileName: TLabel
         Left = 4
-        Height = 29
+        Height = 34
         Top = 2
-        Width = 392
-        Align = alLeft
+        Width = 443
+        Align = alClient
         Alignment = taCenter
         AutoSize = False
         BorderSpacing.Left = 4
@@ -153,10 +153,10 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object Label5: TLabel
-        Left = 448
-        Height = 23
+        Left = 451
+        Height = 28
         Top = 4
-        Width = 63
+        Width = 60
         Align = alRight
         Alignment = taRightJustify
         BorderSpacing.Around = 4
@@ -170,13 +170,13 @@ object MainForm: TMainForm
       end
       object cbxLang: TComboBox
         Left = 515
-        Height = 24
+        Height = 32
         Top = 4
         Width = 119
         Align = alRight
         BorderSpacing.Top = 4
         BorderSpacing.Right = 4
-        ItemHeight = 16
+        ItemHeight = 0
         ItemIndex = 0
         Items.Strings = (
           'fr'
@@ -191,26 +191,26 @@ object MainForm: TMainForm
   end
   object Panel2: TPanel
     Left = 0
-    Height = 50
-    Top = 430
+    Height = 48
+    Top = 432
     Width = 640
     Align = alBottom
-    ClientHeight = 50
+    ClientHeight = 48
     ClientWidth = 640
     TabOrder = 1
     object pnlAnimationPlayer: TPanel
       Left = 1
-      Height = 48
+      Height = 46
       Top = 1
       Width = 247
       Align = alLeft
-      ClientHeight = 48
+      ClientHeight = 46
       ClientWidth = 247
       Enabled = False
       TabOrder = 0
       object btnStartAnimation: TButton
         Left = 5
-        Height = 30
+        Height = 28
         Top = 9
         Width = 75
         Align = alLeft
@@ -223,7 +223,7 @@ object MainForm: TMainForm
       end
       object btnPauseAnimation: TButton
         Left = 84
-        Height = 30
+        Height = 28
         Top = 9
         Width = 75
         Align = alLeft
@@ -236,7 +236,7 @@ object MainForm: TMainForm
       end
       object btnStopAnimation: TButton
         Left = 163
-        Height = 30
+        Height = 28
         Top = 9
         Width = 75
         Align = alLeft
@@ -250,18 +250,18 @@ object MainForm: TMainForm
     end
     object Panel3: TPanel
       Left = 248
-      Height = 48
+      Height = 46
       Top = 1
       Width = 391
       Align = alClient
-      ClientHeight = 48
+      ClientHeight = 46
       ClientWidth = 391
       TabOrder = 1
       object Label1: TLabel
         Left = 5
-        Height = 38
+        Height = 36
         Top = 5
-        Width = 63
+        Width = 60
         Align = alLeft
         BorderSpacing.Around = 4
         Caption = 'Images : '
@@ -269,8 +269,8 @@ object MainForm: TMainForm
         ParentColor = False
       end
       object lblCurrentFrame: TLabel
-        Left = 72
-        Height = 38
+        Left = 69
+        Height = 36
         Top = 5
         Width = 36
         Align = alLeft
@@ -286,10 +286,10 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object Label6: TLabel
-        Left = 112
-        Height = 38
+        Left = 109
+        Height = 36
         Top = 5
-        Width = 12
+        Width = 8
         Align = alLeft
         BorderSpacing.Around = 4
         Caption = '/ '
@@ -301,8 +301,8 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object lblTotalFrame: TLabel
-        Left = 128
-        Height = 38
+        Left = 121
+        Height = 36
         Top = 5
         Width = 36
         Align = alLeft
@@ -321,8 +321,8 @@ object MainForm: TMainForm
   end
   object pnlView: TPanel
     Left = 0
-    Height = 225
-    Top = 64
+    Height = 212
+    Top = 70
     Width = 640
     Align = alClient
     Color = clGreen
@@ -331,17 +331,16 @@ object MainForm: TMainForm
   end
   object Panel4: TPanel
     Left = 0
-    Height = 36
-    Top = 394
+    Height = 45
+    Top = 387
     Width = 640
     Align = alBottom
-    AutoSize = True
-    ClientHeight = 36
+    ClientHeight = 45
     ClientWidth = 640
     TabOrder = 3
     object chkCenterGIF: TCheckBox
       Left = 5
-      Height = 26
+      Height = 35
       Top = 5
       Width = 67
       Align = alLeft
@@ -355,9 +354,9 @@ object MainForm: TMainForm
     end
     object chkStretchGIF: TCheckBox
       Left = 76
-      Height = 26
+      Height = 35
       Top = 5
-      Width = 72
+      Width = 75
       Align = alLeft
       BorderSpacing.Around = 4
       Caption = 'Adapter'
@@ -365,18 +364,18 @@ object MainForm: TMainForm
       TabOrder = 1
     end
     object pnlSelectFrame: TPanel
-      Left = 387
-      Height = 34
+      Left = 390
+      Height = 43
       Top = 1
-      Width = 252
+      Width = 249
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 34
-      ClientWidth = 252
+      ClientHeight = 43
+      ClientWidth = 249
       TabOrder = 2
       object chkViewRawFrame: TCheckBox
-        Left = 8
-        Height = 20
+        Left = 5
+        Height = 29
         Top = 7
         Width = 172
         Align = alRight
@@ -388,8 +387,8 @@ object MainForm: TMainForm
         TabOrder = 0
       end
       object edtViewFrameIndex: TSpinEdit
-        Left = 184
-        Height = 26
+        Left = 181
+        Height = 35
         Top = 4
         Width = 64
         Align = alRight
@@ -402,8 +401,8 @@ object MainForm: TMainForm
       end
     end
     object chkTransparent: TCheckBox
-      Left = 284
-      Height = 26
+      Left = 287
+      Height = 35
       Top = 5
       Width = 99
       Align = alLeft
@@ -416,15 +415,15 @@ object MainForm: TMainForm
       TabOrder = 3
     end
     object cbxStretchMode: TComboBox
-      Left = 152
-      Height = 24
+      Left = 155
+      Height = 33
       Top = 7
       Width = 128
       Align = alLeft
       BorderSpacing.Left = 2
       BorderSpacing.Top = 6
       BorderSpacing.Bottom = 4
-      ItemHeight = 16
+      ItemHeight = 0
       OnSelect = cbxStretchModeSelect
       Style = csDropDownList
       TabOrder = 4
@@ -433,20 +432,22 @@ object MainForm: TMainForm
   object gbxComments: TGroupBox
     Left = 0
     Height = 105
-    Top = 289
+    Top = 282
     Width = 640
     Align = alBottom
     Caption = 'Commentaires '
-    ClientHeight = 84
-    ClientWidth = 636
+    ClientHeight = 87
+    ClientWidth = 638
     TabOrder = 4
     object mmoComments: TMemo
       Left = 4
-      Height = 76
+      Height = 79
       Top = 4
-      Width = 628
+      Width = 630
       Align = alClient
       BorderSpacing.Around = 4
+      ReadOnly = True
+      ScrollBars = ssAutoBoth
       TabOrder = 0
     end
   end

@@ -12,6 +12,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language: en\n"
 
+#: gifviewerstrconsts.rsallframecorrupted
+msgid "Toutes les images dans le GIF sont corrompue. Fichier GIF. Affichage impossible"
+msgstr ""
+
 #: gifviewerstrconsts.rsbadscreensize
 msgid "Dimension de l'image Invalides : %dx%d"
 msgstr "Invalid image size: %dx%d"
@@ -87,3 +91,4 @@ msgstr "Invalid number of colors in the global palette."
 #: gifviewerstrconsts.rsunknownversion
 msgid "Version GIF inconnue"
 msgstr "Unknown GIF version"
+

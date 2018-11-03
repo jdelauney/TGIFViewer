@@ -1068,10 +1068,13 @@ Var
     ExtensionID, BlockType: Byte;
     BufStr: Array[0..255] Of Char;
     Loops:  Word;
+    CurrentExtension : String;
   Begin
     // On lit les extension jusqu'a ce qu'un bloc de description d'une image soit détecter ou que jusqu'a la fin du fichier
     Repeat
+      //showmessage('Read extension at '+ Memory.Position.ToString);
       ExtensionID := Memory.ReadByte;
+      CurrentExtension :='';
       // Si c'est un  nouveau marqueur d'introduction d'extension. On lit le nouvel ID
       If (ExtensionID = GIF_EXTENSIONINTRODUCER) Then ExtensionID := Memory.ReadByte;
       If (ExtensionID = 0) Then
@@ -1121,44 +1124,53 @@ Var
         End;
         GIF_APPLICATIONEXTENSION:
         Begin
+
           BlockSize := Memory.ReadByte;
           // Certains vieux filtres d'exportation Adobe, ou d'autres logiciels utilisent par erreur une valeur de 10, ou plus petite ou trop grande
           If (BlockSize <> 11) Then
           Begin
             FillChar(ApplicationExtensionChunk, SizeOf(TGIFApplicationExtensionRec), 0);
           End;
-
           //else if (BlockSize<11) then
-          //   RaiseInvalidImageFile(sBadApplicationExtensionBlockSize + ' : ' + BlockSize)+' octets. ( Taille valide = 11 octets )'); }
-
+          //   Raise Exception.Create('Bad extension size' + ' : ' + inttostr(BlockSize) +' octets. ( Taille valide = 11 octets )');
           Memory.Read(ApplicationExtensionChunk, SizeOf(TGIFApplicationExtensionRec));
+          CurrentExtension := ApplicationExtensionChunk.AppAuthenticationCode;
           Repeat
             // On lit la taille du  bloc. Zero si il n'y a pas de données supplémentaires
             BlockSize := Memory.ReadByte;
             If (BlockSize > 0) Then
             Begin
-              BlockType := Memory.ReadByte;
-              Dec(BlockSize);
-              Case (BlockType And $07) Of
-                GIF_LOOPEXTENSION:
-                Begin
-                  // Lecture du nombre de boucle, Si Zero alors boucle infinie
-                  Loops := Memory.ReadWord;
-                  If Loops > 0 Then Inc(NSLoopExtensionChunk.Loops);
-                  Dec(BlockSize, SizeOf(Loops));
+              if UpperCase(CurrentExtension) = 'NETSCAPE' then
+              begin
+                BlockType := Memory.ReadByte;
+                Dec(BlockSize);
+                Case (BlockType And $07) Of
+                  GIF_LOOPEXTENSION:
+                  Begin
+                    // Lecture du nombre de boucle, Si Zero alors boucle infinie
+                    Loops := Memory.ReadWord;
+                    If Loops > 0 Then Inc(NSLoopExtensionChunk.Loops);
+                    Dec(BlockSize, SizeOf(Loops));
+                  End;
+                  GIF_BUFFEREXTENSION:
+                  Begin
+                    // Lecture de la taille du tampon. Utilisé pour ??????
+                    NSLoopExtensionChunk.BufferSize := Memory.ReadDWord;
+                    Dec(BlockSize, SizeOF(NSLoopExtensionChunk.BufferSize));
+                  End;
+                  else // Extension NETSCAPE inconnue
+                    begin
+                      Memory.SeekForward(BlockSize);
+                      //BlockSize := 0;
+                    end;
                 End;
-                GIF_BUFFEREXTENSION:
-                Begin
-                  // Lecture de la taille du tampon. Utilisé pour ??????
-                  NSLoopExtensionChunk.BufferSize := Memory.ReadDWord;
-                  Dec(BlockSize, SizeOF(NSLoopExtensionChunk.BufferSize));
-                End;
-              End;
+              end
+              else
               // On saute et on ignore les donnée non lues
               If (BlockSize > 0) Then
               Begin
                 Memory.SeekForward(BlockSize);
-                BlockSize := 0;
+                //BlockSize := 0;
               End;
             End;
           Until (BlockSize = 0);
@@ -1182,13 +1194,13 @@ Var
             BackgroundColorIndex := FLogicalScreenChunk.BackgroundColorIndex;
             DelayTime     := GraphicControlExtensionChunk.DelayTime;
           End;
-
           // Lecture de l'octet de fin de l'extension
           Terminator := Memory.ReadByte;
         End;
       End;
     Until (ExtensionID = GIF_IMAGEDESCRIPTOR) Or Memory.EOS;
-    // Si l'ID pour la description de l'image est détecter on revient en arrière pour la prise ne charge par le traitement des données
+
+    // Si l'ID pour la description de l'image est détecter on revient en arrière pour la prise en charge par le traitement des données
     If (ExtensionID = GIF_IMAGEDESCRIPTOR) Then Memory.Seek(-1, soCurrent);
   End;
 
@@ -2405,13 +2417,13 @@ Begin
   Begin
     If FBorderShow Then
     Begin
-      Result.Left   := n + ((ClientWidth-(n*2)) Div 2) - (PicWidth Div 2);
-      Result.Top    := n + ((ClientHeight-(n*2)) Div 2) - (PicHeight Div 2);
+      Result.Left   := n + ((ClientWidth -(n+n))  - PicWidth)  shr 1;
+      Result.Top    := n + ((ClientHeight-(n+n))  - PicHeight) shr 1;
     end
     else
     begin
-      Result.Left   := (ClientWidth Div 2) - (PicWidth Div 2);
-      Result.Top    := (ClientHeight Div 2) - (PicHeight Div 2);
+      Result.Left   := ((ClientWidth  - PicWidth) shr 1);
+      Result.Top    := ((ClientHeight - PicHeight) shr 1);
     end;
     Result.Right  := Result.Left + PicWidth;
     Result.Bottom := Result.Top + PicHeight;

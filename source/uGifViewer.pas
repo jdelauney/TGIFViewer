@@ -1523,6 +1523,7 @@ Var
     With FFrames.Items[FCurrentLayerIndex] Do
     Begin
       Drawmode := CurrentFrameInfos.Disposal;
+     // Showmessage('#'+inttostr(FCurrentLayerIndex) + 'DrawMode : '+ GifGCEDisposalModeStr[Drawmode]);
       Left     := CurrentFrameInfos.Left;
       Top      := CurrentFrameInfos.Top;
       IsTransparent := CurrentFrameInfos.IsTransparent;
@@ -2271,7 +2272,7 @@ Begin
       iDrawMode := dmSet;
     End;
     FVirtualView.PutImage(Src, 0, 0, Src.Width, Src.Height, pLeft, pTop, dmSet);
-    FRestoreBitmap := FVirtualView.Clone;
+    if FGIFLoader.Frames.Items[0].DrawMode = dmKeep then FRestoreBitmap := FVirtualView.Clone;
   End
   Else
   Begin
@@ -2309,9 +2310,16 @@ Begin
             If (FGIFLoader.Frames.Items[Index].IsTransparent And FTransparent) Then FVirtualView.Clear(clrTransparent)
             Else
               FVirtualView.Clear(FGIFLoader.BackgroundColor);
-          End
+          End;
+
+          If Assigned(FRestoreBitmap) Then FVirtualView.PutImage(FRestoreBitmap, 0, 0, FRestoreBitmap.Width, FRestoreBitmap.Height, 0, 0, dmSet)
           else
-            If Assigned(FRestoreBitmap) Then FVirtualView.PutImage(FRestoreBitmap, 0, 0, FRestoreBitmap.Width, FRestoreBitmap.Height, 0, 0, dmSet);
+          begin
+            If (FGIFLoader.Frames.Items[Index].IsTransparent And FTransparent) Then FVirtualView.Clear(clrTransparent)
+            Else
+              FVirtualView.Clear(FGIFLoader.BackgroundColor);
+          end;
+
           FVirtualView.PutImage(Src, 0, 0, Src.Width, Src.Height, pLeft, pTop, iDrawMode);
         End;
         Else

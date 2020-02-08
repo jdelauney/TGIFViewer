@@ -809,7 +809,6 @@ Var
   anItem: TGIFImageListItem;
   i:      Integer;
 Begin
-  Inherited Clear;
   If Count > 0 Then
   Begin
     For i := Count - 1 Downto 0 do
@@ -818,6 +817,7 @@ Begin
       If anItem <> nil Then anItem.Free;
     End;
   End;
+  Inherited Clear;
 End;
 
 Function TGIFImageList.AddNewImage: TGIFImageListItem;

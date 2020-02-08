@@ -9,6 +9,7 @@ Unit uGifViewer;
  AUTEUR        : J.Delauney (BeanzMaster)
  CONTRIBUTEURS : Jipete, Jurassik Pork
  LICENCE       : MPL
+ BASED         : Some parts provided from  on TGIFImage, Copyright (c) 1997-99 Anders Melander and from GraphicEx by Mike Lischke and some others obscurs resource found on web
 ================================================================================
 *)
 
@@ -2338,8 +2339,7 @@ Begin
   End;
   // Note : Sous MacOS on ne peux pas assigner FRenderCache.Items[Index].Bitmap directement avec
   // FVirtualView.GetBitmap; On est obligé de créer le bitmap de destination et utiliser Assign.
-  // Dans le cas contraire seulment la première image sera affichée.
-  TmpBmp := Graphics.TBitmap.Create;
+  // Dans le cas contraire seulment la première image sera affichée. 
   TmpBmp := FVirtualView.GetBitmap;
   FRenderCache.Items[Index].Bitmap.Assign(TmpBmp);
   FreeAndNil(TmpBmp);

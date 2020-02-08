@@ -1,0 +1,30 @@
+object Form1: TForm1
+  Left = 350
+  Height = 240
+  Top = 250
+  Width = 320
+  Caption = 'Form1'
+  ClientHeight = 240
+  ClientWidth = 320
+  object GIFViewer1: TGIFViewer
+    Left = 104
+    Height = 170
+    Top = 32
+    Width = 184
+    Color = clPurple
+    Border = True
+    BorderColor = clNavy
+    BorderWidth = 4
+    BevelColor = clBlack
+    BevelOuter = bvNone
+    BevelWidth = 2
+    AutoPlay = True
+    Transparent = True
+    Center = True
+    AutoStretchMode = smManual
+    Stretch = True
+    FileName = 'H:\BeanzMaster\Pictures\Images Test Suite\GIF-ImageTestSuite\gif\89a\Good\Didll-0.gif'
+    DisplayInvalidFrames = False
+    AutoRemoveInvalidFrame = True
+  end
+end

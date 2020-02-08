@@ -234,6 +234,7 @@ Type
     Function GetItems(Index : Integer): TGIFImageListItem;
     Procedure SetItems(Index : Integer; AGifImage : TGIFImageListItem);
   Public
+    Destructor Destroy; override;
     { Efface la liste  }
     Procedure Clear; Override;
     { Ajoute une nouvelle image vide à la liste }
@@ -803,6 +804,12 @@ Procedure TGIFImageList.SetItems(Index : Integer; AGifImage : TGIFImageListItem)
 Begin
   Put(Index, AGifImage);
 End;
+
+Destructor TGIFImageList.Destroy;
+begin
+  Self.Clear;
+  inherited Destroy;
+end;
 
 Procedure TGIFImageList.Clear;
 Var
@@ -2154,6 +2161,7 @@ Begin
   If FTransparent = Value Then exit;
   FTransparent := Value;
   FGIFLoader.Transparent := Value;
+  FRenderCache.Clear;
   If FFileName <> '' Then LoadFromFile(FFileName);
 End;
 
@@ -2339,7 +2347,8 @@ Begin
   End;
   // Note : Sous MacOS on ne peux pas assigner FRenderCache.Items[Index].Bitmap directement avec
   // FVirtualView.GetBitmap; On est obligé de créer le bitmap de destination et utiliser Assign.
-  // Dans le cas contraire seulment la première image sera affichée. 
+  // Dans le cas contraire seulment la première image sera affichée.
+  If Assigned(FRestoreBitmap) Then FreeAndNil(FRestoreBitmap);
   TmpBmp := FVirtualView.GetBitmap;
   FRenderCache.Items[Index].Bitmap.Assign(TmpBmp);
   FreeAndNil(TmpBmp);

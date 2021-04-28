@@ -7,9 +7,8 @@ Unit uGifViewer;
  MISE A JOUR   : 06/07/2018 01:40:16
  VERSION       : 1.0
  AUTEUR        : J.Delauney (BeanzMaster)
- CONTRIBUTEURS : Jipete, Jurassik Pork
+ CONTRIBUTEURS : Jipete, Jurassik Pork, bpranoto
  LICENCE       : MPL
- BASED         : Some parts provided from  on TGIFImage, Copyright (c) 1997-99 Anders Melander and from GraphicEx by Mike Lischke and some others obscurs resource found on web
 ================================================================================
 *)
 
@@ -234,7 +233,6 @@ Type
     Function GetItems(Index : Integer): TGIFImageListItem;
     Procedure SetItems(Index : Integer; AGifImage : TGIFImageListItem);
   Public
-    Destructor Destroy; override;
     { Efface la liste  }
     Procedure Clear; Override;
     { Ajoute une nouvelle image vide à la liste }
@@ -431,7 +429,6 @@ Type
     Function GetFrameCount: Integer;
     Function GetGIFVersion: String;
     Function GetRawFrameItem(Index : Integer): TGIFImageListItem;
-    procedure SetAutoPlay(AValue : Boolean);
     Procedure SetAutoStretchMode(AValue: TGIFAutoStretchMode);
     Procedure SetCenter(Const Value : Boolean);
     Procedure SetStretch(Const Value : Boolean);
@@ -522,7 +519,7 @@ Type
 
     { Joue l'animation automatiquement lors du chargement d'une image GIF animée }
     { Play animation automatically when loading an animated GIF image }
-    Property AutoPlay: Boolean read FAutoPlay write SetAutoPlay;
+    Property AutoPlay: Boolean read FAutoPlay write FAutoPlay;
     { Affichage du GIF avec prise en charge de la transparence }
     { GIF view with transparency support }
     Property Transparent: Boolean read FTransparent write SetTransparent;
@@ -804,12 +801,6 @@ Procedure TGIFImageList.SetItems(Index : Integer; AGifImage : TGIFImageListItem)
 Begin
   Put(Index, AGifImage);
 End;
-
-Destructor TGIFImageList.Destroy;
-begin
-  Self.Clear;
-  inherited Destroy;
-end;
 
 Procedure TGIFImageList.Clear;
 Var
@@ -2028,7 +2019,7 @@ End;
 
 {%region=====[ TGIFViewer ]=====================================================}
 
-constructor TGIFViewer.Create(AOwner : TComponent);
+Constructor TGIFViewer.Create(AOwner: TComponent);
 Begin
   Inherited Create(AOwner);
   ControlStyle := [csCaptureMouse, csClickEvents, csDoubleClicks];
@@ -2071,7 +2062,7 @@ Begin
   FAutoStretchMode := smManual;
 End;
 
-destructor TGIFViewer.Destroy;
+Destructor TGIFViewer.Destroy;
 Begin
   FAnimateTimer.Enabled := False;
 
@@ -2086,56 +2077,49 @@ Begin
   Inherited Destroy;
 End;
 
-procedure TGIFViewer.SetCenter(const Value : Boolean);
+Procedure TGIFViewer.SetCenter(Const Value: Boolean);
 Begin
   If Value = FCenter Then exit;
   FCenter := Value;
   Invalidate;
 End;
 
-function TGIFViewer.GetCanvas : TCanvas;
+Function TGIFViewer.GetCanvas: TCanvas;
 Begin
   Result := Inherited Canvas;// FCurrentView.Canvas
 End;
 
-function TGIFViewer.GetFrameCount : Integer;
+Function TGIFViewer.GetFrameCount: Integer;
 Begin
   Result := FRenderCache.Count;//FGifLoader.FrameCount;
 End;
 
-function TGIFViewer.GetGIFVersion : String;
+Function TGIFViewer.GetGIFVersion: String;
 Begin
   Result := FGIFLoader.Version;
 End;
 
-function TGIFViewer.GetRawFrameItem(Index : Integer) : TGIFImageListItem;
+Function TGIFViewer.GetRawFrameItem(Index : Integer): TGIFImageListItem;
 Begin
   Result := nil;
   If (Index >= 0) And (Index < FGIFLoader.FrameCount) Then Result := FGIFLoader.Frames[Index];
 end;
 
-procedure TGIFViewer.SetAutoPlay(AValue : Boolean);
-begin
-  if FAutoPlay = AValue then Exit;
-  FAutoPlay := AValue;
-  // If (csDesigning In ComponentState) and (FFilename<>'') and (FAutoplay = true) Then Start else stop;
-end;
-
-procedure TGIFViewer.SetAutoStretchMode(AValue : TGIFAutoStretchMode);
+Procedure TGIFViewer.SetAutoStretchMode(AValue: TGIFAutoStretchMode);
 Begin
   If FAutoStretchMode = AValue Then Exit;
   FAutoStretchMode := AValue;
   Invalidate;
 End;
 
-procedure TGIFViewer.SetStretch(const Value : Boolean);
+Procedure TGIFViewer.SetStretch(Const Value: Boolean);
 Begin
   If Value = FStretch Then exit;
   FStretch := Value;
   Invalidate;
 End;
 
-procedure TGIFViewer.SetPause(const Value : Boolean);
+Procedure TGIFViewer.SetPause(Const Value: Boolean);
 Begin
   If Value = FPause Then exit;
   FPause := Value;
@@ -2143,29 +2127,28 @@ Begin
   If Assigned(FOnPause) Then FOnPause(Self);
 End;
 
-procedure TGIFViewer.SetFileName(const Value : String);
+Procedure TGIFViewer.SetFileName(Const Value: String);
 Begin
   If Value = FFileName Then exit;
   FFileName := Value;
   LoadFromFile(FFileName);
 End;
 
-function TGIFViewer.GetFrame(const Index : Integer) : Graphics.TBitmap;
+Function TGIFViewer.GetFrame(Const Index: Integer): Graphics.TBitmap;
 Begin
   Result := nil;
   If (Index >= 0) And (Index < FrameCount) Then Result := FRenderCache.Items[Index].Bitmap;
 End;
 
-procedure TGIFViewer.SetTransparent(const Value : Boolean);
+Procedure TGIFViewer.SetTransparent(Const Value: Boolean);
 Begin
   If FTransparent = Value Then exit;
   FTransparent := Value;
   FGIFLoader.Transparent := Value;
-  FRenderCache.Clear;
   If FFileName <> '' Then LoadFromFile(FFileName);
 End;
 
-procedure TGIFViewer.SetBevelWidth(const Value : TBevelWidth);
+Procedure TGIFViewer.SetBevelWidth(Const Value: TBevelWidth);
 Begin
   If FBevelWidth <> Value Then
   Begin
@@ -2174,7 +2157,7 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.ResetCurrentView;
+Procedure TGIFViewer.ResetCurrentView;
 Var
   I: Integer;
   Corrupted : Boolean;
@@ -2215,7 +2198,7 @@ begin
   FLastDrawMode := dmNone;
 End;
 
-procedure TGIFViewer.SetBevelInner(const Value : TPanelBevel);
+Procedure TGIFViewer.SetBevelInner(Const Value: TPanelBevel);
 Begin
   If BevelInner <> Value Then
   Begin
@@ -2224,7 +2207,7 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.SetBevelOuter(const Value : TPanelBevel);
+Procedure TGIFViewer.SetBevelOuter(Const Value: TPanelBevel);
 Begin
   If BevelOuter <> Value Then
   Begin
@@ -2233,12 +2216,12 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.DoInternalOnLoadError(Sender : TObject; const ErrorCount : Integer; const ErrorList : TStringList);
+Procedure TGIFViewer.DoInternalOnLoadError(Sender: TObject; Const ErrorCount: Integer; Const ErrorList: TStringList);
 Begin
   If Assigned(FOnLoadError) Then FOnloadError(Self, ErrorCount, ErrorList);
 End;
 
-procedure TGIFViewer.DoTimerAnimate(Sender : TObject);
+Procedure TGIFViewer.DoTimerAnimate(Sender: TObject);
 Begin
   Inc(FCurrentFrameIndex);
   If FCurrentFrameIndex > (FRenderCache.Count - 1) Then FCurrentFrameIndex := 0;
@@ -2260,7 +2243,7 @@ Begin
   Invalidate;
 End;
 
-procedure TGIFViewer.RenderFrame(Index : Integer);
+Procedure TGIFViewer.RenderFrame(Index: Integer);
 Var
   Src:         TFastBitmap;
   pTop, pLeft: Integer;
@@ -2289,7 +2272,12 @@ Begin
       iDrawMode := dmSet;
     End;
     FVirtualView.PutImage(Src, 0, 0, Src.Width, Src.Height, pLeft, pTop, dmSet);
-    if FGIFLoader.Frames.Items[0].DrawMode = dmKeep then FRestoreBitmap := FVirtualView.Clone;
+    if FGIFLoader.Frames.Items[0].DrawMode = dmKeep then begin
+      if Assigned( FRestoreBitmap) then begin
+        FRestoreBitmap.Free;
+      end;
+      FRestoreBitmap := FVirtualView.Clone;
+    end;
   End
   Else
   Begin
@@ -2348,13 +2336,13 @@ Begin
   // Note : Sous MacOS on ne peux pas assigner FRenderCache.Items[Index].Bitmap directement avec
   // FVirtualView.GetBitmap; On est obligé de créer le bitmap de destination et utiliser Assign.
   // Dans le cas contraire seulment la première image sera affichée.
-  If Assigned(FRestoreBitmap) Then FreeAndNil(FRestoreBitmap);
+  //TmpBmp := Graphics.TBitmap.Create; <== MEMORY LEAK
   TmpBmp := FVirtualView.GetBitmap;
   FRenderCache.Items[Index].Bitmap.Assign(TmpBmp);
   FreeAndNil(TmpBmp);
 End;
 
-procedure TGIFViewer.ComputeCache;
+Procedure TGIFViewer.ComputeCache;
 Var
   I: Integer;
 Begin
@@ -2371,7 +2359,7 @@ Begin
   ResetCurrentView;
 End;
 
-procedure TGIFViewer.CalculatePreferredSize(var PreferredWidth, PreferredHeight : Integer; WithThemeSpace : Boolean);
+Procedure TGIFViewer.CalculatePreferredSize(Var PreferredWidth, PreferredHeight: Integer; WithThemeSpace: Boolean);
 Var
   extraWidth: Integer;
 Begin
@@ -2381,13 +2369,13 @@ Begin
   PreferredHeight := FGIFHeight + extraWidth + 2;
 End;
 
-class function TGIFViewer.GetControlClassDefaultSize : TSize;
+Class Function TGIFViewer.GetControlClassDefaultSize: TSize;
 Begin
   Result.CX := 90; // = ClientWidth
   Result.CY := 90; // = ClientHeight
 End;
 
-function TGIFViewer.DestRect : TRect;
+Function TGIFViewer.DestRect: TRect;
 Var
   PicWidth, PicHeight: Integer;
   ImgWidth, ImgHeight: Integer;
@@ -2455,7 +2443,7 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.Paint;
+Procedure TGIFViewer.Paint;
 
   Procedure DrawFrame;
   Begin
@@ -2527,19 +2515,19 @@ Begin
   Inherited Paint;
 End;
 
-procedure TGIFViewer.Loaded;
+Procedure TGIFViewer.Loaded;
 begin
   if FFileName<>'' then LoadFromFile(FFileName);
   inherited Loaded;
 end;
 
-procedure TGIFViewer.Invalidate;
+Procedure TGIFViewer.Invalidate;
 Begin
   If FPainting Then exit;
   Inherited Invalidate;
 End;
 
-procedure TGIFViewer.LoadFromFile(const aFileName : String);
+Procedure TGIFViewer.LoadFromFile(Const aFileName: String);
 Begin
   FAnimateTimer.Enabled := False;
   FPause     := False;
@@ -2562,10 +2550,10 @@ Begin
     AdjustSize;
   End;
   Invalidate;
-  If (FAutoPlay) and  not(csDesigning In ComponentState) Then Start;
+  If FAutoPlay Then Start;
 End;
 
-procedure TGIFViewer.LoadFromResource(const ResName : String);
+Procedure TGIFViewer.LoadFromResource(Const ResName: String);
 Var
   Resource: TLResource;
 Begin
@@ -2592,7 +2580,7 @@ Begin
   End;
 End;
 
-procedure TGIFViewer.Start;
+Procedure TGIFViewer.Start;
 Begin
   If Not (FPause) Then FCurrentFrameIndex := 0;
   FPause    := False;
@@ -2601,7 +2589,7 @@ Begin
   If Assigned(FOnStart) Then FOnStart(Self);
 End;
 
-procedure TGIFViewer.Stop;
+Procedure TGIFViewer.Stop;
 Begin
   FAnimateTimer.Enabled := False;
   FAnimated := False;
@@ -2612,18 +2600,18 @@ Begin
   Invalidate;
 End;
 
-procedure TGIFViewer.Pause;
+Procedure TGIFViewer.Pause;
 Begin
   FAnimateTimer.Enabled := False;
   FPause := True;
 End;
 
-function TGIFViewer.GetRawFrame(Index : Integer) : TBitmap;
+Function TGIFViewer.GetRawFrame(Index: Integer): TBitmap;
 Begin
   Result := FGIFLoader.Frames[Index].Bitmap.GetBitmap;
 End;
 
-procedure TGIFViewer.DisplayFrame(Index : Integer);
+Procedure TGIFViewer.DisplayFrame(Index: Integer);
 Begin
   If not(FRenderCache.IsIndexOk(Index)) then exit;
   if Not(DisplayInvalidFrames) then
@@ -2645,7 +2633,7 @@ Begin
   Invalidate;
 End;
 
-procedure TGIFViewer.DisplayRawFrame(Index : Integer);
+Procedure TGIFViewer.DisplayRawFrame(Index: Integer);
 Var
   Tmp: Graphics.TBitmap;
 Begin
@@ -2656,13 +2644,13 @@ Begin
   Invalidate;
 End;
 
-procedure TGIFViewer.ExtractFrame(Index : Integer; var bmp : TBitmap);
+Procedure TGIFViewer.ExtractFrame(Index: Integer; Var bmp: TBitmap);
 Begin
   If not(FRenderCache.IsIndexOk(Index)) then exit;
   Bmp.Assign(FRenderCache.Items[Index].Bitmap);
 End;
 
-procedure TGIFViewer.ExtractRawFrame(Index : Integer; var bmp : TBitmap);
+Procedure TGIFViewer.ExtractRawFrame(Index: Integer; Var bmp: TBitmap);
 Var
   Tmp: Graphics.TBitmap;
 Begin
